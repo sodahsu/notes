@@ -29,6 +29,70 @@ https://sodahsu.github.io/notes/
 
 儲存後，GitHub 會自動部署網站。
 
+
+## 下載 Orca
+
+官方下載頁：
+
+https://www.onorca.dev/download
+
+目前官方提供：
+
+- macOS：Apple Silicon、Intel
+- Windows：Windows 10/11 x64 installer
+- Linux：AppImage
+- 舊版與 RC：GitHub Releases
+
+macOS 也可以使用 Homebrew：
+
+```bash
+brew install --cask stablyai/orca/orca
+```
+
+官方安裝說明：
+
+https://www.onorca.dev/docs/install
+
+## 為什麼推薦 Orca
+
+不是因為 Orca 讓 AI 變得比較聰明，而是它把 **AI 開發的工作現場整理得比較清楚**。
+
+對設計師特別有感的地方：
+
+1. **一個功能一個 Worktree**
+   - 不同功能不容易互相踩到。
+   - UI、Mock、互動可以留在同一個功能工作空間。
+
+2. **多個 AI 可以接力**
+   - Claude Code、Codex 等 Agent 可以在同一個工作流裡使用。
+   - 某個 Agent 額度不足時，不需要整個功能重來。
+
+3. **可以直接從畫面工作**
+   - Browser + Design Mode 適合 UI 微調。
+   - 設計師可以直接指出「這裡要改」，不用先找 DOM 或 CSS。
+
+4. **AI 做完後有東西可以 Review**
+   - Diff 讓你看到 AI 實際修改了什麼。
+   - 有問題可以直接針對變更內容回饋，而不是只相信 AI 說「完成」。
+
+5. **不綁單一 AI**
+   - Orca 本身不是模型。
+   - 它是用來統一管理你原本就在使用的 coding agents。
+
+6. **搭配 OpenSpec 很適合**
+   - Orca：管理「工作怎麼做、在哪裡做」。
+   - OpenSpec：管理「這次應該做什麼、不該做什麼」。
+
+白話來說：
+
+> Orca 管「工作不要亂」，OpenSpec 管「需求不要歪」。
+
+### 適合誰？
+
+比較適合已經開始使用 Claude Code、Codex 或其他 coding agent，而且會碰 Git、會看 Diff、需要同時處理多個功能的人。
+
+Orca 官方也明確定位它不是 no-code 工具，而是給已經在寫程式、希望把 AI 當作工作槓桿的人使用。
+
 ## 主要檔案
 
 ### `index.html`
