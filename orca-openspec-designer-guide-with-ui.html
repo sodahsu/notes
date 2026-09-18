@@ -642,85 +642,265 @@
   <section class="section" id="mobile-emulator">
     <div class="section-head">
       <div>
-        <p class="eyebrow">手機版怎麼測？</p>
-        <h2>先分清楚兩種「手機模擬」</h2>
+        <p class="eyebrow">手機模擬｜詳細版</p>
+        <h2>先決定：你要測「手機版網頁」，還是「真的手機 App」？</h2>
       </div>
-      <p>如果只是檢查 RWD，直接用 Browser 的裝置尺寸模擬最快；如果真的要測 App 操作、點擊、旋轉、手勢，再用 iOS / Android Emulator。</p>
+      <p>Orca 裡其實有三種不同層級的手機使用方式：Browser 裝置模擬、iOS / Android Emulator、Mobile Companion。用途完全不同，先選對工具會省很多時間。</p>
     </div>
 
     <div class="matrix">
       <div class="matrix-card">
-        <strong>方法 A｜網頁 RWD：Browser Device Emulation</strong>
-        <p>適合 Vue / React / 一般網站。直接把 Orca Browser 切成手機尺寸，不需要真的啟動手機模擬器。</p>
-        <pre style="margin-top:10px;">orca set device --name "iPhone 12" --worktree active --json
-orca screenshot --worktree active --json</pre>
-        <p style="margin-top:10px;">也可以直接在 Browser tab 設定自訂 viewport，頁面的 media query 與 <code>window.innerWidth</code> 會跟著模擬尺寸變化。</p>
+        <strong>① Browser Device Emulation</strong>
+        <p><b>拿來測 RWD / Web 最常用。</b><br>適合 Vue、React、一般網站、後台、PWA。它把 Orca 內建 Browser 切成手機 viewport，CSS media query、<code>window.innerWidth</code> 也會跟著變。</p>
+        <p style="margin-top:10px;"><b>你要檢查：</b>爆版、按鈕滿寬、表格、彈窗、sticky、文字換行、touch target。</p>
       </div>
-
       <div class="matrix-card">
-        <strong>方法 B｜真正 App 操作：iOS Simulator</strong>
-        <p>Orca CLI 可以把 iOS Simulator 綁到目前 Worktree，讓 AI 幫你點、輸入、滑動、轉橫向。</p>
-        <pre style="margin-top:10px;">orca emulator list --worktree active --json
-orca emulator attach "&lt;device-name-or-udid&gt;" --worktree active --json
-orca emulator tap 0.5 0.7 --worktree active --json
-orca emulator type "hello" --worktree active --json
-orca emulator rotate landscape_left --worktree active --json</pre>
+        <strong>② iOS / Android Emulator</strong>
+        <p><b>拿來測真正 App / WebView / 裝置行為。</b><br>可以讓 Agent 點擊、輸入、滑動、旋轉、按 Home、安裝與啟動 App。</p>
+        <p style="margin-top:10px;"><b>你要檢查：</b>WebView 差異、鍵盤、旋轉、手勢、權限、原生導航、真實裝置尺寸。</p>
       </div>
-
       <div class="matrix-card">
-        <strong>Android 也可以</strong>
-        <p>Android 裝置 / AVD 目前走 Orca 的 <code>orca-emulator-android</code> skill，底層使用 adb，可讓 Agent 做啟動、tap、swipe、輸入、安裝 App、看 logcat。</p>
-        <pre style="margin-top:10px;">npx skills add https://github.com/stablyai/orca --skill orca-emulator-android --global</pre>
+        <strong>③ Mobile Companion</strong>
+        <p><b>不是測試模擬器。</b><br>它是你人在外面時，用手機看 Orca 的 Worktree、Agent 狀態、terminal、source control，必要時回覆 AI。</p>
+        <p style="margin-top:10px;">白話：<b>Companion 是遙控器；Emulator 才是測試手機。</b></p>
       </div>
+    </div>
+
+    <div class="spec-box">
+      <strong>設計師最簡單的判斷</strong>
+      <ul>
+        <li><b>我要看 390px 會不會爆版</b> → Browser Device Emulation。</li>
+        <li><b>我要測 iOS WebView、鍵盤、旋轉、手勢</b> → iOS Simulator。</li>
+        <li><b>我要測 Android App、adb、logcat、權限</b> → Android Emulator skill。</li>
+        <li><b>我只是離開電腦，想用手機看 AI 跑到哪</b> → Mobile Companion。</li>
+      </ul>
+    </div>
+
+    <div class="section-head" style="margin-top:26px;">
+      <div>
+        <p class="eyebrow">A｜最推薦先學</p>
+        <h2>用 Browser 模擬手機版 RWD</h2>
+      </div>
+      <p>如果你主要做前端網頁，這個就能解決大多數手機 QA，不用一開始就碰真正 Emulator。</p>
     </div>
 
     <div class="shot-block">
       <div class="shot-card">
-        <div class="shot-title"><b>設計師最常用的方式</b><span>Responsive Web</span></div>
+        <div class="shot-title"><b>你實際在做的事情</b><span>同一個頁面 → 換手機 viewport</span></div>
         <div class="shot-wrap" style="background:#20242b;padding:18px;">
-          <div style="max-width:320px;margin:0 auto;background:#fff;border-radius:28px;padding:12px;border:8px solid #111;min-height:420px;line-height:1.5;color:#181a1f;">
-            <div style="font-size:11px;color:#69707d;margin-bottom:12px;">iPhone 12 · 390 × 844</div>
-            <div style="font-weight:800;font-size:18px;">會員管理</div>
-            <div style="margin-top:10px;padding:12px;border:1px solid #dfe3e8;border-radius:12px;">會員列表</div>
-            <button type="button" style="width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;background:#155eef;color:#fff;font-weight:700;">＋ 新增會員</button>
-            <div style="margin-top:18px;font-size:12px;color:#69707d;">這裡就是你要檢查：按鈕是否滿寬、文字有沒有爆版、卡片間距是否正常。</div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(230px,.45fr);gap:16px;align-items:center;line-height:1.5;color:#e6e9ee;">
+            <div style="border:1px solid #555;border-radius:12px;padding:14px;min-height:230px;">
+              <div style="font-size:11px;color:#9da5b0;">Desktop</div>
+              <div style="margin-top:12px;font-weight:800;">會員管理</div>
+              <div style="margin-top:12px;display:flex;gap:8px;"><div style="flex:1;border:1px solid #555;padding:10px;border-radius:8px;">會員列表</div><div style="background:#155eef;padding:10px;border-radius:8px;">新增會員</div></div>
+            </div>
+            <div style="color:#9da5b0;font-size:22px;">→</div>
+            <div style="background:#fff;border-radius:28px;padding:10px;border:8px solid #111;min-height:300px;color:#181a1f;">
+              <div style="font-size:10px;color:#69707d;">iPhone 12 profile</div>
+              <div style="margin-top:12px;font-weight:800;">會員管理</div>
+              <div style="margin-top:10px;padding:10px;border:1px solid #dfe3e8;border-radius:9px;">會員列表</div>
+              <div style="margin-top:8px;padding:10px;text-align:center;background:#155eef;color:#fff;border-radius:9px;font-weight:700;">＋ 新增會員</div>
+            </div>
           </div>
         </div>
       </div>
-
       <aside class="location-card">
-        <h4>設計師建議先這樣用</h4>
-        <div class="path">Worktree → Browser → localhost → 手機尺寸 / Device profile</div>
-        <p class="plain">如果你現在做的是前端網站，九成情境先用 Browser 裝置模擬就夠了。只有真的要測原生 App、WebView、裝置手勢或系統行為時，再開 Emulator。</p>
-        <div class="tip">白話：先用「縮成手機看 RWD」；需要真的像手機一樣操作時，才用「真正模擬器」。</div>
+        <h4>適合什麼情況？</h4>
+        <div class="path">Worktree → Browser → localhost → Device / viewport emulation</div>
+        <p class="plain">你還是在跑同一個 localhost，只是讓 Browser 告訴網頁：「現在可視寬度是手機尺寸」。</p>
+        <div class="tip">它可以驗證 responsive CSS，但<b>不等於真正 iPhone Safari / Android Chrome</b>，也不會模擬完整作業系統行為。</div>
       </aside>
     </div>
 
+    <div class="steps">
+      <div class="step"><b>1</b><span><strong>先把前端跑起來。</strong><br>例如 <code>npm run dev</code>，確認 Orca Browser 可以打開 <code>http://localhost:xxxx</code>。</span></div>
+      <div class="step"><b>2</b><span><strong>確認 Orca CLI 可以用。</strong><br>在 Settings 找到 Orca CLI 並註冊，Terminal 執行 <code>orca status --json</code>。</span></div>
+      <div class="step"><b>3</b><span><strong>切成手機 profile。</strong><br><code>orca set device --name "iPhone 12" --worktree active --json</code></span></div>
+      <div class="step"><b>4</b><span><strong>截圖留證據。</strong><br><code>orca screenshot --worktree active --json</code>；需要整頁時可用 <code>orca full-screenshot --worktree active --json</code>。</span></div>
+      <div class="step"><b>5</b><span><strong>交給 AI 做 QA。</strong><br>先要求它列問題，不要一看到爆版就直接讓它大改 CSS。</span></div>
+      <div class="step"><b>6</b><span><strong>修完回到同一尺寸重驗。</strong><br>同一個 viewport 再截一次，確認問題真的消失。</span></div>
+    </div>
+
+    <div class="prompt">
+      <div class="prompt-label">給 AI：手機版 UI QA</div>
+      <pre>先不要修改程式。
+
+請用 iPhone 12 的 viewport 檢查目前頁面，依照 OpenSpec 驗證：
+1. 是否出現水平 overflow
+2. 主要 CTA 是否符合手機版規則
+3. 中文文字是否有不自然斷行或被裁切
+4. 表格 / 卡片 / Modal 是否超出畫面
+5. sticky / fixed 元件是否遮住內容
+6. touch target 是否過小
+7. spacing 是否沿用既有設計系統
+
+先整理「問題 → 證據 → 建議最小修改」。
+我確認後再動程式。</pre>
+    </div>
+
+    <div class="section-head" style="margin-top:28px;">
+      <div>
+        <p class="eyebrow">B｜需要真實裝置行為時</p>
+        <h2>用 iOS Simulator 讓 AI 真的「點手機」</h2>
+      </div>
+      <p>Orca CLI 的 mobile emulator bridge 可以綁定目前 Worktree 的 iOS Simulator。Agent 換 session 時，目標裝置仍能跟工作上下文放在一起。</p>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>先裝 iOS emulator skill</strong>
+        <pre>npx skills add https://github.com/stablyai/orca --skill orca-emulator --global</pre>
+        <p style="margin-top:10px;">之後 Agent 可先用 <code>orca skills get orca-emulator</code> 讀取與目前版本相符的指令說明。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>找裝置 → 綁定 Worktree</strong>
+        <pre>orca emulator list --worktree active --json
+
+orca emulator attach "&lt;device-name-or-udid&gt;" --worktree active --json</pre>
+        <p style="margin-top:10px;">如果同時有多台 simulator，可以用 device name / UDID 明確指定，不要讓 Agent 猜。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>注意平台</strong>
+        <p>iOS Simulator 是 Apple 的模擬器環境，因此要在能提供 iOS Simulator 的 Mac runtime / host 上使用。若你的主要工作機是 Windows，可以先用 Browser RWD；真的需要 iOS 測試時再連到 Mac host。</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><b>1</b><span><strong>列出 Simulator。</strong><br><code>orca emulator list --worktree active --json</code></span></div>
+      <div class="step"><b>2</b><span><strong>Attach 裝置。</strong><br><code>orca emulator attach "iPhone 16 Pro" --worktree active --json</code>（名稱以你的 list 結果為準）。</span></div>
+      <div class="step"><b>3</b><span><strong>點擊。</strong><br><code>orca emulator tap 0.5 0.7 --worktree active --json</code></span></div>
+      <div class="step"><b>4</b><span><strong>輸入。</strong><br><code>orca emulator type "hello" --worktree active --json</code></span></div>
+      <div class="step"><b>5</b><span><strong>滑動 / 拖曳。</strong><br><code>orca emulator gesture '[{"type":"begin","x":0.5,"y":0.8},{"type":"move","x":0.5,"y":0.4},{"type":"end","x":0.5,"y":0.2}]' --worktree active --json</code></span></div>
+      <div class="step"><b>6</b><span><strong>旋轉。</strong><br><code>orca emulator rotate landscape_left --worktree active --json</code></span></div>
+      <div class="step"><b>7</b><span><strong>Home / 系統按鍵。</strong><br><code>orca emulator button home --worktree active --json</code></span></div>
+      <div class="step"><b>8</b><span><strong>結束。</strong><br><code>orca emulator shutdown --worktree active --json</code>；需要終止 bridge 時可使用 <code>kill</code>。</span></div>
+    </div>
+
     <div class="spec-box">
-      <strong>搭配 OpenSpec，可以把手機驗收條件直接寫進規格</strong>
+      <strong>座標為什麼是 0～1？</strong>
       <ul>
-        <li>390px 寬度下不得出現水平捲軸。</li>
-        <li>主要操作按鈕在手機版改為滿寬。</li>
-        <li>表格在小螢幕改為卡片或可橫向捲動。</li>
-        <li>WebView 與一般 Browser 顯示差異列為待驗證項目。</li>
+        <li><code>0,0</code> = 左上。</li>
+        <li><code>0.5,0.5</code> = 正中央。</li>
+        <li><code>1,1</code> = 右下。</li>
+        <li>好處是換不同尺寸的 Simulator 時，同一組「相對位置」比較容易重複使用。</li>
+        <li>單點優先用 <code>tap</code>；拖曳、多段觸控流程用 <code>gesture</code>。</li>
       </ul>
     </div>
 
     <div class="prompt">
-      <div class="prompt-label">設計師可以直接這樣跟 AI 說</div>
-      <pre>先不要修改程式。
-請把目前頁面切成 iPhone 12 尺寸檢查 responsive。
-依照 OpenSpec 驗證：
-1. 有沒有水平 overflow
-2. 按鈕是否符合手機版規則
-3. 文字 / 表格有沒有被裁切
-4. spacing 是否與現有設計系統一致
+      <div class="prompt-label">給 AI：iOS Simulator 驗證</div>
+      <pre>使用目前 Worktree 綁定的 iOS Simulator 驗證這個流程。
 
-先列出問題與截圖證據，再提出最小修改。</pre>
+先不要修改程式。
+請依序：
+1. 確認目前 attach 的 simulator
+2. 啟動目標頁面 / App
+3. 完成「開啟表單 → 輸入 → 送出」流程
+4. 測試直向與橫向
+5. 記錄任何鍵盤遮擋、WebView 放大、點擊區域、overflow 問題
+6. 回報可重現步驟
+
+只有確認問題可重現後，才提出最小修正。</pre>
     </div>
 
-    <p class="note">Orca 官方也提供 Mobile Companion，但那是「用手機遠端看 Agent / Worktree」的 companion app，不等於用來測 App 的 Emulator。兩者用途不同。</p>
+    <div class="section-head" style="margin-top:28px;">
+      <div>
+        <p class="eyebrow">C｜Android</p>
+        <h2>Android Emulator / 實機走 adb skill</h2>
+      </div>
+      <p>Orca 提供 Android emulator skill，專門處理 adb-connected AVD 或裝置。這條路適合 Android App、WebView、權限、logcat 等測試。</p>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>安裝 skill</strong>
+        <pre>npx skills add https://github.com/stablyai/orca --skill orca-emulator-android --global</pre>
+      </div>
+      <div class="matrix-card">
+        <strong>讓 Agent 讀目前版本的說明</strong>
+        <pre>orca skills get orca-emulator-android</pre>
+        <p style="margin-top:10px;">官方建議讓 Agent 讀 live guide，不要從記憶硬猜 flag。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>可做的事情</strong>
+        <p>列出 / 啟動 AVD、tap、swipe、type、hardware buttons、安裝 / 啟動 App、權限、accessibility tree、logcat。</p>
+      </div>
+    </div>
+
+    <div class="prompt">
+      <div class="prompt-label">給 AI：Android 驗證</div>
+      <pre>請使用 orca-emulator-android skill。
+先讀目前版本的 live guide，不要猜指令。
+
+目標：
+- 啟動指定 Android AVD
+- 開啟目前 App
+- 驗證登入與表單流程
+- 檢查 WebView 尺寸 / 縮放
+- 檢查鍵盤是否遮住 CTA
+- 若有錯誤，附上 logcat 與重現步驟
+
+先驗證，不要先修改。</pre>
+    </div>
+
+    <div class="section-head" style="margin-top:28px;">
+      <div>
+        <p class="eyebrow">D｜搭配 OpenSpec</p>
+        <h2>手機驗收不要只寫「支援 RWD」</h2>
+      </div>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>Viewport</strong>
+        <p>明確寫最低要驗證哪些寬度，例如 390px / 768px / desktop，而不是只寫「手機版要正常」。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>Layout 行為</strong>
+        <p>例如 CTA 手機滿寬、桌機靠右；表格手機可橫向捲動；Modal 不可超出可視範圍。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>裝置特有風險</strong>
+        <p>若是 WebView，直接把「字體縮放、viewport、鍵盤遮擋、safe area、旋轉」列成驗證項目。</p>
+      </div>
+    </div>
+
+    <div class="spec-box">
+      <strong>OpenSpec 手機 Scenario 範例</strong>
+      <ul>
+        <li>390px viewport 下，頁面不得產生非預期水平捲軸。</li>
+        <li>主要 CTA 在小螢幕改為滿寬，且不得被 fixed footer / virtual keyboard 遮住。</li>
+        <li>中文標題允許換行，但不可截字或溢出容器。</li>
+        <li>表格若無法完整收進 viewport，必須採既定 mobile pattern，不由 AI 自行發明。</li>
+        <li>WebView 與一般 Browser 結果不同時，標記為待確認，不直接當成 CSS 問題。</li>
+      </ul>
+    </div>
+
+    <div class="section-head" style="margin-top:28px;">
+      <div>
+        <p class="eyebrow">常見問題</p>
+        <h2>手機模擬最容易踩的坑</h2>
+      </div>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>Browser 模擬正常 ≠ 真機一定正常</strong>
+        <p>Device emulation 很適合抓 RWD，但 Safari / WebView / keyboard / safe area 等仍可能有真實裝置差異。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>不要只測一個 breakpoint</strong>
+        <p>至少測小手機、平板附近 breakpoint、桌機。問題常發生在「剛跨 breakpoint」的位置，而不是標準裝置尺寸本身。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>先留證據，再叫 AI 修</strong>
+        <p>推薦順序：Screenshot → 重現條件 → OpenSpec 預期 → 最小修改 → 同尺寸重驗。不要只說「手機版怪怪的」。</p>
+      </div>
+    </div>
+
+    <p class="note">官方參考：<a href="https://www.onorca.dev/docs/browser/overview" target="_blank" rel="noopener noreferrer">Browser viewport emulation ↗</a> · <a href="https://www.onorca.dev/docs/cli/reference" target="_blank" rel="noopener noreferrer">Orca CLI / mobile emulator ↗</a> · <a href="https://www.onorca.dev/docs/cli/skills" target="_blank" rel="noopener noreferrer">Emulator skills ↗</a> · <a href="https://www.onorca.dev/docs/mobile" target="_blank" rel="noopener noreferrer">Mobile Companion ↗</a></p>
   </section>
+
 
 
   <section class="section">
