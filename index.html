@@ -569,6 +569,75 @@
     </div>
   </section>
 
+
+  <section class="section" id="download">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">先裝起來再玩</p>
+        <h2>Orca 要去哪裡下載？</h2>
+      </div>
+      <p>Orca 是桌面 App，官方提供 macOS、Windows 與 Linux 版本。這份教學建議先用穩定版，裝好後再把你常用的 repo 加進去。</p>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>下載位置</strong>
+        <p>官方下載頁：<br><a href="https://www.onorca.dev/download" target="_blank" rel="noopener noreferrer"><b>onorca.dev/download ↗</b></a></p>
+        <p style="margin-top:10px;">Windows 10/11 x64、macOS Apple Silicon / Intel、Linux AppImage 都可以直接下載。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>macOS 也可以用 Homebrew</strong>
+        <p><code>brew install --cask stablyai/orca/orca</code></p>
+        <p style="margin-top:10px;">想看舊版或 RC 版本，可從官方 GitHub Releases 取得。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>第一次開啟</strong>
+        <p>把現有 Git repo 加進 Orca，再選你已經在用的 Claude Code、Codex 等 Agent。Orca 本身不是另一個模型，而是把這些 Agent 放進同一個工作環境。</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:24px;">
+      <div>
+        <p class="eyebrow">為什麼這份教學推薦 Orca？</p>
+        <h2>不是因為 AI 比較聰明，而是工作比較不容易亂。</h2>
+      </div>
+    </div>
+
+    <div class="matrix">
+      <div class="matrix-card">
+        <strong>① 多個 AI 可以真的分工</strong>
+        <p>每個任務有自己的 Git Worktree 與 Agent terminal。Claude、Codex 等可以平行做不同功能，不必一直 stash、切 branch、重新交代上下文。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>② 設計師可以直接看畫面 Review</strong>
+        <p>Browser、Design Mode、Diff 都在同一個工作環境。你可以從畫面指出問題，再回頭確認 AI 到底改了哪些程式。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>③ AI 換了，工作不用重來</strong>
+        <p>真正的工作狀態留在 Worktree、檔案與 Diff。Agent 額度不足時，可以換下一個 AI 接手，不用把整個功能重新開一份。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>④ 比較適合「AI 已經進入日常工作」的人</strong>
+        <p>如果你已經用 Claude Code、Codex 或其他 coding agent，Orca 很適合當統一工作台。它不是 no-code 工具，也不取代 Git。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>⑤ 免費、開源、跨平台</strong>
+        <p>Orca 官方目前提供 macOS、Windows、Linux 桌面版，並以 MIT 授權開源。</p>
+      </div>
+      <div class="matrix-card">
+        <strong>⑥ 搭配 OpenSpec 更穩</strong>
+        <p>Orca 管工作空間與 AI 執行；OpenSpec 管需求邊界。對設計師來說，就是「AI 可以跑快，但不要跑錯方向」。</p>
+      </div>
+    </div>
+
+    <div class="lesson-controls">
+      <a class="control primary" href="https://www.onorca.dev/download" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;text-decoration:none;">下載 Orca ↗</a>
+      <a class="control" href="https://www.onorca.dev/docs" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;text-decoration:none;">看官方文件 ↗</a>
+    </div>
+
+    <p class="note">適合：已經會用 AI coding agent、需要同時處理多個功能、在意 Diff 與 Git 歷史的人。若你只想做完全不碰程式的 no-code 原型，Orca 不是主要解法。</p>
+  </section>
+
   <section class="section">
     <div class="section-head">
       <div><p class="eyebrow">常用痛點 → 找到介面</p><h2>先學這 6 個就夠了</h2></div>
