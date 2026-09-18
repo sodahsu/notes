@@ -93,6 +93,129 @@ https://www.onorca.dev/docs/install
 
 Orca 官方也明確定位它不是 no-code 工具，而是給已經在寫程式、希望把 AI 當作工作槓桿的人使用。
 
+
+## 手機模擬器怎麼用
+
+Orca 裡有兩種不同層級的「手機模擬」，先分清楚會比較好用。
+
+### 1. 只要檢查 RWD：用 Browser Device Emulation
+
+如果你做的是 Vue、React 或一般網站，通常不需要先開真正的手機模擬器。
+
+可以直接把 Orca Browser 切成手機尺寸：
+
+```bash
+orca set device --name "iPhone 12" --worktree active --json
+orca screenshot --worktree active --json
+```
+
+Orca 的 Browser 會用 Chrome DevTools Protocol 做 viewport 模擬，所以：
+
+- `window.innerWidth`
+- CSS media query
+- responsive breakpoint
+
+都會跟著模擬的手機尺寸改變。
+
+設計師最適合拿來檢查：
+
+- 有沒有水平 overflow
+- 按鈕手機版有沒有滿寬
+- CJK 文字是否爆版
+- 表格是否被裁切
+- spacing / card / modal 在小螢幕是否正常
+
+### 2. 要測真正 App 操作：用 iOS Simulator
+
+Orca CLI 可以控制 iOS Simulator，而且會綁在目前 Worktree。
+
+常用指令：
+
+```bash
+orca emulator list --worktree active --json
+orca emulator attach "<device-name-or-udid>" --worktree active --json
+
+orca emulator tap 0.5 0.7 --worktree active --json
+orca emulator type "hello" --worktree active --json
+orca emulator rotate landscape_left --worktree active --json
+orca emulator button home --worktree active --json
+orca emulator shutdown --worktree active --json
+```
+
+座標採 0～1 的比例值，例如：
+
+```text
+0,0        左上
+0.5,0.5    畫面中央
+1,1        右下
+```
+
+適合用來測：
+
+- 原生 App
+- WebView
+- 點擊 / 輸入
+- 滑動與 gesture
+- 橫向 / 直向
+- Home button 等裝置行為
+
+### 3. Android Emulator
+
+Android AVD / adb 裝置可以加 Orca 的 Android emulator skill：
+
+```bash
+npx skills add https://github.com/stablyai/orca --skill orca-emulator-android --global
+```
+
+可讓 Agent 操作：
+
+- list / boot emulator
+- tap / swipe / type
+- hardware button
+- install / launch App
+- permissions
+- accessibility tree
+- logcat
+
+### 設計師最簡單的判斷
+
+```text
+只是看手機版 UI / RWD
+→ Browser Device Emulation
+
+要測 WebView / App / 手勢 / 裝置行為
+→ iOS / Android Emulator
+```
+
+### 搭配 OpenSpec
+
+可以直接把手機驗收條件寫入 spec，例如：
+
+```text
+- 390px 寬度不得出現水平捲軸
+- 手機版主要 CTA 改為滿寬
+- 表格在手機版不得裁切重要資訊
+- WebView 與一般 Browser 顯示差異需驗證
+```
+
+給 AI 的 Prompt 可以寫：
+
+```text
+先不要修改程式。
+
+請把目前頁面切成 iPhone 12 尺寸檢查 responsive。
+依照 OpenSpec 驗證：
+
+1. 有沒有水平 overflow
+2. 按鈕是否符合手機版規則
+3. 文字 / 表格有沒有被裁切
+4. spacing 是否與現有設計系統一致
+
+先列出問題與截圖證據，再提出最小修改。
+```
+
+> 注意：Orca Mobile Companion 是「用手機遠端查看與控制桌面上的 Agent / Worktree」，和用來測 App 的 mobile emulator 是不同功能。
+
 ## 主要檔案
 
 ### `index.html`
