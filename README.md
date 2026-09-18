@@ -94,127 +94,254 @@ https://www.onorca.dev/docs/install
 Orca 官方也明確定位它不是 no-code 工具，而是給已經在寫程式、希望把 AI 當作工作槓桿的人使用。
 
 
-## 手機模擬器怎麼用
+## 手機模擬器怎麼用（詳細版）
 
-Orca 裡有兩種不同層級的「手機模擬」，先分清楚會比較好用。
+先不要把所有「手機」功能混在一起。Orca 這裡其實有三種不同用途：
 
-### 1. 只要檢查 RWD：用 Browser Device Emulation
+| 你要做什麼 | 用什麼 |
+| --- | --- |
+| 看手機版 RWD / breakpoint / overflow | Browser Device Emulation |
+| 測 App / WebView / 鍵盤 / 手勢 / 旋轉 | iOS / Android Emulator |
+| 人離開電腦，用手機查看 Agent 進度 | Mobile Companion |
 
-如果你做的是 Vue、React 或一般網站，通常不需要先開真正的手機模擬器。
+### A. Browser Device Emulation：前端設計師最常用
 
-可以直接把 Orca Browser 切成手機尺寸：
+適合 Vue、React、一般網站、後台與 PWA。
 
-```bash
-orca set device --name "iPhone 12" --worktree active --json
-orca screenshot --worktree active --json
-```
-
-Orca 的 Browser 會用 Chrome DevTools Protocol 做 viewport 模擬，所以：
+Orca Browser 會透過 Chrome DevTools Protocol 模擬 viewport，所以頁面讀到的：
 
 - `window.innerWidth`
 - CSS media query
 - responsive breakpoint
 
-都會跟著模擬的手機尺寸改變。
+都會跟著模擬尺寸變化。
 
-設計師最適合拿來檢查：
+#### 1. 先確認 CLI
 
-- 有沒有水平 overflow
-- 按鈕手機版有沒有滿寬
-- CJK 文字是否爆版
-- 表格是否被裁切
-- spacing / card / modal 在小螢幕是否正常
+Orca Desktop 的 Settings 裡啟用 / 註冊 Orca CLI，然後：
 
-### 2. 要測真正 App 操作：用 iOS Simulator
+```bash
+orca status --json
+```
 
-Orca CLI 可以控制 iOS Simulator，而且會綁在目前 Worktree。
+#### 2. 前端跑起來
 
-常用指令：
+例如：
+
+```bash
+npm run dev
+```
+
+並在 Orca Browser 打開 localhost。
+
+#### 3. 切成手機 profile
+
+```bash
+orca set device --name "iPhone 12" --worktree active --json
+```
+
+#### 4. 截圖
+
+```bash
+orca screenshot --worktree active --json
+orca full-screenshot --worktree active --json
+```
+
+#### 5. 建議檢查
+
+- 水平 overflow
+- CTA 是否符合手機版規則
+- 中文換行 / 裁切
+- 表格 / Modal 是否超出 viewport
+- sticky / fixed 是否遮內容
+- touch target 是否過小
+- spacing 是否沿用既有設計系統
+
+> Browser 裝置模擬適合 RWD QA，但不等於真正 iPhone Safari 或 Android WebView。
+
+### B. iOS Simulator：測真正 App / WebView 行為
+
+先安裝 skill：
+
+```bash
+npx skills add https://github.com/stablyai/orca --skill orca-emulator --global
+```
+
+Agent 可以先讀目前 Orca 版本對應的 guide：
+
+```bash
+orca skills get orca-emulator
+```
+
+#### 找到裝置
 
 ```bash
 orca emulator list --worktree active --json
-orca emulator attach "<device-name-or-udid>" --worktree active --json
+```
 
+#### 綁定 Simulator
+
+```bash
+orca emulator attach "<device-name-or-udid>" --worktree active --json
+```
+
+#### 點擊
+
+```bash
 orca emulator tap 0.5 0.7 --worktree active --json
+```
+
+#### 輸入
+
+```bash
 orca emulator type "hello" --worktree active --json
+```
+
+#### 滑動 / 拖曳
+
+```bash
+orca emulator gesture '[{"type":"begin","x":0.5,"y":0.8},{"type":"move","x":0.5,"y":0.4},{"type":"end","x":0.5,"y":0.2}]' --worktree active --json
+```
+
+#### 旋轉
+
+```bash
 orca emulator rotate landscape_left --worktree active --json
+```
+
+#### Home
+
+```bash
 orca emulator button home --worktree active --json
+```
+
+#### 結束
+
+```bash
 orca emulator shutdown --worktree active --json
 ```
 
-座標採 0～1 的比例值，例如：
+Orca 的 emulator 座標是 0～1 的相對座標：
 
 ```text
-0,0        左上
-0.5,0.5    畫面中央
-1,1        右下
+0,0       左上
+0.5,0.5   中央
+1,1       右下
 ```
 
-適合用來測：
+單次點擊優先用 `tap`；拖曳或多段觸控流程用 `gesture`。
 
-- 原生 App
-- WebView
-- 點擊 / 輸入
-- 滑動與 gesture
-- 橫向 / 直向
-- Home button 等裝置行為
+iOS Simulator 需要可提供 Apple Simulator 環境的 Mac runtime / host。Windows 工作機如果只是做 Web，先用 Browser Device Emulation；真的需要 iOS 行為時再接 Mac host。
 
-### 3. Android Emulator
+### C. Android Emulator / 實機
 
-Android AVD / adb 裝置可以加 Orca 的 Android emulator skill：
+安裝 Android skill：
 
 ```bash
 npx skills add https://github.com/stablyai/orca --skill orca-emulator-android --global
 ```
 
-可讓 Agent 操作：
+再讓 Agent 讀目前版本說明：
 
-- list / boot emulator
+```bash
+orca skills get orca-emulator-android
+```
+
+官方 skill 的用途包含：
+
+- list / boot AVD
 - tap / swipe / type
-- hardware button
+- hardware buttons
 - install / launch App
 - permissions
 - accessibility tree
 - logcat
 
-### 設計師最簡單的判斷
+不要直接叫 AI 從記憶猜 adb / Orca flags，先載入目前版本的 guide。
+
+### D. Mobile Companion 不是 Emulator
+
+Orca Mobile Companion 是手機端遙控 / 監看工具。
+
+可以用手機：
+
+- 看每個 Worktree
+- 看 Agent working / waiting / done
+- 看 terminal
+- 看 source control
+- 回覆 Agent 問題
+- 切換部分 Agent account
+
+它不是用來模擬 App 的測試裝置。
+
+白話：
 
 ```text
-只是看手機版 UI / RWD
-→ Browser Device Emulation
-
-要測 WebView / App / 手勢 / 裝置行為
-→ iOS / Android Emulator
+Mobile Companion = 用手機遙控 Orca
+Mobile Emulator   = 讓 AI 操作一台測試手機
 ```
 
-### 搭配 OpenSpec
+### E. 搭配 OpenSpec
 
-可以直接把手機驗收條件寫入 spec，例如：
+不要只寫：
 
 ```text
-- 390px 寬度不得出現水平捲軸
-- 手機版主要 CTA 改為滿寬
-- 表格在手機版不得裁切重要資訊
-- WebView 與一般 Browser 顯示差異需驗證
+支援 RWD
 ```
 
-給 AI 的 Prompt 可以寫：
+改成可驗收的 scenario：
+
+```text
+- 390px viewport 不得出現非預期水平捲軸
+- 手機版主要 CTA 必須滿寬
+- CTA 不得被 fixed footer 或 virtual keyboard 遮住
+- 中文標題可以換行，但不得截字
+- 表格使用既定 mobile pattern，不由 AI 自行發明
+- WebView 與一般 Browser 不一致時先標記待確認
+```
+
+### F. 推薦 QA 流程
+
+```text
+切手機尺寸
+  ↓
+先截圖
+  ↓
+找出可重現問題
+  ↓
+對 OpenSpec 預期
+  ↓
+AI 做最小修改
+  ↓
+同尺寸再驗一次
+  ↓
+看 Diff
+```
+
+給 AI：
 
 ```text
 先不要修改程式。
 
-請把目前頁面切成 iPhone 12 尺寸檢查 responsive。
-依照 OpenSpec 驗證：
+請用 iPhone 12 viewport 檢查目前頁面，依 OpenSpec 驗證：
+1. horizontal overflow
+2. CTA 行為
+3. 中文換行 / 裁切
+4. 表格 / Modal
+5. sticky / fixed
+6. touch target
+7. spacing
 
-1. 有沒有水平 overflow
-2. 按鈕是否符合手機版規則
-3. 文字 / 表格有沒有被裁切
-4. spacing 是否與現有設計系統一致
-
-先列出問題與截圖證據，再提出最小修改。
+先回報「問題 → 證據 → 最小修改建議」。
+我確認後再實作。
 ```
 
-> 注意：Orca Mobile Companion 是「用手機遠端查看與控制桌面上的 Agent / Worktree」，和用來測 App 的 mobile emulator 是不同功能。
+官方文件：
+
+- Browser viewport emulation: https://www.onorca.dev/docs/browser/overview
+- Orca CLI / mobile emulator: https://www.onorca.dev/docs/cli/reference
+- Emulator skills: https://www.onorca.dev/docs/cli/skills
+- Mobile Companion: https://www.onorca.dev/docs/mobile
 
 ## 主要檔案
 
