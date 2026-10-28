@@ -192,6 +192,75 @@ Codex
 不要重做已完成部分。
 ```
 
+
+## Orca Orchestration：Worker 有問題，Commander 會回答嗎？
+
+**可以，但不是保證自動回答。** Orca 正式的 Orchestration 提供 Worker → Commander 的阻塞提問與回覆機制；Commander 仍需要留在監督迴圈，持續讀取問題、回答、驗收 Worker 的完成回報。
+
+- **Commander（協調者）**：建立 Run、定義工作邊界、啟動 Worker、回答問題、檢查結果及整合。
+- **Worker（執行者）**：依 Task 執行；需要協調者做決策時使用 ```orca orchestration ask```；完成後回報 ```worker_done```。
+- **Run / Task / Dispatch**：分別是協調空間與收件匣、工作項目，以及該工作的某一次實際派工。
+
+### 1. 啟用並派工
+
+先在 Orca 的 **Settings → Experimental** 啟用 Orchestration，並從 Commander 的 Orca 終端機執行：
+
+```bash
+orca status --json
+orca skills get orchestration --full
+orca orchestration run-create --objective "檢查報名頁手機版" --json
+orca orchestration worker-start --spec "檢查報名頁 RWD 與互動問題，回報證據" --worktree current --agent codex --json
+```
+
+```worker-start --spec``` 會建立 Task 並啟動 Dispatch；若需要相依任務，再明確使用 ```task-create``` + ```worker-start --task```。多個會寫入的 Worker 必須先界定檔案 ownership；獨立功能才切獨立 Worktree。
+
+### 2. Worker 卡住：用 ask，不要在本機 AI 介面提問
+
+從**收到 Dispatch preamble 的 Worker 終端機**執行，並以 preamble 指定的執行檔、身分與旗標為準：
+
+```bash
+orca orchestration ask --question "API 尚未完成，可以先使用 Mock 嗎？" --options "先用Mock,等待API" --timeout-ms 600000 --json
+```
+
+在有效 Dispatch 內，問題預設送到所屬 Run 的 Commander。```ask``` 會阻塞等待回答；逾時不會自動取消問題，請用**同一個訊息 ID**恢復等待，避免重複提問：
+
+```bash
+orca orchestration ask --resume <message_id> --timeout-ms 600000 --json
+```
+
+### 3. Commander 收件、回答、驗收
+
+在**已綁定 Run 的 Commander 終端機**執行：
+
+```bash
+orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json
+orca orchestration reply --id <message_id> --body "先使用 Mock，維持既有 API 契約；未知業務規則保持待確認。" --json
+orca orchestration check --ack <delivery_id> --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json
+```
+
+每次 ```check``` 回傳的 Delivery 可能包含多則訊息；**逐則處理後才 ack**，再繼續等待。只有看到 ```worker_done``` 且驗證 Diff／測試／工作範圍無誤後，才能把任務視為完成。派工後就結束 Commander 會話，並不能保證 Worker 的問題會有人答覆。
+
+### 4. 什麼情況由誰決定？
+
+| 狀況 | 建議處理 |
+| --- | --- |
+| 技術細節、現有測試失敗、Mock 策略 | Commander 查程式碼、OpenSpec 和 API 契約後回答 |
+| 跨 Worker 同檔案修改／整合衝突 | Commander 指定單一寫入者並調整派工 |
+| 新增業務規則、重大變更、不可逆操作 | Commander 暫停相關修改，詢問使用者 |
+| ```ask``` 逾時、Worker 沒動靜 | 確認 Run 綁定與訊息處理狀態，檢查 Dispatch；不要直接重啟 |
+
+故障排查：
+
+```bash
+orca orchestration worker-list --include-remote --json
+orca orchestration task-list --json
+orca orchestration worker-read --dispatch <dispatch_id> --limit 50 --json
+```
+
+**原則：**Orca 的問答機制負責傳訊，Commander 的監督迴圈才負責回答與決策。不要把逾時當作 Worker 已退出，也不要因為沒有訊息就直接 reset 或刪 Worktree。
+
+官方依據：[Orchestration CLI](https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/orchestration.mdx) · [官方 Orchestration Skill 指引](https://github.com/stablyai/orca/blob/main/skill-guides/orchestration.md)。實際旗標以本機 ```orca skills get orchestration --full``` 為準。
+
 ## OpenSpec Integration
 
 ### 開工前

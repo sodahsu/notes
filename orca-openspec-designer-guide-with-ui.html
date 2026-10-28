@@ -128,6 +128,7 @@
     <a href="#problems">常見痛點</a>
     <a href="#designer">我是設計師</a>
     <a href="#frontend">我是前端</a>
+    <a href="#orchestration">Worker / Commander</a>
     <a href="#openspec">OpenSpec</a>
     <a href="#mobile">手機測試</a>
     <a href="#reference">名詞 / 指令</a>
@@ -351,10 +352,99 @@
     </div>
   </section>
 
+
+  <section id="orchestration" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">5 · 多 Agent 協作</p><h2>Worker 有問題，Commander 會自己回答嗎？</h2></div>
+        <p>Orca Orchestration 是正式的任務編排與訊息機制。重點不是同時開很多 AI，而是 Worker 卡住時有人接球、任務完成時有人驗收。</p>
+      </div>
+
+      <div class="callout"><b>先說結論：</b>可以讓 Worker 向 Commander 提問，Commander 回覆後 Worker 再往下做；但<strong>有訊息機制不代表一定自動回答</strong>。Commander 必須持續執行監督迴圈、處理收件匣，不能派工完就結束會話。</div>
+
+      <div class="grid three" style="margin-top:14px;">
+        <div class="card accent"><strong>Commander｜協調者</strong><p>拆解與派工、指定可修改的檔案範圍、回答技術問題、解決衝突、檢查成果。超過授權的業務決策才回來問人。</p></div>
+        <div class="card"><strong>Worker｜執行者</strong><p>依 Task 的邊界實作。遇到需決策的阻塞，用 orchestration ask；完成時送出 worker_done，不自行宣告整個專案完成。</p></div>
+        <div class="card"><strong>Run / Task / Dispatch</strong><p>Run 是協調收件匣；Task 是工作內容；Dispatch 是這一次派到哪個 Worker 的執行紀錄。三者不是同一件事。</p></div>
+      </div>
+
+      <div class="flow" style="margin:18px 0 16px;">
+        <span class="pill">Worker 遇到問題</span><span class="arrow">→</span>
+        <span class="pill">ask 提問</span><span class="arrow">→</span>
+        <span class="pill spec">Commander check</span><span class="arrow">→</span>
+        <span class="pill spec">reply 回答</span><span class="arrow">→</span>
+        <span class="pill">Worker 繼續</span><span class="arrow">→</span>
+        <span class="pill">驗收 / 收尾</span>
+      </div>
+
+      <details open>
+        <summary>A｜先啟用正式編排，再啟動 Worker</summary>
+        <div class="detail-body">
+          <p>先到 Orca 的 <b>Settings → Experimental</b> 啟用 Orchestration，確認 Orca Runtime 正常，再閱讀目前安裝版本的完整指令。下面是單一 Worker 的最小示例；不必為了一個小修改硬拆多個 Agent。</p>
+          <pre class="code">orca status --json
+orca skills get orchestration --full
+orca orchestration run-create --objective "檢查前端報名流程" --json
+orca orchestration worker-start --spec "檢查報名頁的手機版互動與問題，先回報證據" --worktree current --agent codex --json</pre>
+          <p><code>worker-start --spec</code> 會建立 Task 並啟動一次 Dispatch。若要規劃相依任務，再使用 <code>task-create</code> 與 <code>worker-start --task</code>。獨立且會修改不同功能的 Worker 才考慮分開 Worktree；同一個檔案不要給兩個 Worker 同時寫。</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>B｜Worker 卡住時，怎麼問 Commander？</summary>
+        <div class="detail-body">
+          <p>從<strong>正在執行該 Dispatch 的 Worker 終端機</strong>提出阻塞問題；優先照 Worker 啟動時收到的 preamble 複製完整命令（包含它指定的執行檔、身分或額外旗標）。不要使用只會出現在本機 AI 介面的提問方式，因為 Commander 可能收不到。</p>
+          <pre class="code">orca orchestration ask --question "API 尚未完成，這個頁面可以先用 Mock 嗎？" --options "先用Mock,等待API" --timeout-ms 600000 --json</pre>
+          <p><code>ask</code> 會等待協調者回答。在有效的 Dispatch 內，新問題預設送到所屬 Run。若逾時或中斷，問題仍可能待答；從回傳結果取出原始訊息 ID，用 <code>orca orchestration ask --resume &lt;message_id&gt; --timeout-ms 600000 --json</code> 繼續等待，不要重複建立相同問題。</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>C｜Commander 如何接收問題、回覆並繼續監督？</summary>
+        <div class="detail-body">
+          <p>在<strong>已綁定該 Run 的 Commander 終端機</strong>監聽訊息。<code>check</code> 取得的 Delivery 可能包含多則訊息；逐則處理（問題、阻塞、完成回報）後，才能用該批的 <code>deliveryId</code> 確認已處理。這是監督迴圈，不是派完工就自動常駐的服務。</p>
+          <pre class="code">orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json
+orca orchestration reply --id &lt;message_id&gt; --body "先用 Mock，遵守既有 API 契約；未知業務規則標記待確認。" --json
+orca orchestration check --ack &lt;delivery_id&gt; --wait --types "worker_done,escalation,question" --timeout-ms 900000 --json</pre>
+          <p>回答前先查現有 OpenSpec、程式碼與契約；不能擅自替使用者決定新業務規則。收到 <code>worker_done</code> 後，也要檢查 Diff 與相關測試，再決定是否整合及釋放 Worker。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>D｜Worker 沒反應、問題沒人回，怎麼辦？</summary>
+        <div class="detail-body">
+          <p>先確認 Commander 仍在監督、Run 綁定正確、訊息 Delivery 已逐則處理且 ack；再查看 Worker 與 Task 的真實狀態。</p>
+          <pre class="code">orca orchestration worker-list --include-remote --json
+orca orchestration task-list --json
+orca orchestration worker-read --dispatch &lt;dispatch_id&gt; --limit 50 --json</pre>
+          <p><b>等待逾時不等於 Worker 死掉。</b>不要只因沒有新訊息就重啟 Worker、刪除 Worktree 或清空 Orchestration。需要重新派工時，先確認上一個 Dispatch 的狀態，避免重複修改。</p>
+        </div>
+      </details>
+
+      <div class="grid two" style="margin-top:14px;">
+        <div class="card"><strong>Commander 可以自行回答</strong><p>現有規格下的技術做法、測試失敗、Mock 使用策略、檔案 ownership、不同 Worker 的修改衝突；要附上可查證的依據。</p></div>
+        <div class="card"><strong>需要回來問使用者</strong><p>新增或改變業務規則、未授權的資料刪除或不可逆操作、驗收範圍重大改動，以及欠缺依據又會影響決策的問題。</p></div>
+      </div>
+
+      <div class="prompt">
+        <div class="label">直接給 Orca Commander 的協調規則</div>
+        <pre>請使用 Orca 官方 Orchestration 擔任 Commander，不要用文字模擬多代理。
+先確認 Runtime、現有 Run / Task / Dispatch / Worktree，再決定是否需要多個 Worker。
+每個 Worker 都要有明確的工作範圍、寫入邊界與驗收方式；同檔案避免平行寫入。
+啟動 Worker 後持續監聽 question、escalation、worker_done。
+技術問題先查既有 OpenSpec、API 契約與程式碼，能判斷就回答 Worker。
+涉及未確認業務規則、重大範圍變更或不可逆操作，才向我提問。
+逐批處理訊息再 ack；Worker 完成後檢查 Diff、測試及整合狀態。
+不要把 ask 逾時當成失敗，也不要在未確認 Dispatch 狀態時重複派工。</pre>
+      </div>
+
+      <p class="note">指令可能隨 Orca 版本調整；以本機 <code>orca skills get orchestration --full</code> 為準。延伸閱讀：<a href="https://github.com/stablyai/orca/blob/main/docs/site/content/docs/cli/orchestration.mdx" target="_blank" rel="noopener noreferrer">Orca 官方 Orchestration 文件</a>、<a href="https://github.com/stablyai/orca/blob/main/skill-guides/orchestration.md" target="_blank" rel="noopener noreferrer">官方協調者工作流程</a>。</p>
+    </div>
+  </section>
+
   <section id="openspec" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">5 · Orca × OpenSpec</p><h2>Orca 管「工作不要亂」，OpenSpec 管「需求不要歪」</h2></div>
+        <div><p class="eyebrow">6 · Orca × OpenSpec</p><h2>Orca 管「工作不要亂」，OpenSpec 管「需求不要歪」</h2></div>
         <p>OpenSpec 不應只放在文件最後。它要出現在開工、AI 接手、UI 修改、Diff Review 與完成驗收。</p>
       </div>
 
@@ -374,7 +464,7 @@
   <section id="mobile" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">6 · 手機 / Emulator / WebView</p><h2>先判斷你要測哪一種手機情境</h2></div>
+        <div><p class="eyebrow">7 · 手機 / Emulator / WebView</p><h2>先判斷你要測哪一種手機情境</h2></div>
         <p>這章是進階驗證。只是看 RWD，先用 Browser Device Emulation；真的要測 App / WebView / 手勢，再進 Emulator。</p>
       </div>
 
@@ -457,7 +547,7 @@ orca skills get orca-emulator-android</pre>
   <section id="reference" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">7 · 名詞 / 指令速查</p><h2>看到術語不用怕，先翻成白話</h2></div>
+        <div><p class="eyebrow">8 · 名詞 / 指令速查</p><h2>看到術語不用怕，先翻成白話</h2></div>
         <p>正式技術名稱保留，旁邊補白話。這樣設計師看得懂，工程師也不會失去精確度。</p>
       </div>
 
@@ -465,6 +555,9 @@ orca skills get orca-emulator-android</pre>
         <div class="term"><b>Worktree</b><span>功能專用工作目錄。一個完整功能一張工作桌。</span></div>
         <div class="term"><b>Branch</b><span>這份工作的版本線。Worktree 通常會對應自己的功能 branch。</span></div>
         <div class="term"><b>Agent</b><span>幫你執行工作的 AI，例如 Claude Code、Codex。</span></div>
+        <div class="term"><b>Commander</b><span>協調者：派工、回答 Worker 問題、驗收與整合。</span></div>
+        <div class="term"><b>Worker</b><span>接下 Task 的執行者，透過 ask 提問、worker_done 回報。</span></div>
+        <div class="term"><b>Run / Task / Dispatch</b><span>協調收件匣／工作內容／一次實際派工。</span></div>
         <div class="term"><b>Diff</b><span>這次到底改了哪些程式。AI 說 Done 之後先看它。</span></div>
         <div class="term"><b>OpenSpec</b><span>功能應該做到哪裡的規格與驗收邊界。</span></div>
         <div class="term"><b>Checkpoint</b><span>留給自己或下一個 AI 的進度記錄：完成、未完成、下一步、限制。</span></div>
