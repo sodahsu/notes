@@ -66,7 +66,7 @@
     .problem-btn{min-height:58px;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:#fff;color:var(--text);text-align:left;cursor:pointer}
     .problem-btn[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
     .problem-btn small{display:block;color:var(--muted);margin-top:3px}
-    .problem-main{border:1px solid var(--border);border-radius:18px;background:#fff;padding:20px}
+    .problem-main{border:1px solid var(--border);border-radius:18px;background:#fff;padding:20px;scroll-margin-top:16px}
     .badge{display:inline-flex;padding:6px 9px;border:1px solid var(--accent);border-radius:999px;background:var(--accent-soft);color:#1746a2;font-size:12px;font-weight:800}
     .plain-tech{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
     .label{font-size:11px;color:var(--muted);font-weight:850;letter-spacing:.04em;margin-bottom:6px}
@@ -241,7 +241,7 @@
 
       <div class="problem-layout">
         <nav id="problemNav" class="problem-nav" aria-label="常見問題"></nav>
-        <article class="problem-main">
+        <article id="problemPanel" class="problem-main">
           <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
             <div><p id="problemKicker" class="eyebrow">痛點 1</p><h3 id="problemTitle"></h3></div>
             <span id="problemFeature" class="badge"></span>
@@ -678,6 +678,7 @@ orca screenshot --worktree active --json</pre>
   ];
 
   const nav = document.getElementById("problemNav");
+  const panel = document.getElementById("problemPanel");
   const title = document.getElementById("problemTitle");
   const feature = document.getElementById("problemFeature");
   const plain = document.getElementById("problemPlain");
@@ -698,10 +699,24 @@ orca screenshot --worktree active --json</pre>
       const b = document.createElement("button");
       b.type = "button";
       b.className = "problem-btn";
-      b.setAttribute("aria-current", i===current ? "true" : "false");
+      b.setAttribute("aria-controls", "problemPanel");
       b.innerHTML = p.title + "<small>" + p.feature + "</small>";
-      b.addEventListener("click",()=>{current=i;render();});
+      b.addEventListener("click",()=>{
+        current = i;
+        render();
+        // The menu stacks above its content on narrow screens.
+        if (window.matchMedia("(max-width: 920px)").matches) {
+          panel.scrollIntoView({block:"start",behavior:"auto"});
+        }
+      });
       nav.appendChild(b);
+    });
+  }
+
+  function updateNav(){
+    // Keep buttons mounted so the active click target retains focus.
+    Array.from(nav.children).forEach((b,i)=>{
+      b.setAttribute("aria-current", i===current ? "true" : "false");
     });
   }
 
@@ -740,9 +755,10 @@ orca screenshot --worktree active --json</pre>
         <div class="label">你現在只要記這句</div>
         <p>${p.plain}</p>
       </div>`;
-    renderNav();
+    updateNav();
   }
 
+  renderNav();
   render();
 })();
 </script>
