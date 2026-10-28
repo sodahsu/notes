@@ -166,11 +166,13 @@ test("Eight native accordions remain independently toggleable", () => {
   assert.equal((html.match(/<\/summary>/g) ?? []).length, 8);
 });
 
-test("Button-styled external links have real destinations", () => {
+test("All external links and button-styled links have destinations", () => {
   const html = readFileSync(pages[0], "utf8");
+  const external = [...html.matchAll(/<a\b[^>]*href="(https:\/\/[^"]+)"[^>]*>/g)];
   const actions = [...html.matchAll(/<a\s+class="btn[^"]*"\s+href="([^"]+)"[^>]*>/g)];
-  assert.equal(actions.length, 3);
-  for (const [, url] of actions) {
+  assert.equal(external.length, 5, "all five external links are present");
+  assert.equal(actions.length, 3, "three links are styled as buttons");
+  for (const [, url] of external) {
     assert.match(url, /^https:\/\//);
   }
 });
