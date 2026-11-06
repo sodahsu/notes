@@ -804,7 +804,7 @@ orca orchestration worker-read --dispatch &lt;dispatch_id&gt; --limit 50 --json<
         <div class="step"><b>1</b><span><strong>先確認來源：</strong>業務意圖看核准需求，現行行為看 API、程式與實測。不同時標成 SPEC_DRIFT，交 SA／業務負責人判斷。</span></div>
         <div class="step"><b>2</b><span><strong>同一變更同步：</strong>需求或功能改變時，更新 Change／Scenario、受影響設計與 API／Mock 契約，以及測試案例；未實作／未確認規則留在 Change。</span></div>
         <div class="step"><b>3</b><span><strong>經驗證才成現行規格：</strong>只把確認且實作驗證的行為整理到 openspec/specs/，別讓 Mock 或 AI 推論變成系統真實規則。</span></div>
-        <div class="step"><b>4</b><span><strong>本站也要同步：</strong>變更教學章節或職能時，同一個 PR 更新 <a href="SPEC.md">SPEC.md</a>、兩份 HTML、README 與相關 tests，通過驗證後才整合。</span></div>
+        <div class="step"><b>4</b><span><strong>本站也要同步：</strong>變更教學章節或職能時，同一個 PR 更新 <a href="https://github.com/sodahsu/notes/blob/main/SPEC.md" target="_blank" rel="noopener noreferrer">SPEC.md</a>、兩份 HTML、README 與相關 tests，通過驗證後才整合。</span></div>
       </div>
       <div class="prompt">
         <div class="label">規格漂移檢查 Prompt（預設唯讀）</div>
@@ -956,7 +956,7 @@ orca screenshot --worktree active --json</pre>
     </div>
   </section>
 
-  <div class="sources">介面圖來源：Orca 官網與 Orca Docs；AI 換班案例使用你提供的 Orca 中文介面截圖。產品功能隨版本與授權而異。本網站的內容維護契約見 <a href="SPEC.md">SPEC.md</a>。</div>
+  <div class="sources">介面圖來源：Orca 官網與 Orca Docs；AI 換班案例使用你提供的 Orca 中文介面截圖。產品功能隨版本與授權而異。本網站的內容維護契約見 <a href="https://github.com/sodahsu/notes/blob/main/SPEC.md" target="_blank" rel="noopener noreferrer">SPEC.md</a>。</div>
 </main>
 
 <script>
@@ -1125,6 +1125,16 @@ orca screenshot --worktree active --json</pre>
   }
   window.addEventListener("hashchange", updateSectionNav);
   updateSectionNav();
+
+  // Opening a role shortcut reveals its details before fragment navigation.
+  const roleJumpLinks = Array.from(document.querySelectorAll('.role-jump[href^="#role-"]'));
+  roleJumpLinks.forEach((link)=>{
+    link.addEventListener("click", ()=>{
+      const roleId = link.getAttribute("href").slice(1);
+      const detail = document.getElementById(roleId);
+      if (detail) detail.open = true;
+    });
+  });
 
   renderNav();
   render();
