@@ -15,7 +15,8 @@
 
 ## 驗證證據
 
-- `node --test tests/*.test.mjs`：PASS／FAIL／NOT_RUN／BLOCKED（附證據）
+- GitHub Actions `verify-guide.yml`：PASS／FAIL／NOT_RUN／BLOCKED（附證據）
+- `node --test tests/*.test.mjs` 本機（若執行）：PASS／FAIL／NOT_RUN／BLOCKED
 - 導覽／錨點／角色展開／常見痛點切換：PASS／FAIL／NOT_RUN／BLOCKED
 - Desktop／Mobile：PASS／FAIL／NOT_RUN／BLOCKED
 - 官網功能來源與人工審查：PASS／FAIL／NOT_RUN／BLOCKED
