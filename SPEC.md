@@ -4,22 +4,41 @@
 
 ## 1. 目的、定位與真相來源
 
-本 Repo 是 **Orca 使用方法教學網站**，目標是讓使用者先理解「Orca 能解決什麼工作問題」，再依自己的職能找到入門路徑，最後學會多 Agent 監督、故障處理與安全交付。
+本 Repo 是 **Orca 入門體驗 + 完整操作手冊**。首頁只讓訪客迅速理解「這和我的工作有何關係」，用 3 個輕量任務體驗引發探索意願；詳細角色、技術、規格、Heartbeat、Watchdog 與故障處理保留在第二層手冊，不在首頁堆成長文章。
 
 - Orca 是面向 coding agents 的開發環境；不是模型、不是 Jira／專案管理平台、不是 no-code 工具，也不保證自動完成業務核准或所有 Worker 故障恢復。
 - PM／PO／SA 可在需要 Repo、規格、Mock 或開發上下文時使用 Agent 輔助 Planning；業務決策與正式專案追蹤仍由既有權責及工具負責。
 - OpenSpec 是與 Orca 搭配使用的規格方法／工具，不得寫成 Orca 原生內建功能。
 - 本手冊內容與互動的規格來源：本檔 `SPEC.md`。
-- 實作來源：`index.html`；`orca-openspec-designer-guide-with-ui.html` 是完全一致的鏡像。
+- **入口網站**：`index.html`，由 `orca-openspec-designer-guide-with-ui.html` 作逐字一致鏡像。**完整操作手冊**：`guide.html`，保留既有全部教學章節、12 個角色 Prompt 與互動案例。
 - 快速查閱：`README.md`。AI 維護規則：`AGENTS.md`。
 - 可驗證行為：`tests/*.test.mjs`。測試通過不取代人工內容審查。
 - Orca 產品能力以當前官方文件與版本為準；建議工作法不得冒充原生功能。
 
 本 Repo 的 `SPEC.md` 規範本網站，不代替實際業務專案的 OpenSpec。其他專案中未批准／未實作的需求放在 `openspec/changes/`；只有經授權確認、實作與驗證的現行行為才進 `openspec/specs/`。
 
-## 2. 首頁閱讀路徑與主要導覽契約
+## 2. 入門首頁與完整手冊分層契約
 
-首頁先讓使用者理解價值，再用真實工作案例說明成果，接著依職能選擇入口；操作細節與進階監督逐層展開。頂部導覽只放主要入口；次要章節透過卡片、職能連結與上下文 CTA 進入。
+**短首頁 `index.html`** 不使用下列 10 個技術導覽，訪客只需看一句價值主張、三個生活化工作情境、輕量「原本 → 整理後」示意，再選擇複製第一句 Prompt 或前往完整操作。
+
+**完整手冊 `guide.html`** 繼續持有下列 navigation-contract、page-section-contract、role-contract、problem-case-contract、tutorial-contract。從首頁前往時可依情境開啟對應教學，既有 `/#watchdog`、`/#role-*` 等深層連結應轉送到 `guide.html` 的對應錨點。
+
+<!-- landing-mission-contract:start -->
+| id | 卡關情境 | 完整操作對應 |
+| --- | --- | --- |
+| mission-pm | 需求一直改、規則不清楚 | tutorial-pm-sa |
+| mission-design | 手機版介面不好用 | tutorial-design |
+| mission-team | 多個 AI 同時開工難監督 | tutorial-engineering |
+<!-- landing-mission-contract:end -->
+
+- **LANDING-01**：首頁只放一個主標、簡短副標、3 張情境選擇及 1 個動態成果預覽；不得再次把 15 個技術章節直接攤在首頁。
+- **LANDING-02**：情境選擇會更新「原本問題、整理後示意、簡短 Prompt、完整操作連結」。每次切換新情境先收起成果，訪客自行按「看看成果」才展開，必須標示只是示範。
+- **LANDING-03**：首頁完成任務只需 3 個動作：選情境 → 看前後差異 → 複製第一句／進入詳細步驟；不得要求先懂 Git、Worker 或 OpenSpec。
+- **LANDING-04**：Prompt 複製成功才顯示成功；失敗時選取完整可編輯區供手動複製。無真正 Orca 執行、無登入、無個資、無儲存或外部請求。
+- **LANDING-05**：首頁與鏡像 HTML byte-identical；完整手冊獨立在 `guide.html`，原有 15 個章節、12 職能、6 個問題與 3 套完整互動教學全部保留。上線時驗證兩層連結，不得只測首頁。
+- **LANDING-06**：保留舊網址錨點相容性，從 `/#watchdog`、`/#role-*` 等既有技術章節入口自動導至 `guide.html#...`；`/#journey` 保留為短首頁的體驗入口，完整教學改由 `guide.html?case=...#tutorialLab` 開啟對應情境。
+- **LANDING-07**：桌面與手機的 tab 切換、鍵盤操作、結果展開、Prompt 複製成功／失敗、舊錨點轉送與所有完整手冊舊功能必須通過 Node 與 Chromium 回歸測試。
+- **LANDING-08**：這是使用動機導向的資訊架構假設；CI 只可證明互動與技術規格，不可宣稱已用訪談或可用性測試證明「更容易學習」。
 
 <!-- navigation-contract:start -->
 | id | 導覽標籤 | 使用者問題 |
@@ -36,7 +55,7 @@
 | safety | 安全與權限 | 怎麼控制 Agent 權限與資料風險？ |
 <!-- navigation-contract:end -->
 
-`reference` 保留於頁面末端供查閱，不列入主要導覽；由頁尾及相關章節連結進入。
+`reference` 保留於完整手冊末端供查閱，不列入主要導覽；由頁尾及相關章節連結進入。
 
 <!-- page-section-contract:start -->
 | id | 章節目的 |
@@ -75,15 +94,15 @@
 - **WEB-01**：所有站內 `href="#..."` 必須指向真實且唯一的 HTML ID。
 - **WEB-02**：常見痛點保留六個互動案例；切換內容不得重建按鈕或遺失焦點。
 - **WEB-03**：桌面與窄螢幕可閱讀；`details/summary` 支援滑鼠與鍵盤；職能捷徑會自動展開對應 Prompt。
-- **WEB-04**：`index.html` 與鏡像 HTML 必須逐字一致；重排章節不得破壞現有 JavaScript。
-- **WEB-05**：頂部導覽、頁面章節、職能數量以本檔契約為準，測試從契約讀取，不得在多處寫死互相矛盾的數字。
+- **WEB-04**：`index.html` 與鏡像 HTML 必須逐字一致；`guide.html` 保存完整手冊，不得破壞原有 JavaScript。
+- **WEB-05**：完整手冊的頂部導覽、頁面章節、職能數量以本檔契約為準；首頁三個情境以 landing-mission-contract 為準，測試不可寫死互相矛盾的數字。
 - **WEB-06**：PR 需執行 Node 測試與真實 Chromium Browser Smoke Test；未執行標記 NOT_RUN。
 - **WEB-07**：Browser Smoke Test 至少覆蓋契約中的導覽、所有職能捷徑、所有痛點案例、鍵盤展開、無 JS 例外與非預期橫向溢出；桌面 1280×800、手機 390×844。
-- **WEB-08**：主導覽只顯示 navigation-contract；所有 page-section-contract 章節仍需可由主導覽、職能卡、CTA 或內容連結到達。
-- **WEB-09**：首頁必須包含可理解的任務成果案例，不可只列 Orca 功能名詞；每個案例需說明「使用者原本的問題、Orca／Agent 如何參與、產出成果與人工決策界線」。
+- **WEB-08**：完整手冊主導覽只顯示 navigation-contract；所有 page-section-contract 章節仍需可由手冊主導覽、職能卡、CTA 或內容連結到達。
+- **WEB-09**：首頁只提供三種生活化的工作成果示意，先吸引探索再連至完整操作手冊；不可將技術名詞與長篇操作文字放在第一層。
 - **WEB-10**：第一次使用需分流「文件／需求工作」與「程式／介面工作」。PM／SA 不得被要求為唯讀需求分析建立 Worktree；只有要修改 Repo 或開發程式時才進入 Worktree 路徑。
 - **WEB-11**：提供分階學習路徑：第一次完成單一任務、日常工作流、多 Agent 協作、團隊治理；每階段說明適用時機與下一步，不要求新手先學完進階術語。
-- **WEB-12**：首頁職能捷徑需直接連到對應職能 Prompt；PM／SA、設計師、工程師、主管入口各有不同工作目標，不可全部導向同一泛用頁。
+- **WEB-12**：首頁情境捷徑必須能通往對應的完整教程，進一步由完整手冊的職能捷徑開啟各自 Prompt；不可全部導向同一泛用案例。
 - **WEB-13**：Quickstart 必須將文件／需求工作與程式／介面工作分流；文件唯讀分析不要求 Worktree，程式修改才進入 Git 工作區流程。
 
 
@@ -99,7 +118,7 @@
 | tutorial-engineering | Engineering：多 Agent 交付 | 前端／後端、QA、主管 | Worktree／Task 分工、Worker 狀態、測試證據與整合 Gate |
 <!-- tutorial-contract:end -->
 
-- **TUTORIAL-01**：三個案例以可切換的教學面板呈現；一次聚焦一個案例，顯示目前案例名稱與進度。
+- **TUTORIAL-01**：完整手冊 `guide.html#journey` 中，三個案例以可切換的教學面板呈現；一次聚焦一個案例，顯示目前案例名稱與進度。
 - **TUTORIAL-02**：每個案例至少包含 4 個有順序的步驟；每步需提供「輸入資料／前置條件、在 Orca 中做什麼、可複製 Prompt、預期輸出、人工檢查點」。
 - **TUTORIAL-03**：每個步驟可獨立複製 Prompt；複製失敗或 Clipboard API 不可用時，畫面仍提供可選取的完整文字，不得假裝已複製。
 - **TUTORIAL-04**：可前進、返回步驟及切換案例；切換案例後步驟回到第一步；步驟狀態可由使用者自行勾選，不可宣稱 AI 已執行。
@@ -186,9 +205,9 @@
 
 ## 8. 規格同步維護規則（所有後續 PR 必遵守）
 
-1. 變更前閱讀 `SPEC.md`、`AGENTS.md`、`README.md`、兩份 HTML 與相關測試。
+1. 變更前閱讀 `SPEC.md`、`AGENTS.md`、`README.md`、入口兩份 HTML、完整手冊 `guide.html` 與相關測試。
 2. 章節、導覽、職能或 Watchdog 能力有變更時，在同一 PR 更新對應契約表及受影響的 WEB／ROLE／PLAN／FLOW／WATCH／SAFE 條文。
-3. `index.html` 與 `orca-openspec-designer-guide-with-ui.html` 必須逐字一致。
+3. `index.html` 與 `orca-openspec-designer-guide-with-ui.html` 必須逐字一致；`guide.html` 保留完整手冊，兩層不可互相覆寫。
 4. 若影響入門或公開承諾，同步更新 README；修改可觀察行為時同步更新 Node 與 Chromium 測試。
 5. 測試必須從本檔契約讀取導覽與角色，不得在多處寫死互相矛盾的數量。
 6. 官方功能敘述需附當前官方來源；未確認功能標為未確認，建議工作法標為建議。
