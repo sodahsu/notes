@@ -98,8 +98,8 @@ for (const device of viewports) {
         assert.ok((await page.locator('#problemPrompt').innerText()).length > 10);
       }
 
-      const roleLinks = page.locator('a.role-jump[href^="#role-"]');
-      assert.equal(await roleLinks.count(), roles.length + 3, 'all role cards and hero shortcuts');
+      const roleLinks = page.locator('#crossroles a.role-jump[href^="#role-"]');
+      assert.equal(await roleLinks.count(), roles.length, 'all contracted role cards');
       for (let i = 0; i < roles.length; i++) {
         const link = page.locator('#crossroles a.role-jump[href="#' + roles[i] + '"]');
         assert.equal(await link.count(), 1);
