@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 const spec = readFileSync("SPEC.md", "utf8");
-const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
+const pages = ["guide.html"];
 
 function specTutorialIds() {
   const start = spec.indexOf("<!-- tutorial-contract:start -->");
@@ -84,6 +84,6 @@ for (const file of pages) {
   });
 }
 
-test("Published HTML variants remain byte-identical", () => {
-  assert.equal(readFileSync(pages[0], "utf8"), readFileSync(pages[1], "utf8"));
+test("Short landing and its legacy alias remain byte-identical", () => {
+  assert.equal(readFileSync("index.html", "utf8"), readFileSync("orca-openspec-designer-guide-with-ui.html", "utf8"));
 });
