@@ -13,7 +13,7 @@ if (roleBlockStart < 0 || roleBlockEnd < 0) throw new Error("missing role-contra
 const roleCount = spec.slice(roleBlockStart, roleBlockEnd).split("\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && /^role-[a-z0-9-]+$/.test(value); }).length;
 import { Script } from "node:vm";
 
-const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
+const pages = ["guide.html"];
 const ids = [
   "problemNav", "problemPanel", "problemTitle", "problemFeature",
   "problemPlain", "problemEngineer", "problemLocation", "problemMedia",
@@ -130,8 +130,8 @@ function mountPage(html, { mobile = false } = {}) {
   return nodes;
 }
 
-test("Both published HTML files stay in sync", () => {
-  assert.equal(readFileSync(pages[0], "utf8"), readFileSync(pages[1], "utf8"));
+test("Short landing and its legacy alias remain byte-identical", () => {
+  assert.equal(readFileSync("index.html", "utf8"), readFileSync("orca-openspec-designer-guide-with-ui.html", "utf8"));
 });
 
 for (const page of pages) {
