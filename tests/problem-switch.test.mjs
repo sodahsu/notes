@@ -6,7 +6,7 @@ const spec = readFileSync("SPEC.md", "utf8");
 const problemBlockStart = spec.indexOf("<!-- problem-case-contract:start -->");
 const problemBlockEnd = spec.indexOf("<!-- problem-case-contract:end -->", problemBlockStart);
 if (problemBlockStart < 0 || problemBlockEnd < 0) throw new Error("missing problem-case-contract in SPEC.md");
-const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\n").filter(line => /^\\|\\s*[a-z][a-z0-9-]*\\s*\\|/.test(line)).length;
+const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && /^[a-z][a-z0-9-]*$/.test(value); }).length;
 import { Script } from "node:vm";
 
 const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
