@@ -1,34 +1,43 @@
-# AGENTS.md — Orca 工作手冊維護規範
+# AGENTS.md — Orca 使用指南維護規範
 
-此 repo 是靜態 GitHub Pages 文件網站。先閱讀 [SPEC.md](SPEC.md)，再變更任何內容。**每次變更都要評估規格是否受影響，受影響時在同一個 PR 同步修改規格、網站內容與測試。**
+此 repo 是靜態 GitHub Pages 手冊。先讀 `SPEC.md`，再修改任何內容。手冊目標是讓使用者依工作目標找到 Orca 用法，而不是堆疊技術名詞。
 
-## 真相來源與變更範圍
+## 真相來源
 
-- `SPEC.md`：網站可觀察行為與編輯維護規格，包含導覽、角色、Planning、治理與交付。
-- `index.html`：主頁；`orca-openspec-designer-guide-with-ui.html`：逐字相同的鏡像，任何修改都須同步。
-- `README.md`：入門摘要；功能範圍與網址有變需同步。
-- `tests/*.test.mjs`：行為回歸與規格同步檢查。執行 `node --test tests/*.test.mjs`。
+- `SPEC.md`：主要導覽、全部頁面章節、角色、痛點案例、Heartbeat／Watchdog／Recovery 及安全契約。
+- `index.html`：主頁；`orca-openspec-designer-guide-with-ui.html`：必須逐字一致的鏡像。
+- `README.md`：入口摘要，必須與網站定位、功能邊界一致。
+- `tests/*.test.mjs`：規格契約、互動與瀏覽器回歸。
 
-## 變更前
+## 內容與產品事實
 
-1. 確認 Git 工作區狀態，保留其他人的未提交修改。
-2. 對照 `SPEC.md` 與現行 HTML／README／測試，記下實際要改的範圍。
-3. 依據官方版本或有來源的專案證據描述產品能力與業務規則，不得把推測寫成已驗證事實。
+1. 先確認使用者問題，再介紹功能；每個功能要說明「什麼時候用、怎麼開始、結果如何驗收」。
+2. Orca 是 coding-agent 開發環境，不是模型、PM 專案管理平台或 no-code 工具；PM／SA 的用法需標示為搭配 Agent 的工作方法。
+3. OpenSpec 是與 Orca 搭配的規格方法／工具，不得描述為 Orca 原生內建。
+4. Orca 官方文件有版本差異時，使用當前官方文件；不要沿用已退役 CLI 指令。
+5. 區分原生功能與建議工作法，特別是 Heartbeat、Watchdog、Recovery：
+   - Worker heartbeat 是 Orchestration 訊息；長工作帶 taskId／dispatchId。
+   - Agent Dashboard 是 OSC title sequence／hooks 推導的狀態視圖。
+   - Mobile heartbeat 是桌面 Agent process 的手機狀態同步。
+   - Runtime Supervisor 監督 Orca Server，不是個別 Worker；官方服務支援平台依官方文件標示。
+   - 不得宣稱 Orca 有未經官方文件確認的 Worker timeout auto-kill／auto-restart／auto-retry。
+   - Worker 恢復需先查證 Dispatch／Terminal，再明確 stop／retry；重試需重新指定 placement。
+6. 安全敘述不可淡化：Worktree 不是 OS sandbox；檢查 Agent launch arguments；正式資料、憑證與不可逆操作需最小權限及人工核准。
 
-## 變更時（必須）
+## 修改規則
 
-- 新增、刪除、更名導航或角色，**同時**修改 `SPEC.md` 契約表、兩份 HTML 及測試。
-- 修改 Planning、Orchestration、OpenSpec、交付、權限治理說明時，同步修改對應 `PLAN`、`FLOW`、`SAFE` 規格條文與 README（若影響入門）。
-- 網站兩份 HTML 必須 byte-identical。不可只修一份。
-- 修改各角色情境時，明確寫出使用情境、輸入、工作步驟／Prompt、交付物、人工核准責任。
-- 本 repo 的 `SPEC.md` 是手冊規格；別的業務 repo 的 `openspec/changes` 屬於「待實作的意圖」，`openspec/specs` 只記經實作與驗證的現行事實。不得把 Prototype/Mock 當成已落地業務規則。
-- 若變更不影響規格，PR 必須寫出「規格無影響」及理由，不能略過判斷。
-- 不要以 Agent Done 取代 PM／SA／PO／QA／資安／維運的人為核准。
+- 新增／刪除／更名導覽或頁面章節：同一 PR 更新 `SPEC.md` 的 navigation-contract／page-section-contract、HTML、README（若適用）與測試。
+- 新增／修改職能：更新 role-contract、角色卡、Prompt、交付物與人工驗收責任。
+- 新增／修改痛點案例：更新 problem-case-contract、互動按鈕與 Browser Smoke Test。
+- 修改 Heartbeat／Watchdog／Recovery：更新 watchdog-contract 及 WATCH 條文，標清楚 Orca 原生能力、官方未承諾能力、團隊建議。
+- 兩份 HTML 必須 byte-identical。
+- 不得把 AI 推測、SA 原型或 Mock 假設寫成已批准的業務規則。
+- 若規格無影響，PR 必須明確寫出理由。
 
-## 驗證與整合
+## 驗證
 
-1. `node --test tests/*.test.mjs`；並確認 GitHub Actions 的 Chromium Browser Smoke Test（`tests/browser-smoke.mjs`）通過。
-2. 確認所有錨點可到達、角色卡片連結可開啟對應 `details`、五個常見痛點可切換且保留焦點，並檢查手機視窗。
-3. PR 會以 `.github/workflows/verify-guide.yml` 執行 Node 測試及桌面／手機 Chromium 瀏覽器測試；若 CI 未啟用或未執行，需標 NOT_RUN，不能冒充通過。人工驗證另行紀錄。
-4. 在新功能 PR 中使用 `.github/pull_request_template.md` 的規格同步勾選表。
-5. 未完成測試時不得宣稱成功。不要重設／清理／強制推送以掩蓋問題。
+1. `node --test tests/*.test.mjs`。
+2. GitHub Actions 的 `tests/browser-smoke.mjs` 必須通過桌面 1280×800 與手機 390×844。
+3. 驗證主導覽、全部章節錨點、所有角色 Prompt、五個痛點、Watchdog 區塊、鍵盤展開、無 JS 例外與無非預期水平溢出。
+4. PR 使用 `.github/pull_request_template.md` 並提供 CI 證據。
+5. 未執行的測試標 NOT_RUN；不可宣稱完成。
