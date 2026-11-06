@@ -78,7 +78,7 @@ for (const page of pages) {
       "Agent Dashboard", "Mobile Heartbeat", "Runtime Supervisor",
       "Healthy", "Slow", "Stale", "Failed", "Blocked",
       "worker-show", "worker-read", "worker-stop", "--retry-of",
-      "check --wait", "不是個別 Worker", "不會自動"]) {
+      "check --wait", "不是個別 Worker", "沒有承諾"]) {
       assert.ok(html.includes(label), page + " missing guidance: " + label);
     }
     assert.ok(html.includes('href="https://www.onorca.dev/docs/cli/orchestration"'));
@@ -91,7 +91,7 @@ for (const page of pages) {
 test("Watchdog capability boundaries are explicit in SPEC.md", () => {
   assert.match(spec, /WATCH-01[\s\S]*?沒有承諾/);
   assert.match(spec, /WATCH-03[\s\S]*?不是 Worker heartbeat/);
-  assert.match(spec, /WATCH-06[\s\S]*?不是個別 Worker/);
+  assert.match(spec, /WATCH-06[\s\S]*?不可描述為個別 Worker/);
   assert.match(spec, /WATCH-07[\s\S]*?不是業務交付狀態/);
 });
 
