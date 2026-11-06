@@ -34,8 +34,9 @@
 | watchdog | 心跳與故障處理 | Worker 是否還活著？卡住如何恢復？ |
 | openspec | OpenSpec 同步 | 怎麼讓規格與程式同步？ |
 | safety | 安全與權限 | 怎麼控制 Agent 權限與資料風險？ |
-| <!-- reference remains in page but not primary nav --> | | |
 <!-- navigation-contract:end -->
+
+`reference` 保留於頁面末端供查閱，不列入主要導覽；由頁尾及相關章節連結進入。
 
 <!-- page-section-contract:start -->
 | id | 章節目的 |
