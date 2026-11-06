@@ -7,9 +7,13 @@ import { chromium } from 'playwright';
 
 const spec = readFileSync(resolve('SPEC.md'), 'utf8');
 function contractIds(name, pattern) {
-  const block = spec.match(new RegExp("<!-- " + name + ":start -->([\\s\\S]*?)<!-- " + name + ":end -->"));
-  assert.ok(block, 'missing spec contract ' + name);
-  return block[1].split("\\n").map(line => line.split('|')[1]?.trim()).filter(value => value && pattern.test(value));
+  const startTag = '<!-- ' + name + ':start -->';
+  const endTag = '<!-- ' + name + ':end -->';
+  const start = spec.indexOf(startTag);
+  const end = spec.indexOf(endTag, start);
+  assert.ok(start >= 0 && end > start, 'missing spec contract ' + name);
+  return spec.slice(start + startTag.length, end).split('\n')
+    .map(line => line.split('|')[1]?.trim()).filter(value => value && pattern.test(value));
 }
 const navigation = contractIds('navigation-contract', /^(?!id$)[a-z][a-z0-9-]*$/);
 const roles = contractIds('role-contract', /^role-[a-z0-9-]+$/);
@@ -21,7 +25,7 @@ const viewports = [
 ];
 
 for (const device of viewports) {
-  test(`real Chromium ${device.name}: user journey, role prompts and watchdog`, async () => {
+  test('real Chromium ' + device.name + ': user journey, role prompts and watchdog', async () => {
     const browser = await chromium.launch({ headless: true });
     try {
       const context = await browser.newContext({
@@ -40,20 +44,20 @@ for (const device of viewports) {
         const link = nav.nth(i);
         const fragment = await link.getAttribute('href');
         assert.equal(fragment, '#' + navigation[i]);
-        assert.ok(await page.locator(fragment).count(), `missing destination ${fragment}`);
+        assert.ok(await page.locator(fragment).count(), 'missing destination ' + fragment);
         await link.click();
         await page.waitForFunction(hash => {
-          const current = document.querySelector(`.topnav a[href="${hash}"]`);
+          const current = document.querySelector('.topnav a[href="' + hash + '"]');
           return location.hash === hash && current?.getAttribute('aria-current') === 'location';
         }, fragment);
-        assert.equal(await link.getAttribute('aria-current'), 'location', `active nav ${fragment}`);
+        assert.equal(await link.getAttribute('aria-current'), 'location', 'active nav ' + fragment);
       }
 
       const problemButtons = page.locator('#problemNav button');
       assert.equal(await problemButtons.count(), problemCases.length);
       for (let i = 0; i < problemCases.length; i++) {
         await problemButtons.nth(i).click();
-        assert.equal((await page.locator('#problemKicker').innerText()).trim(), `痛點 ${i + 1}`);
+        assert.equal((await page.locator('#problemKicker').innerText()).trim(), '痛點 ' + (i + 1));
         assert.equal(await problemButtons.nth(i).getAttribute('aria-current'), 'true');
         assert.ok((await page.locator('#problemPrompt').innerText()).length > 10);
       }
@@ -65,14 +69,14 @@ for (const device of viewports) {
         const target = await link.getAttribute('href');
         assert.equal(target, '#' + roles[i]);
         await link.click();
-        assert.equal(await page.locator(target).evaluate(el => el.open), true, `${target} expands`);
-        assert.ok((await page.locator(`${target} pre.code`).innerText()).length > 20);
+        assert.equal(await page.locator(target).evaluate(el => el.open), true, target + ' expands');
+        assert.ok((await page.locator(target + ' pre.code').innerText()).length > 20);
       }
 
       const watchdog = page.locator('#watchdog');
       for (const term of ['Worker Heartbeat', 'Agent Dashboard', 'Mobile Heartbeat',
         'Runtime Supervisor', 'Healthy', 'Stale', 'worker-stop', '--retry-of']) {
-        assert.ok((await watchdog.innerText()).includes(term), `watchdog missing ${term}`);
+        assert.ok((await watchdog.innerText()).includes(term), 'watchdog missing ' + term);
       }
 
       const firstSummary = page.locator('#role-pm summary');
@@ -87,7 +91,7 @@ for (const device of viewports) {
         viewportWidth: document.documentElement.clientWidth,
       }));
       assert.ok(size.scrollWidth <= size.viewportWidth + 2,
-        `${device.name} horizontal overflow ${JSON.stringify(size)}`);
+        device.name + ' horizontal overflow ' + JSON.stringify(size));
       assert.deepEqual(exceptions, [], 'no page JavaScript exceptions');
       await context.close();
     } finally {
