@@ -312,7 +312,7 @@ Orca 官方說明：[Supported agents／permissions](https://www.onorca.dev/docs
 node --test tests/*.test.mjs
 ```
 
-檢查結果需標為 `PASS`／`FAIL`／`NOT_RUN`／`BLOCKED`，且必要時人工驗證桌面／手機、角色展開及所有按鈕。
+PR 將由 `.github/workflows/verify-guide.yml` 自動執行上述測試（若 GitHub Actions 可用）；檢查結果需標為 `PASS`／`FAIL`／`NOT_RUN`／`BLOCKED`，且必要時人工驗證桌面／手機、角色展開及所有按鈕。
 
 **要特別分清楚兩種規格同步：**
 
