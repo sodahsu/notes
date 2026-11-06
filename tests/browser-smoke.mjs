@@ -114,6 +114,7 @@ for (const device of viewports) {
         assert.ok((await watchdog.innerText()).includes(term), 'watchdog missing ' + term);
       }
 
+      await page.locator('#role-pm').evaluate(el => { el.open = false; });
       const firstSummary = page.locator('#role-pm summary');
       await firstSummary.focus();
       await page.keyboard.press('Enter');
