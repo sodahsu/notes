@@ -64,18 +64,19 @@
 | design-mode | 想直接指出畫面元件並修正 |
 | checkpoint | 隔天回來或換人接手，需要進度快照 |
 | worker-watch | Worker 沒回應，需要判斷是否卡住與安全恢復 |
+| worker-watch | Worker 沒回應，需要判斷是否卡住與安全恢復 |
 <!-- problem-case-contract:end -->
 
 
 ### WEB requirements
 
 - **WEB-01**：所有站內 `href="#..."` 必須指向真實且唯一的 HTML ID。
-- **WEB-02**：常見痛點保留五個互動案例；切換內容不得重建按鈕或遺失焦點。
+- **WEB-02**：常見痛點保留六個互動案例；切換內容不得重建按鈕或遺失焦點。
 - **WEB-03**：桌面與窄螢幕可閱讀；`details/summary` 支援滑鼠與鍵盤；職能捷徑會自動展開對應 Prompt。
 - **WEB-04**：`index.html` 與鏡像 HTML 必須逐字一致；重排章節不得破壞現有 JavaScript。
 - **WEB-05**：頂部導覽、頁面章節、職能數量以本檔契約為準，測試從契約讀取，不得在多處寫死互相矛盾的數字。
 - **WEB-06**：PR 需執行 Node 測試與真實 Chromium Browser Smoke Test；未執行標記 NOT_RUN。
-- **WEB-07**：Browser Smoke Test 至少覆蓋契約中的導覽、所有職能捷徑、五個痛點、鍵盤展開、無 JS 例外與非預期橫向溢出；桌面 1280×800、手機 390×844。
+- **WEB-07**：Browser Smoke Test 至少覆蓋契約中的導覽、所有職能捷徑、所有痛點案例、鍵盤展開、無 JS 例外與非預期橫向溢出；桌面 1280×800、手機 390×844。
 - **WEB-08**：主導覽只顯示 navigation-contract；所有 page-section-contract 章節仍需可由主導覽、職能卡、CTA 或內容連結到達。
 
 ## 3. 角色情境契約
