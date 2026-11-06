@@ -1098,6 +1098,19 @@ orca screenshot --worktree active --json</pre>
       verify:"完成判斷：下一個人不需要翻完整聊天，就能知道從哪裡安全接手。",
       image:"",
       imageLabel:""
+    },
+    {
+      title:"Worker 沒回應，不知道是慢、卡住還是已經停止",
+      feature:"Heartbeat + Watchdog",
+      plain:"不要看到 AI 沒回話就直接重開。先確認它有沒有持續回報、終端機是否還在執行，再決定要等待、詢問、停止或重新派工。",
+      engineer:"對照 taskId、dispatchId、Worker 狀態、Terminal 輸出與 Worktree Diff。Heartbeat 是訊號，不是程序存活保證；Watchdog 的判斷門檻依任務類型設定。",
+      location:"Orchestration → Coordinator inbox / Agent Dashboard / Worker Terminal",
+      openspec:"任務規格要寫清楚完成條件、可重試性、寫入範圍與驗收方式。重試不能讓兩個 Dispatch 同時修改同一份檔案。",
+      steps:["確認 Coordinator 是否仍在監督 Run。","查看 Worker 與 Dispatch 的狀態、最新輸出和 heartbeat。","區分 Slow、Stale、Failed 或 Blocked。","保存目前 Diff 與輸出，確認舊 Dispatch 已安全結束。","由 Coordinator 決定等待、回答、停止或明確 retry。"],
+      prompt:"請先唯讀診斷目前 Worker，不要立即停止或重派。\n檢查 Run、Task、Dispatch、heartbeat、Agent Dashboard、Terminal 最近輸出與 Worktree git status / diff。\n將狀態判定為 Healthy、Slow、Stale、Failed 或 Blocked，逐項附證據。\n若疑似失聯，先說明還需要哪些證據確認；若建議 retry，必須先確認舊 Dispatch 已停止且不會再寫入，並重新指定 Worktree / host placement。\n不要只因沒有新訊息就判定 Worker 死亡。",
+      verify:"完成判斷：有 Dispatch 身分、狀態判斷附證據、未發生重複 Writer；若重試，舊 Dispatch 已安全結束且新 Dispatch 有明確 retry-of 關聯。",
+      image:"",
+      imageLabel:""
     }
   ];
 
