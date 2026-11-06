@@ -7,6 +7,10 @@ const problemBlockStart = spec.indexOf("<!-- problem-case-contract:start -->");
 const problemBlockEnd = spec.indexOf("<!-- problem-case-contract:end -->", problemBlockStart);
 if (problemBlockStart < 0 || problemBlockEnd < 0) throw new Error("missing problem-case-contract in SPEC.md");
 const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && value !== "id" && /^[a-z][a-z0-9-]*$/.test(value); }).length;
+const roleBlockStart = spec.indexOf("<!-- role-contract:start -->");
+const roleBlockEnd = spec.indexOf("<!-- role-contract:end -->", roleBlockStart);
+if (roleBlockStart < 0 || roleBlockEnd < 0) throw new Error("missing role-contract in SPEC.md");
+const roleCount = spec.slice(roleBlockStart, roleBlockEnd).split("\\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && /^role-[a-z0-9-]+$/.test(value); }).length;
 import { Script } from "node:vm";
 
 const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
@@ -223,7 +227,7 @@ for (const page of pages) {
   test(page + ": role links expand the matching prompt on desktop and mobile", () => {
     for (const mobile of [false, true]) {
       const nodes = mountPage(readFileSync(page, "utf8"), { mobile });
-      assert.equal(nodes.roleJumps.length, 12, "all contracted role shortcuts exist");
+      assert.equal(nodes.roleJumps.length, roleCount, "all contracted role shortcuts exist");
       for (const link of nodes.roleJumps) {
         const roleId = link.getAttribute("href").slice(1);
         const target = nodes.roleDetails[roleId];
