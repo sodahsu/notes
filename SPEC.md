@@ -55,6 +55,17 @@
 | reference | 名詞、CLI 與官方文件 |
 <!-- page-section-contract:end -->
 
+<!-- problem-case-contract:start -->
+| id | 使用者問題 |
+| --- | --- |
+| agent-handoff | AI 額度用完，需要換 Agent 接手 |
+| worktree-conflict | 多個功能同時開發，避免互相踩檔案 |
+| diff-review | AI 擴大修改範圍，需要檢查 Diff |
+| design-mode | 想直接指出畫面元件並修正 |
+| checkpoint | 隔天回來或換人接手，需要進度快照 |
+<!-- problem-case-contract:end -->
+
+
 ### WEB requirements
 
 - **WEB-01**：所有站內 `href="#..."` 必須指向真實且唯一的 HTML ID。
