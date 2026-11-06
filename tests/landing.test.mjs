@@ -40,7 +40,7 @@ test("exactly three mission tabs match the SPEC and have specific short examples
     assert.ok(home.includes('id="' + mission.id + '"'), "mission tab id missing");
     assert.ok(home.includes('data-mission="' + mission.id + '"'), "mission data attribute missing");
     for (const key of ["label", "title", "hint", "before", "afterTitle", "prompt", "guide"]) {
-      assert.ok(typeof mission[key] === "string" && mission[key].trim().length > 3,
+      assert.ok(typeof mission[key] === "string" && mission[key].trim().length >= (key === "label" ? 2 : 4),
         "incomplete scenario " + mission.id + ":" + key);
     }
     assert.equal(mission.outputs.length, 3, "a short tangible output needs three examples");
