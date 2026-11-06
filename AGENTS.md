@@ -16,7 +16,7 @@
 3. OpenSpec 是與 Orca 搭配的規格方法／工具，不得描述為 Orca 原生內建。
 4. Orca 官方文件有版本差異時，使用當前官方文件；不要沿用已退役 CLI 指令。
 5. 區分原生功能與建議工作法，特別是 Heartbeat、Watchdog、Recovery：
-   - Worker heartbeat 是 Orchestration 訊息；長工作帶 taskId／dispatchId。
+   - Worker heartbeat 是 Orchestration 訊息；只有目前 preamble 要求時才送，並帶 taskId／dispatchId；不要自行假設固定頻率。
    - Agent Dashboard 是 OSC title sequence／hooks 推導的狀態視圖。
    - Mobile heartbeat 是桌面 Agent process 的手機狀態同步。
    - Runtime Supervisor 監督 Orca Server，不是個別 Worker；官方服務支援平台依官方文件標示。
