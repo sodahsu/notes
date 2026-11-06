@@ -50,7 +50,7 @@
 | openspec | Change 與現行 Spec 的界線 |
 | designer | 設計師的 Browser／Design Mode 工作法 |
 | frontend | 前端工程流程 |
-| problems | 五種常見痛點的互動切換 |
+| problems | 六種常見痛點的互動切換 |
 | orchestration | Run／Task／Dispatch／Worker／Coordinator |
 | watchdog | Heartbeat、狀態監控、Watchdog 與 Recovery |
 | safety | Agent 權限、資料與不可逆操作治理 |
@@ -83,6 +83,8 @@
 - **WEB-09**：首頁必須包含可理解的任務成果案例，不可只列 Orca 功能名詞；每個案例需說明「使用者原本的問題、Orca／Agent 如何參與、產出成果與人工決策界線」。
 - **WEB-10**：第一次使用需分流「文件／需求工作」與「程式／介面工作」。PM／SA 不得被要求為唯讀需求分析建立 Worktree；只有要修改 Repo 或開發程式時才進入 Worktree 路徑。
 - **WEB-11**：提供分階學習路徑：第一次完成單一任務、日常工作流、多 Agent 協作、團隊治理；每階段說明適用時機與下一步，不要求新手先學完進階術語。
+- **WEB-12**：首頁職能捷徑需直接連到對應職能 Prompt；PM／SA、設計師、工程師、主管入口各有不同工作目標，不可全部導向同一泛用頁。
+- **WEB-13**：Quickstart 必須將文件／需求工作與程式／介面工作分流；文件唯讀分析不要求 Worktree，程式修改才進入 Git 工作區流程。
 
 ## 3. 角色情境契約
 
