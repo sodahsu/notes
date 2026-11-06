@@ -8,6 +8,7 @@ on:
       - 'README.md'
       - 'index.html'
       - 'orca-openspec-designer-guide-with-ui.html'
+      - 'guide.html'
       - 'tests/**'
       - '.github/workflows/verify-guide.yml'
 

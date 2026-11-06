@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
+const pages = ["guide.html"];
 const spec = readFileSync("SPEC.md", "utf8");
 const agents = readFileSync("AGENTS.md", "utf8");
 const readme = readFileSync("README.md", "utf8");
@@ -26,8 +26,8 @@ const sections = contractIds("page-section-contract", /^(?!id$)[a-z][a-z0-9-]*$/
 const roles = contractIds("role-contract", /^role-[a-z0-9-]+$/);
 const problemCases = contractIds("problem-case-contract", /^(?!id$)[a-z][a-z0-9-]*$/);
 
-test("Both published HTML files stay in sync", () => {
-  assert.equal(readFileSync(pages[0], "utf8"), readFileSync(pages[1], "utf8"));
+test("Short landing and its legacy alias remain byte-identical", () => {
+  assert.equal(readFileSync("index.html", "utf8"), readFileSync("orca-openspec-designer-guide-with-ui.html", "utf8"));
 });
 
 test("SPEC defines a user-first journey and all supported entry paths", () => {
