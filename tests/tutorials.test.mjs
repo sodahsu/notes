@@ -42,7 +42,7 @@ for (const file of pages) {
           assert.ok(typeof step[key] === "string" && step[key].trim().length >= (key === "title" ? 4 : 12),
             item.id + " step " + index + " missing " + key);
         }
-        assert.ok(/確認|檢查|核准|驗收|審查/.test(step.review), "human gate missing");
+        assert.ok(/確認|檢查|核准|驗收|審查|審核|批准/.test(step.review), "human gate missing");
       }
     }
     assert.ok(data[0].steps[0].action.includes("不必建立 Worktree"), "PM/SA must not require worktree");
