@@ -126,7 +126,7 @@
 | 能力 | 分類 | 本手冊必須說清楚的行為 |
 | --- | --- | --- |
 | Worker Heartbeat | Orca 原生 | 長時間工作的 Worker 應回報 heartbeat；訊息需帶 taskId 與 dispatchId。 |
-| Agent Dashboard | Orca 原生 | 依終端機 OSC title sequence 與 Agent hooks 顯示 Working／Needs You／Done／Blocked／Idle；是狀態視圖，不是程序存活保證。 |
+| Agent Dashboard | Orca 原生（Experimental） | Settings → Experimental 啟用；看板欄位為 Needs You／Working／Done／Idle，紅點代表 blocked／interrupted／failed。依 OSC title sequence 與 Agent status hooks 判斷；是狀態視圖，不是程序存活保證。 |
 | Mobile Heartbeat | Orca 原生 | 手機追蹤桌面 Agent process heartbeat；卡住的 spinner 可強制刷新 Worktree row。這不是 Worker auto-recovery。 |
 | Runtime Supervisor | Orca 原生（平台受限） | 監督 Orca Server 程序並在異常退出後重新啟動；不是個別 Worker Watchdog。官方 service install 支援 macOS／Linux，Windows 尚不支援。 |
 | Worker Recovery | Orca 原生的明確操作 | worker-show／worker-read／worker-stop／worker-start --retry-of；需先查證再由 Coordinator 決定，不能當成自動重派。 |
@@ -139,7 +139,9 @@
 - **WATCH-04**：官方沒有承諾固定 Worker heartbeat 秒數；Watchdog timeout 由團隊依任務類型與長指令設定，不得把 15 秒當成 Worker 週期。
 - **WATCH-05**：疑似失聯先檢查 Worker／Dispatch／Terminal；只有確認前一個 Dispatch 安全結束，才可明確 retry，並重新指定 Worktree／host placement。
 - **WATCH-06**：Runtime Supervisor 只監督 Orca Server，不可描述為個別 Worker 的看門狗。
-- **WATCH-07**：Agent Dashboard 的 Working／Needs You／Done／Blocked／Idle 是 Agent 狀態，不是業務交付狀態。
+- **WATCH-07**：Agent Dashboard 的 Needs You／Working／Done／Idle 是看板欄位；紅點代表 blocked／interrupted／failed。它是 Agent 狀態，不是業務交付狀態。
+- **WATCH-08**：目前官方建議事件喚醒式 Coordinator 流程：Worker 回報、提問或停止時 Orca 喚醒 Coordinator，Coordinator 再執行 `check --run <runId>`；不可要求永遠輪詢作為唯一監督方式。
+- **WATCH-09**：Agent Dashboard 位於 Settings → Experimental；Agent status hooks 可用 `orca agent hooks status|on|off --json` 檢查與切換。沒有狀態指示時，先確認 Agent CLI 是從 Orca Agent picker 啟動且 hooks 已啟用。
 
 ## 7. 安全與權限治理
 
