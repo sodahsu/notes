@@ -44,6 +44,7 @@
 - **WEB-03**：桌面與窄螢幕都可閱讀；縮小頁面時導覽可換行，`details/summary` 可用滑鼠及鍵盤展開；點擊職能卡片的角色連結，必須自動展開對應的 Prompt 區塊。
 - **WEB-04**：鏡像 HTML 完全一致，且新增段落不能破壞現有 JavaScript。
 - **WEB-05**：導航、內部連結、角色區塊或展開數量變更時，測試**不得沿用過期固定數量**；應以此契約及實際目標做檢查。
+- **WEB-06**：本 repo 的 PR 應由 `.github/workflows/verify-guide.yml` 以唯讀權限執行 `node --test tests/*.test.mjs`，自動擋下導航、角色、鏡像與互動回歸；CI 未跑時必須標記為 NOT_RUN，不能宣稱通過。
 
 ## 3. 角色情境契約
 
