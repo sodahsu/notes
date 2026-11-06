@@ -118,9 +118,9 @@ for (const device of viewports) {
       const firstSummary = page.locator('#role-pm summary');
       await firstSummary.focus();
       await page.keyboard.press('Enter');
-      assert.equal(await page.locator('#role-pm').evaluate(el => el.open), false);
-      await page.keyboard.press('Enter');
       assert.equal(await page.locator('#role-pm').evaluate(el => el.open), true);
+      await page.keyboard.press('Enter');
+      assert.equal(await page.locator('#role-pm').evaluate(el => el.open), false);
 
       const size = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
