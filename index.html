@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="給設計師與前端工程師的 Orca × OpenSpec 白話工作流：從痛點、Worktree、AI 接手、Design Mode、Diff Review 到手機模擬。">
-  <title>Orca 快速上手｜設計師 × 前端工程師 × OpenSpec</title>
+  <meta name="description" content="給 PM、SA、設計師、前端工程師、QA 與主管的 Orca × OpenSpec 工作流：從痛點、Worktree、AI 接手、Design Mode、Diff Review 到手機模擬。">
+  <title>Orca 工作流手冊｜PM × SA × 設計 × 前端 × OpenSpec</title>
   <style>
     :root{
       --bg:#f6f7f9;--surface:#fff;--subtle:#f0f2f5;--text:#17191d;--muted:#69707d;
@@ -128,6 +128,8 @@
     <a href="#problems">常見痛點</a>
     <a href="#designer">我是設計師</a>
     <a href="#frontend">我是前端</a>
+    <a href="#planning">計畫撰寫</a>
+    <a href="#crossroles">PM / SA 等職能</a>
     <a href="#orchestration">Worker / Commander</a>
     <a href="#openspec">OpenSpec</a>
     <a href="#mobile">手機測試</a>
@@ -135,9 +137,9 @@
   </nav>
 
   <section class="hero">
-    <p class="eyebrow">ORCA × OPENSPEC · 給設計師與前端工程師</p>
+    <p class="eyebrow">ORCA × OPENSPEC · PM / SA / UX / FRONTEND / QA</p>
     <h1>AI 幫你寫程式，但不要讓工作跟著變亂。</h1>
-    <p class="lead">Orca 把每個功能、AI、畫面與程式修改整理在同一個工作空間。第一次來不用先背 Git 名詞；先知道「遇到什麼問題，要用哪個功能」就能開始。</p>
+    <p class="lead">Orca 把需求、功能、AI、畫面與修改紀錄整理在可追溯的工作流程。PM、SA 可以先做計畫與規格，設計師與工程師再實作和驗收；先知道「自己的職能能做什麼」就能開始。</p>
 
     <div class="dual-flow">
       <div class="dual-label">白話版</div>
@@ -165,6 +167,7 @@
       <a class="card entry" href="#frontend"><strong>我是前端工程師</strong><small>Worktree、dev server、Mock、test、commit / push。</small></a>
       <a class="card entry" href="#problems"><strong>我現在就卡住了</strong><small>AI 沒額度、亂改、多功能衝突、忘記進度。</small></a>
     </div>
+    <div class="cta-row"><a class="btn" href="#planning">先寫計畫 →</a><a class="btn" href="#crossroles">PM / SA / QA / 主管使用情境 →</a></div>
   </section>
 
   <section id="why" class="section">
@@ -352,6 +355,164 @@
     </div>
   </section>
 
+
+
+  <section id="planning" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">延伸 · 先計畫再執行</p><h2>Orca 的 Planning：先搞清楚，再讓 AI 動手</h2></div>
+        <p>對 PM、SA、設計師和工程師，Planning 的共同目的都是確認事實、範圍、責任、依賴及驗收。Orca 是工作環境；計畫內容仍須由人核准。</p>
+      </div>
+      <div class="sop" aria-label="AI 計畫審查流程">
+        <span class="node">需求與來源</span><span class="arrow">→</span>
+        <span class="node">唯讀調查</span><span class="arrow">→</span>
+        <span class="node spec">草擬計畫</span><span class="arrow">→</span>
+        <span class="node">人工確認</span><span class="arrow">→</span>
+        <span class="node">分工執行</span><span class="arrow">→</span>
+        <span class="node">驗收與交接</span>
+      </div>
+      <div class="grid three" style="margin-top:14px;">
+        <div class="card"><strong>簡單任務｜Solo</strong><p>單一 Agent 調查與列出修改方案。適合小幅文件修訂、單一 UI 缺陷；不為了形式而開多個 Worker。</p></div>
+        <div class="card"><strong>複雜分析｜Recon Fleet</strong><p>多個唯讀角色從需求、流程、技術、測試角度交叉檢視；由一個協調者整合證據，先不修改檔案。</p></div>
+        <div class="card"><strong>獨立功能｜Worktree Fleet</strong><p>只有可獨立驗收、檔案邊界清楚的多功能實作，才各開一個 Worktree。相同功能的 UI、Mock、互動通常同一個 Worktree。</p></div>
+      </div>
+      <div class="prompt">
+        <div class="label">通用 Planning 提示詞｜先貼給 Agent，確認後才開工</div>
+        <pre>你是這次工作的計畫協調者，現在只做唯讀分析，不能修改程式、文件或 Git。
+先檢查我提供的需求來源、現況、既有規格及可取得的專案證據。
+請輸出：
+1. 目標、非目標、已確認的依據
+2. 需求與目前行為的差距
+3. 建議步驟、相依關係、負責角色及交付物
+4. 必須修改／不可修改的範圍
+5. 待確認的業務規則、風險及替代方案
+6. 每一階段的驗收方式與決策者
+7. 建議使用 Solo、唯讀並行分析或 Worktree 多代理的原因
+把「已確認」「推論」「待確認」分開，不得把 AI 猜測寫成正式規格。
+最後標示：計畫完成，尚未執行。等待人工核准。</pre>
+      </div>
+      <div class="callout"><b>重要界線：</b>文件分析不必預設建立 Git Worktree。只有要修改版本控管內容、開發或測試時才依實際權限使用。Orchestration 的 Worker 也不能取代 PM、SA 或業務負責人的核准。</div>
+    </div>
+  </section>
+
+  <section id="crossroles" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">延伸 · 跨職能使用情境</p><h2>PM、SA、設計、工程與 QA，怎麼用 Orca 合作？</h2></div>
+        <p>這些是使用 Orca、Agent、既有文件和可驗證資料的「建議工作方法」，不是 Orca 內建的 PM / SA 專屬功能。從你自己的職能切入，確認適用範圍即可。</p>
+      </div>
+      <div class="grid three">
+        <div class="card accent"><strong>PM｜專案經理</strong><p><b>情境：</b>政府專案需求新增或時程異動。<br><b>做法：</b>整理需求來源、WBS、依賴、風險與責任分工。<br><b>交付：</b>計畫草案、決策清單與追蹤表。<br><b>核准：</b>範圍、預算、時程由有權責的人確認。</p></div>
+        <div class="card accent"><strong>SA｜系統分析師</strong><p><b>情境：</b>從訪談、舊系統及 HTML 原型建立可驗收需求。<br><b>做法：</b>整理流程、角色權限、狀態轉換、資料與 API 契約。<br><b>交付：</b>需求／情境、流程與待決問題。<br><b>核准：</b>業務規則與狀態由業務／SA 確認。</p></div>
+        <div class="card"><strong>UX/UI｜設計師</strong><p><b>情境：</b>接手品質不一的 AI HTML 雛形。<br><b>做法：</b>檢查資訊架構、操作回饋、錯誤狀態、RWD、無障礙。<br><b>交付：</b>問題清單、標註原型及互動驗收。<br><b>核准：</b>體驗與視覺品質由設計負責。</p></div>
+        <div class="card"><strong>Frontend｜前端工程師</strong><p><b>情境：</b>API 尚未完成、需先開發前端互動。<br><b>做法：</b>檢查規格與 Repo，隔離功能 Worktree，實作 Mock、測試及 Diff。<br><b>交付：</b>可重現的實作與測試證據。<br><b>核准：</b>合併前需完成 Code Review。</p></div>
+        <div class="card"><strong>QA｜測試人員</strong><p><b>情境：</b>報名、多階段繳費、補件與不同角色操作。<br><b>做法：</b>由核准規格推導正常、邊界、失敗和權限案例。<br><b>交付：</b>測試矩陣、重現步驟與問題證據。<br><b>核准：</b>通過標準由測試與業務負責人確認。</p></div>
+        <div class="card"><strong>Lead｜主管／協調者</strong><p><b>情境：</b>跨專案共用人力與多 Agent 協作。<br><b>做法：</b>評估優先級、工作依賴、寫入邊界與驗收狀態。<br><b>交付：</b>分工表、風險與決策紀錄。<br><b>核准：</b>資源調整、合併及交付由人決策。</p></div>
+      </div>
+
+      <h3 style="margin:22px 0 12px;">可複製的職能 Prompt｜點選情境展開</h3>
+
+      <details id="role-pm">
+        <summary>PM｜專案需求新增：先排計畫、找依賴，不直接叫 AI 開發</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>合約範圍、需求變更、會議紀錄、交期與可用人力。<b>交付：</b>WBS、里程碑、依賴、風險、決策紀錄；沒有來源的工期不得假裝精確。</p>
+          <pre class="code">請擔任 PM 計畫分析助手，先唯讀整理本次需求。
+根據已提供的合約、需求與會議紀錄：
+1. 區分既定範圍、變更需求及待確認事項
+2. 列出可驗收交付物、WBS、相依工作、責任角色
+3. 標出時程風險、跨組阻塞與需要業主決策的問題
+4. 產出里程碑草案和決策清單，禁止自行承諾工期
+5. 將需求來源與每項結論對應；無證據請標記假設
+目前只提出計畫，等待 PM 核准，不修改專案檔案。</pre>
+          <p><b>人工驗收：</b>確認 WBS 對應合約、責任與決策者清楚，變更範圍經授權。</p>
+        </div>
+      </details>
+
+      <details id="role-sa">
+        <summary>SA｜從服務流程與 HTML 原型整理需求、狀態與 API 契約</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>核准的需求、訪談記錄、既有資料、API 文件、前後台原型。<b>交付：</b>角色／流程／狀態表、資料契約、OpenSpec 草稿及差異報告。</p>
+          <pre class="code">你是 SA 分析助手，只做唯讀比對，不能將推測寫入正式規格。
+以考選系統「報考繳費、受訓繳費、證書核發前繳費」為例：
+1. 列出各階段的參與角色、前置條件、狀態與資料流
+2. 區分已核准規則、原型暗示、Mock 假設與未知事項
+3. 標出正常、逾期、失敗、補件、重複付款等待確認路徑
+4. 盤點欄位、API 請求／回應、錯誤狀態、權限邊界
+5. 產出需求與驗收 Scenario 草稿，附來源與衝突清單
+未確認的付款／通知規則要寫「待確認」，不可自行決定。
+請先交 SA 和業務負責人審核，再建議後續實作。</pre>
+          <p><b>人工驗收：</b>規則、資料契約及權限已由相關權責確認；未批准內容不得直接寫成 openspec/specs 的真實規格。</p>
+        </div>
+      </details>
+
+      <details id="role-ux">
+        <summary>UX/UI｜檢查 SA／PM 產生的 HTML 雛形，讓 AI 幫忙整理體驗</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>原型、流程與設計規範。<b>交付：</b>可定位的問題清單、優先順序、調整後畫面與測試結果。</p>
+          <pre class="code">先觀察現有原型，不修改任何檔案。
+檢查資訊架構、流程節點、欄位辨識、操作回饋、空狀態、
+404／405／權限不足、個資遮罩、鍵盤操作和手機尺寸。
+依「問題－證據－使用者影響－最小改善建議」整理。
+區分設計缺陷與尚未確認的業務規則。
+等我選定改善項目，才透過 Browser／Design Mode 指定修改。
+完成後需提供畫面證據與 Diff，不得順手重構無關程式。</pre>
+          <p><b>人工驗收：</b>設計師確認使用者可完成流程，錯誤回饋、手機版及無障礙通過指定情境。</p>
+        </div>
+      </details>
+
+      <details id="role-frontend">
+        <summary>Frontend｜規格確認後再切 Worktree，Mock 與互動留同一功能</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>已核准 Scenario、既有 Vue 專案、API／Mock 契約。<b>交付：</b>功能 Diff、測試、Browser 操作證據、提交紀錄。</p>
+          <pre class="code">先唯讀檢查 AGENTS.md／README／OpenSpec 與 Git 狀態。
+這次只處理指定的完整功能，先提出：
+1. 影響的 route、元件、store、API layer、Mock
+2. 能沿用的現有模式和不可修改範圍
+3. loading、empty、error、403／404／405 等驗收情境
+4. 對應的 lint／typecheck／test／build／Browser 驗證
+5. 一個功能 Worktree 的實作與提交計畫
+API 未確認時不得自行新增業務規則。
+計畫核准後才實作，完成後先審查 Diff，再整合至 soda。</pre>
+          <p><b>人工驗收：</b>測試有實際執行證據，Diff 僅含需求修改；不得將未完成測試報成通過。</p>
+        </div>
+      </details>
+
+      <details id="role-qa">
+        <summary>QA｜從驗收 Scenario 產生測試矩陣，而不是讓 AI 猜預期結果</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>核准規格、環境與測試帳號權限。<b>交付：</b>案例表、結果、截圖或重現證據、缺陷清單。</p>
+          <pre class="code">以已核准需求與可驗證系統行為為準，先整理測試計畫。
+針對報名／繳費／補件流程：
+1. 列正常、錯誤、空資料、逾期、重複操作及權限案例
+2. 每案標明前置條件、操作、預期結果與規格來源
+3. 尚無核准規則的預期結果標示 BLOCKED／待確認
+4. 可執行時使用 Browser 檢查並留存結果和重現步驟
+5. 區分 PASS、FAIL、NOT_RUN、BLOCKED，不臆測成功
+請勿修改正式資料、權限設定或程式碼。</pre>
+          <p><b>人工驗收：</b>測試負責人查核案例覆蓋和缺陷影響，業務負責人確認預期結果。</p>
+        </div>
+      </details>
+
+      <details id="role-lead">
+        <summary>主管／Coordinator｜跨專案決定工作優先級與 AI 派工邊界</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>各專案需求、既有承諾、團隊容量及阻塞。<b>交付：</b>優先級、Owner、可並行範圍、決策與驗收閘門。</p>
+          <pre class="code">以管理者協調模式整理目前專案工作，不直接派工或修改。
+請依實際可取得的資料：
+1. 列出工作目標、業務價值、期限、風險與阻塞
+2. 區分可獨立驗收與共享檔案／共用元件依賴的工作
+3. 建議 Solo、唯讀多代理分析或獨立 Worktree 的原因
+4. 明確界定每個 Agent 的讀／寫範圍、成果與驗收者
+5. 排出需要人工審核的範圍、權限與整合決策
+6. 將未知工時、資源與風險明確標成待確認
+先輸出控制表；我核准後，才使用正式 Orchestration 派工。</pre>
+          <p><b>人工驗收：</b>主管確認資源與優先順序；Coordinator 可協調技術決策，但不能代替業務批准。</p>
+        </div>
+      </details>
+
+      <div class="callout"><b>把六種角色串起來：</b>PM 定交付與時程 → SA 定可驗收的規格 → UX/UI 定使用體驗 → Frontend 實作 → QA 留測試證據 → 主管決定是否可交付。Orca 負責協作與可追溯工作；人負責業務決策和品質責任。</div>
+    </div>
+  </section>
 
   <section id="orchestration" class="section">
     <div class="section-card">
