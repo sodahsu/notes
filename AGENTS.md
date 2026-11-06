@@ -27,8 +27,8 @@
 
 ## 驗證與整合
 
-1. `node --test tests/*.test.mjs`。
+1. `node --test tests/*.test.mjs`；並確認 GitHub Actions 的 Chromium Browser Smoke Test（`tests/browser-smoke.mjs`）通過。
 2. 確認所有錨點可到達、角色卡片連結可開啟對應 `details`、五個常見痛點可切換且保留焦點，並檢查手機視窗。
-3. PR 會以 `.github/workflows/verify-guide.yml` 執行 Node 測試；若 CI 未啟用或未執行，需標 NOT_RUN，不能冒充通過。人工驗證另行紀錄。
+3. PR 會以 `.github/workflows/verify-guide.yml` 執行 Node 測試及桌面／手機 Chromium 瀏覽器測試；若 CI 未啟用或未執行，需標 NOT_RUN，不能冒充通過。人工驗證另行紀錄。
 4. 在新功能 PR 中使用 `.github/pull_request_template.md` 的規格同步勾選表。
 5. 未完成測試時不得宣稱成功。不要重設／清理／強制推送以掩蓋問題。
