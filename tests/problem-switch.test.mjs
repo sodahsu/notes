@@ -20,6 +20,7 @@ class MockElement {
     this._innerHTML = "";
     this.textContent = "";
     this.scrollCalls = 0;
+    this.open = false;
   }
 
   set innerHTML(value) {
@@ -75,13 +76,22 @@ function mountPage(html, { mobile = false } = {}) {
     link.setAttribute("href", match[1]);
     return link;
   });
+  const roleJumps = [...html.matchAll(/<a class="role-jump" href="#(role-[^"]+)"/g)].map((match) => {
+    const link = new MockElement("a");
+    link.setAttribute("href", "#" + match[1]);
+    return link;
+  });
+  const roleDetails = Object.fromEntries(roleJumps.map((link) => [
+    link.getAttribute("href").slice(1), new MockElement("details")
+  ]));
   const listeners = new Map();
   const document = {
-    getElementById: (id) => nodes[id] ?? null,
+    getElementById: (id) => nodes[id] ?? roleDetails[id] ?? null,
     createElement: (tag) => new MockElement(tag),
     querySelectorAll: (selector) => {
-      assert.equal(selector, '.topnav a[href^="#"]');
-      return sectionLinks;
+      if (selector === '.topnav a[href^="#"]') return sectionLinks;
+      if (selector === '.role-jump[href^="#role-"]') return roleJumps;
+      throw new Error("unexpected selector " + selector);
     }
   };
   const window = {
@@ -93,6 +103,8 @@ function mountPage(html, { mobile = false } = {}) {
     }
   };
   nodes.sectionLinks = sectionLinks;
+  nodes.roleJumps = roleJumps;
+  nodes.roleDetails = roleDetails;
   nodes.setHash = (hash) => {
     window.location.hash = hash;
     const change = listeners.get("hashchange");
@@ -198,5 +210,22 @@ for (const page of pages) {
     }
     nodes.setHash("");
     assert.ok(nodes.sectionLinks.every((link) => link.getAttribute("aria-current") === null));
+  });
+}
+
+for (const page of pages) {
+  test(page + ": role links expand the matching prompt on desktop and mobile", () => {
+    for (const mobile of [false, true]) {
+      const nodes = mountPage(readFileSync(page, "utf8"), { mobile });
+      assert.equal(nodes.roleJumps.length, 12, "all contracted role shortcuts exist");
+      for (const link of nodes.roleJumps) {
+        const roleId = link.getAttribute("href").slice(1);
+        const target = nodes.roleDetails[roleId];
+        assert.ok(target, "missing details " + roleId);
+        assert.equal(target.open, false, "details initially collapsed");
+        link.click();
+        assert.equal(target.open, true, "role shortcut must open " + roleId);
+      }
+    }
   });
 }
