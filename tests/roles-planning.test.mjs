@@ -9,9 +9,9 @@ const readme = readFileSync("README.md", "utf8");
 const prTemplate = readFileSync(".github/pull_request_template.md", "utf8");
 
 function contractIds(name, pattern) {
-  const block = spec.match(new RegExp("<!-- " + name + ":start -->([\\s\\S]*?)<!-- " + name + ":end -->"));
+  const block = spec.match(new RegExp("<!-- " + name + ":start -->([\\\\s\\\\S]*?)<!-- " + name + ":end -->"));
   assert.ok(block, "missing spec contract: " + name);
-  const ids = block[1].split("\n").map((line) => line.split("|")[1]?.trim())
+  const ids = block[1].split("\\n").map((line) => line.split("|")[1]?.trim())
     .filter((value) => value && pattern.test(value));
   assert.ok(ids.length > 0, "empty contract: " + name);
   assert.equal(new Set(ids).size, ids.length, name + " IDs duplicated in SPEC.md");
@@ -72,7 +72,7 @@ for (const page of pages) {
       "Agent Dashboard", "Mobile Heartbeat", "Runtime Supervisor",
       "Healthy", "Slow", "Stale", "Failed", "Blocked",
       "worker-show", "worker-read", "worker-stop", "--retry-of",
-      "check --wait", "不是 Worker", "不會自動"]) {
+      "check --wait", "不是個別 Worker", "不會自動"]) {
       assert.ok(html.includes(label), page + " missing guidance: " + label);
     }
     assert.ok(html.includes('href="https://www.onorca.dev/docs/cli/orchestration"'));
@@ -91,9 +91,9 @@ test("Watchdog capability boundaries are explicit in SPEC.md", () => {
 
 test("Spec synchronization policy is documented for future changes", () => {
   assert.match(spec, /同一 PR/);
-  assert.match(spec, /openspec\\/changes\\//);
-  assert.match(spec, /openspec\\/specs\\//);
+  assert.match(spec, /openspec\\\\/changes\\\\//);
+  assert.match(spec, /openspec\\\\/specs\\\\//);
   assert.match(agents, /同步修改規格/);
-  assert.match(readme, /SPEC\\.md/);
+  assert.match(readme, /SPEC\\\\.md/);
   assert.match(prTemplate, /規格同步檢查/);
 });
