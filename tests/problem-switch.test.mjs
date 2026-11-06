@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+
+const spec = readFileSync("SPEC.md", "utf8");
+const problemBlockStart = spec.indexOf("<!-- problem-case-contract:start -->");
+const problemBlockEnd = spec.indexOf("<!-- problem-case-contract:end -->", problemBlockStart);
+if (problemBlockStart < 0 || problemBlockEnd < 0) throw new Error("missing problem-case-contract in SPEC.md");
+const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\n").filter(line => /^\\|\\s*[a-z][a-z0-9-]*\\s*\\|/.test(line)).length;
 import { Script } from "node:vm";
 
 const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
@@ -127,7 +133,7 @@ for (const page of pages) {
     const nodes = mountPage(html);
     const nav = nodes.problemNav;
     const buttons = [...nav.children];
-    assert.equal(buttons.length, 5);
+    assert.equal(buttons.length, problemCaseCount);
     assert.equal(nodes.problemKicker.textContent, "痛點 1");
 
     const titles = new Set();
