@@ -12,6 +12,18 @@
 | 設計師：AI 產生的畫面不順、不知道要改哪個元件 | Browser／Design Mode 指定元素，Agent 修改後檢查 Diff 與 RWD | 可操作的介面修改、畫面與測試證據 |
 | 工程師／主管：多個功能並行，Agent 卡住不易察覺 | Worktree 隔離功能，Orchestration 分派任務，Heartbeat／Watchdog 協助監督 | 獨立功能變更、狀態紀錄、測試證據與 PR |
 
+## 互動式教學：直接跟著做
+
+開啟 [三種互動教學](https://sodahsu.github.io/notes/#journey)，可切換情境、前進／返回步驟、複製每一步的 AI Prompt、核對預期輸出和人工檢查點，並自行勾選已完成的步驟。
+
+| 情境 | 步驟 | 適用工作 |
+| --- | ---: | --- |
+| PM／SA：需求整理 | 4 | 唯讀盤點來源、流程與 Scenario，最後由 PO／SA 核准 |
+| UX／Design：畫面改善 | 4 | Browser／Design Mode、限定範圍修改、Diff／RWD 驗收 |
+| Engineering：多 Agent 交付 | 5 | Worktree、正式 Task／Dispatch、Heartbeat、QA、PR 與人工整合 |
+
+這是一個**靜態教學模擬器**，不是 Orca 遠端控制介面：不會連線到你的 Repo、Agent 或客戶系統，不會替你執行指令；「完成」勾選僅記錄本頁當次操作的自行進度，不代表任務、CI 或業務已通過驗收。切換情境會從該情境第一步開始，但保留本次頁面載入後的勾選狀態；不寫入儲存空間。複製失敗時會選取 Prompt 供手動複製。
+
 ## 依職能開始
 
 - **PM／PO／SA**：需求與規格 → [實際案例](https://sodahsu.github.io/notes/#journey) → [Planning](https://sodahsu.github.io/notes/#planning)。文件唯讀分析不必建立 Worktree；只有要修改 Repo／規格檔時才進入 Git 工作區。

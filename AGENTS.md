@@ -32,6 +32,7 @@
 - 新增／刪除／更名導覽或頁面章節：同一 PR 更新 `SPEC.md` 的 navigation-contract／page-section-contract、HTML、README（若適用）與測試。
 - 新增／修改職能：更新 role-contract、角色卡、Prompt、交付物與人工驗收責任。
 - 新增／修改痛點案例：更新 problem-case-contract、互動按鈕與 Browser Smoke Test。
+- 新增／修改互動教學：更新 tutorial-contract、TUTORIAL 條文、靜態示例資料、首頁教學互動、README、Node 與 Chromium 測試。複製失敗須可選取原文，完成勾選只代表使用者自行記錄，不可宣稱 Orca 已執行。
 - 修改 Heartbeat／Watchdog／Recovery：更新 watchdog-contract 及 WATCH 條文，標清楚 Orca 原生能力、官方未承諾能力、團隊建議。
 - 兩份 HTML 必須 byte-identical。
 - 不得把 AI 推測、SA 原型或 Mock 假設寫成已批准的業務規則。
@@ -41,6 +42,6 @@
 
 1. `node --test tests/*.test.mjs`。
 2. GitHub Actions 的 `tests/browser-smoke.mjs` 必須通過桌面 1280×800 與手機 390×844。
-3. 驗證主導覽、全部章節錨點、任務案例、四階學習路徑、文件／程式兩條 Quickstart、所有角色 Prompt、六個痛點、Watchdog 區塊、鍵盤展開、無 JS 例外與無非預期水平溢出。
+3. 驗證主導覽、全部章節錨點、三個互動教學切換／前後步／Prompt 複製成功與失敗回退／完成勾選／鍵盤操作、四階學習路徑、文件／程式兩條 Quickstart、所有角色 Prompt、六個痛點、Watchdog 區塊、無 JS 例外與無非預期水平溢出。
 4. PR 使用 `.github/pull_request_template.md` 並提供 CI 證據。
 5. 未執行的測試標 NOT_RUN；不可宣稱完成。
