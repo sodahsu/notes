@@ -19,12 +19,13 @@
 
 ## 2. 首頁閱讀路徑與主要導覽契約
 
-首頁先回答「為什麼要用」，再提供職能入口、交付全貌、第一次使用與進階監督。頂部導覽只放主要入口；次要操作章節透過首頁卡片、職能連結與上下文 CTA 進入，避免把所有細節塞進同一排導覽。
+首頁先讓使用者理解價值，再用真實工作案例說明成果，接著依職能選擇入口；操作細節與進階監督逐層展開。頂部導覽只放主要入口；次要章節透過卡片、職能連結與上下文 CTA 進入。
 
 <!-- navigation-contract:start -->
 | id | 導覽標籤 | 使用者問題 |
 | --- | --- | --- |
 | why | Orca 能幫什麼 | 什麼情況值得用 Orca？ |
+| journey | 看一個任務如何完成 | Orca 實際能幫我做到什麼？ |
 | crossroles | 依職能找用法 | 我的角色可以怎麼開始？ |
 | teamwork | 從需求到交付 | 團隊如何交接與驗收？ |
 | quickstart | 第一次開始 | 如何完成第一個小任務？ |
@@ -33,13 +34,14 @@
 | watchdog | 心跳與故障處理 | Worker 是否還活著？卡住如何恢復？ |
 | openspec | OpenSpec 同步 | 怎麼讓規格與程式同步？ |
 | safety | 安全與權限 | 怎麼控制 Agent 權限與資料風險？ |
-| reference | 指令速查 | 需要查什麼術語或指令？ |
+| <!-- reference remains in page but not primary nav --> | | |
 <!-- navigation-contract:end -->
 
 <!-- page-section-contract:start -->
 | id | 章節目的 |
 | --- | --- |
 | why | Orca 定位、適用與不適用情境 |
+| journey | 以 PM／SA、設計、工程三個案例說明任務前後差異與可交付成果，並提供四階學習路徑 |
 | crossroles | 12 種職能入口與可複製 Prompt |
 | teamwork | 端到端交付流程、責任矩陣與任務來源 |
 | quickstart | 第一次使用與第一個任務 |
@@ -77,6 +79,9 @@
 - **WEB-06**：PR 需執行 Node 測試與真實 Chromium Browser Smoke Test；未執行標記 NOT_RUN。
 - **WEB-07**：Browser Smoke Test 至少覆蓋契約中的導覽、所有職能捷徑、所有痛點案例、鍵盤展開、無 JS 例外與非預期橫向溢出；桌面 1280×800、手機 390×844。
 - **WEB-08**：主導覽只顯示 navigation-contract；所有 page-section-contract 章節仍需可由主導覽、職能卡、CTA 或內容連結到達。
+- **WEB-09**：首頁必須包含可理解的任務成果案例，不可只列 Orca 功能名詞；每個案例需說明「使用者原本的問題、Orca／Agent 如何參與、產出成果與人工決策界線」。
+- **WEB-10**：第一次使用需分流「文件／需求工作」與「程式／介面工作」。PM／SA 不得被要求為唯讀需求分析建立 Worktree；只有要修改 Repo 或開發程式時才進入 Worktree 路徑。
+- **WEB-11**：提供分階學習路徑：第一次完成單一任務、日常工作流、多 Agent 協作、團隊治理；每階段說明適用時機與下一步，不要求新手先學完進階術語。
 
 ## 3. 角色情境契約
 
