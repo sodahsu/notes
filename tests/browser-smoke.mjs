@@ -53,6 +53,22 @@ for (const device of viewports) {
         assert.equal(await link.getAttribute('aria-current'), 'location', 'active nav ' + fragment);
       }
 
+      const heroEntries = page.locator('.hero a.entry');
+      assert.equal(await heroEntries.count(), 4, 'four clear role / goal entry points');
+      const expectedEntryTargets = ['#crossroles', '#designer', '#frontend', '#watchdog'];
+      for (let i = 0; i < expectedEntryTargets.length; i++) {
+        const entry = heroEntries.nth(i);
+        assert.equal(await entry.getAttribute('href'), expectedEntryTargets[i]);
+        await entry.click();
+        await page.waitForFunction(hash => location.hash === hash, expectedEntryTargets[i]);
+      }
+      for (const target of ['#problems', '#mobile']) {
+        const cta = page.locator('.hero .cta-row a[href="' + target + '"]');
+        assert.equal(await cta.count(), 1, 'hero CTA to ' + target);
+        await cta.click();
+        await page.waitForFunction(hash => location.hash === hash, target);
+      }
+
       const problemButtons = page.locator('#problemNav button');
       assert.equal(await problemButtons.count(), problemCases.length);
       for (let i = 0; i < problemCases.length; i++) {
