@@ -109,6 +109,7 @@
 - **TUTORIAL-08**：桌面及手機均可操作；鍵盤可切換案例與步驟；切換後焦點與 aria-selected／aria-current 等可及性狀態正確。
 - **TUTORIAL-09**：Node 測試須將 tutorial-contract 與實際面板、步驟、Prompt 數量及必要欄位對照；Chromium E2E 驗證切換、前後步、複製回退、步驟勾選、手機版及無 JS 例外。
 - **TUTORIAL-10**：修改教學步驟、案例或 Prompt 時，同一 PR 同步更新 SPEC、兩份 HTML、README（若影響入口）、Node 與 Chromium 測試。
+- **TUTORIAL-11**：切換教學案例重置該案例目前步驟至第一步；本頁載入後的完成勾選可在切換案例與返回步驟時保留，但不得持久化到瀏覽器儲存空間或傳送給伺服器。
 
 ## 3. 角色情境契約
 
