@@ -79,7 +79,7 @@ for (const page of pages) {
       "Agent Dashboard", "Mobile Heartbeat", "Runtime Supervisor",
       "Healthy", "Slow", "Stale", "Failed", "Blocked",
       "worker-show", "worker-read", "worker-stop", "--retry-of",
-      "check --run", "不是個別 Worker", "沒有承諾"]) {
+      "check --run", "preamble 明確要求時", "不是個別 Worker", "沒有承諾"]) {
       assert.ok(html.includes(label), page + " missing guidance: " + label);
     }
     assert.ok(html.includes('href="https://www.onorca.dev/docs/cli/orchestration"'));
