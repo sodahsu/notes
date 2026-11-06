@@ -67,8 +67,9 @@ for (const page of pages) {
       "Issue", "Worktree", "QA", "資安", "規格", "人工驗收"]) {
       assert.ok(html.includes(label), page + " missing critical guidance: " + label);
     }
-    assert.ok(html.includes('href="SPEC.md"'), "documentation must link to synchronized spec");
+    assert.ok(html.includes('href="https://github.com/sodahsu/notes/blob/main/SPEC.md"'), "documentation must link to synchronized spec");
     assert.ok(html.includes('function updateSectionNav()'), "PR3 navigation state regression");
+    assert.ok(html.includes('const roleJumpLinks'), "role jump opening regression");
   });
 }
 
