@@ -703,7 +703,7 @@ API 未確認時不得自行新增業務規則。
       </div>
       <div class="grid three">
         <div class="card accent"><strong>Coordinator</strong><p>建立 Run、拆 Task、分派 Worker、接收提問與完成回報、檢查結果。必須持續處理收件匣，不是派工後就離開。</p></div>
-        <div class="card"><strong>Worker</strong><p>只負責明確 Task。長時間工作要回報 heartbeat；阻塞時透過 ask 提問；完成時只回報自己這次 Dispatch 的結果。</p></div>
+        <div class="card"><strong>Worker</strong><p>只負責明確 Task。只有 Worker preamble 明確要求時才送 heartbeat，並帶 taskId／dispatchId；阻塞時透過 ask 提問；完成時只回報自己這次 Dispatch 的結果。</p></div>
         <div class="card"><strong>Run / Task / Dispatch</strong><p>Run 是協調空間與收件匣；Task 是工作項目；Dispatch 是一次實際執行。Worker 回報必須帶 taskId 與 dispatchId。</p></div>
       </div>
       <div class="sop" style="margin:16px 0 12px;" aria-label="Orchestration 執行流程">
@@ -737,7 +737,7 @@ orca orchestration worker-start \
       <details>
         <summary>B｜Worker 怎麼提問、回報心跳與完成？</summary>
         <div class="detail-body">
-          <p>Orchestration 的訊息類型包含 <code>question</code>、<code>escalation</code>、<code>worker_done</code> 與 <code>heartbeat</code>。官方 Worker contract 要求長時間工作期間送出 heartbeat，且完成／心跳訊息都應包含 <code>taskId</code> 與 <code>dispatchId</code>，避免舊 Dispatch 的回報污染重試任務。</p>
+          <p>Orchestration 的訊息類型包含 <code>question</code>、<code>escalation</code>、<code>worker_done</code> 與 <code>heartbeat</code>。Worker 只有在目前 preamble 明確要求時才送 heartbeat；心跳與完成回報都要帶 <code>taskId</code>、<code>dispatchId</code>，避免舊 Dispatch 的回報污染重試任務。</p>
           <pre class="code"># Worker 阻塞時，依 preamble 將問題送給所屬 Run
 orca orchestration ask \
   --question "API 尚未完成，這個頁面可以先用 Mock 嗎？" \
@@ -745,6 +745,10 @@ orca orchestration ask \
 
 # 需要等待答案時，才加 --wait；也可用 --resume &lt;message_id&gt;
 orca orchestration ask --resume &lt;message_id&gt; --wait --json
+
+# 只有 preamble 明確要求心跳時才送；不要自行猜頻率
+orca orchestration send --type heartbeat --subject "alive" \
+  --payload '{"taskId":"&lt;taskId&gt;","dispatchId":"&lt;dispatchId&gt;","phase":"implementing"}' --json
 
 # Worker 完成時，回報本次 Task／Dispatch
 orca orchestration send --type worker_done \
@@ -778,7 +782,7 @@ orca orchestration worker-retain --dispatch &lt;dispatchId&gt;</pre>
         <pre>請使用 Orca 官方 Orchestration，不要用文字模擬 Worker。
 先確認 Runtime、Run、Task、Dispatch 與 Worktree 狀態。
 每個 Worker 都要有明確範圍、主要寫入者、完成定義與驗收證據。
-長時間工作要送 heartbeat；阻塞問題用 ask；完成時送 worker_done。
+只有 preamble 要求時才送 heartbeat（帶 taskId／dispatchId）；阻塞問題用 ask；完成時送 worker_done。
 Worker 回報、提問或停止時，依 Orca 喚醒訊號執行 check --run <runId>，逐則處理訊息；依目前版本確認是否需要 ack。
 派工後不要無意義地永久輪詢；只有明確需要 wait 模式時才使用等待命令。
 遇到需求不明、重大範圍變更、個資或不可逆操作，回來向我確認。
@@ -801,7 +805,7 @@ Worker 完成後檢查 Diff、測試與規格，再決定 release、retain 或�
       </div>
       <h3 style="margin:20px 0 12px;">先分清楚四種「心跳／狀態」</h3>
       <div class="grid two">
-        <div class="card"><strong>1. Worker Heartbeat｜Orchestration 訊息</strong><p>長時間工作的 Worker 依官方 contract 主動回報 heartbeat。訊息需關聯正確的 <code>taskId</code> 與 <code>dispatchId</code>，讓 Coordinator 知道這個 Dispatch 仍在回報。</p></div>
+        <div class="card"><strong>1. Worker Heartbeat｜Orchestration 訊息</strong><p>Orchestration 支援 heartbeat 訊息；只有目前 Worker preamble 明確要求時才送出，且需關聯正確的 <code>taskId</code> 與 <code>dispatchId</code>。不代表固定秒數的程序存活探針。</p></div>
         <div class="card"><strong>2. Agent Dashboard｜執行狀態</strong><p>在 Settings → Experimental 開啟 Agent Dashboard。看板以 OSC title sequence 與 Agent status hooks 顯示 Needs You、Working、Done、Idle；紅點代表 Blocked／interrupted／failed。它是狀態視圖，不是 Worker 程序存活保證。</p><pre class="code">orca agent hooks status --json
 orca agent hooks on --json</pre></div>
         <div class="card"><strong>3. Mobile Heartbeat｜手機狀態同步</strong><p>手機 companion 顯示桌面 Worktree／Agent 狀態、近期終端輸出與通知。桌面已 Idle 而手機仍顯示 Working 時，強制刷新 Worktree row；這是狀態同步，不是自動恢復 Worker。</p></div>
@@ -812,7 +816,7 @@ orca agent hooks on --json</pre></div>
         <table class="workflow-table">
           <thead><tr><th scope="col">判斷狀態</th><th scope="col">要看什麼證據</th><th scope="col">建議處理</th></tr></thead>
           <tbody>
-            <tr><td><b>Healthy｜正常</b></td><td>heartbeat／checkpoint 有更新；Task、Dispatch、Process 狀態一致。</td><td>繼續執行；在完成重要工作切片時更新 Worktree checkpoint。</td></tr>
+            <tr><td><b>Healthy｜正常</b></td><td>收到 preamble 要求的 heartbeat／checkpoint；Task、Dispatch、Process 狀態一致。</td><td>繼續執行；在完成重要工作切片時更新 Worktree checkpoint。</td></tr>
             <tr><td><b>Slow｜進度偏慢</b></td><td>有心跳但長時間沒有可驗證進展；Terminal 仍有輸出或正在跑長指令。</td><td>先要求 Worker 回報目前步驟、阻塞與下一個 checkpoint；不要直接殺程序。</td></tr>
             <tr><td><b>Stale｜疑似失聯</b></td><td>超過團隊自行設定的觀察門檻沒有 heartbeat；Dashboard、Dispatch 與 Terminal 狀態可能不一致。</td><td>先查 Worker／Dispatch 與 terminal output，再決定通知、等待或停止。不要把沒有心跳直接等同死亡。</td></tr>
             <tr><td><b>Failed｜執行失敗</b></td><td>Worker 明確回報 failed、Agent process 已退出或出現可重現錯誤。</td><td>保存輸出與 Diff，定位原因；確認重試安全後，明確建立 retry Dispatch。</td></tr>
