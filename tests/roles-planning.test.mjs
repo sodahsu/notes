@@ -9,10 +9,14 @@ const readme = readFileSync("README.md", "utf8");
 const prTemplate = readFileSync(".github/pull_request_template.md", "utf8");
 
 function contractIds(name, pattern) {
-  const block = spec.match(new RegExp("<!-- " + name + ":start -->([\\\\s\\\\S]*?)<!-- " + name + ":end -->"));
-  assert.ok(block, "missing spec contract: " + name);
-  const ids = block[1].split("\\n").map((line) => line.split("|")[1]?.trim())
-    .filter((value) => value && pattern.test(value));
+  const startTag = "<!-- " + name + ":start -->";
+  const endTag = "<!-- " + name + ":end -->";
+  const start = spec.indexOf(startTag);
+  const end = spec.indexOf(endTag, start);
+  assert.ok(start >= 0 && end > start, "missing spec contract: " + name);
+  const block = spec.slice(start + startTag.length, end);
+  const ids = block.split("\n").map(line => line.split("|")[1]?.trim())
+    .filter(value => value && pattern.test(value));
   assert.ok(ids.length > 0, "empty contract: " + name);
   assert.equal(new Set(ids).size, ids.length, name + " IDs duplicated in SPEC.md");
   return ids;
@@ -39,13 +43,15 @@ test("Specification defines user-first navigation, all page sections, roles and 
 for (const page of pages) {
   test(page + ": primary navigation and all page sections match SPEC.md", () => {
     const html = readFileSync(page, "utf8");
-    const topNav = html.match(/<nav class="topnav"[^>]*>([\\s\\S]*?)<\\/nav>/i)?.[1];
-    assert.ok(topNav, "top navigation missing");
-    const navLinks = [...topNav.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
+    const navStart = html.indexOf('<nav class="topnav"');
+    const navEnd = html.indexOf("</nav>", navStart);
+    assert.ok(navStart >= 0 && navEnd > navStart, "top navigation missing");
+    const topNav = html.slice(navStart, navEnd);
+    const navLinks = [...topNav.matchAll(/href="#([^"]+)"/g)].map(m => m[1]);
     assert.deepEqual(navLinks, navigation, "primary nav does not match SPEC.md");
-    const ids = [...html.matchAll(/\\bid="([^"]+)"/g)].map((m) => m[1]);
+    const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
     assert.equal(new Set(ids).size, ids.length, "duplicate IDs on page");
-    const allAnchors = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
+    const allAnchors = [...html.matchAll(/href="#([^"]+)"/g)].map(m => m[1]);
     for (const id of allAnchors) assert.ok(ids.includes(id), "broken anchor: #" + id);
     for (const section of sections) {
       assert.ok(html.includes('<section id="' + section + '"'), "missing page section: " + section);
@@ -54,14 +60,14 @@ for (const page of pages) {
 
   test(page + ": every contracted role has a scenario, prompt and human reviewer", () => {
     const html = readFileSync(page, "utf8");
-    const blocks = [...html.matchAll(/<details id="(role-[^"]+)">([\\s\\S]*?)<\\/details>/g)];
-    assert.deepEqual(blocks.map((m) => m[1]), roles, "role detail IDs and order must match SPEC.md");
+    const blocks = [...html.matchAll(/<details id="(role-[^"]+)">([\s\S]*?)<\/details>/g)];
+    assert.deepEqual(blocks.map(m => m[1]), roles, "role detail IDs and order must match SPEC.md");
     for (const [, id, content] of blocks) {
-      assert.match(content, /<summary>[\\s\\S]*?<\\/summary>/, id + " missing summary");
+      assert.match(content, /<summary>[\s\S]*?<\/summary>/, id + " missing summary");
       for (const label of ["輸入", "交付", "人工驗收"]) {
         assert.ok(content.includes(label), id + " missing: " + label);
       }
-      assert.match(content, /<pre class="code">[\\s\\S]*?<\\/pre>/, id + " missing reusable prompt");
+      assert.match(content, /<pre class="code">[\s\S]*?<\/pre>/, id + " missing reusable prompt");
       assert.ok(html.includes('href="#' + id + '"'), id + " missing role jump link");
     }
   });
@@ -83,17 +89,17 @@ for (const page of pages) {
 }
 
 test("Watchdog capability boundaries are explicit in SPEC.md", () => {
-  assert.match(spec, /WATCH-01[\\s\\S]*?沒有承諾/);
-  assert.match(spec, /WATCH-03[\\s\\S]*?不是 Worker heartbeat/);
-  assert.match(spec, /WATCH-06[\\s\\S]*?不是個別 Worker/);
-  assert.match(spec, /WATCH-07[\\s\\S]*?不是業務交付狀態/);
+  assert.match(spec, /WATCH-01[\s\S]*?沒有承諾/);
+  assert.match(spec, /WATCH-03[\s\S]*?不是 Worker heartbeat/);
+  assert.match(spec, /WATCH-06[\s\S]*?不是個別 Worker/);
+  assert.match(spec, /WATCH-07[\s\S]*?不是業務交付狀態/);
 });
 
 test("Spec synchronization policy is documented for future changes", () => {
   assert.match(spec, /同一 PR/);
-  assert.match(spec, /openspec\\\\/changes\\\\//);
-  assert.match(spec, /openspec\\\\/specs\\\\//);
+  assert.match(spec, /openspec\/changes\//);
+  assert.match(spec, /openspec\/specs\//);
   assert.match(agents, /同步修改規格/);
-  assert.match(readme, /SPEC\\\\.md/);
+  assert.match(readme, /SPEC\.md/);
   assert.match(prTemplate, /規格同步檢查/);
 });
