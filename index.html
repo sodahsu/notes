@@ -738,29 +738,38 @@ orca orchestration worker-start \
         <summary>B｜Worker 怎麼提問、回報心跳與完成？</summary>
         <div class="detail-body">
           <p>Orchestration 的訊息類型包含 <code>question</code>、<code>escalation</code>、<code>worker_done</code> 與 <code>heartbeat</code>。官方 Worker contract 要求長時間工作期間送出 heartbeat，且完成／心跳訊息都應包含 <code>taskId</code> 與 <code>dispatchId</code>，避免舊 Dispatch 的回報污染重試任務。</p>
-          <pre class="code"># Worker 阻塞時，使用啟動 preamble 指定的 coordinator handle
+          <pre class="code"># Worker 阻塞時，依 preamble 將問題送給所屬 Run
 orca orchestration ask \
-  --to &lt;coordinatorHandle&gt; \
   --question "API 尚未完成，這個頁面可以先用 Mock 嗎？" \
-  --options "mock,wait-for-api" --timeout-ms 600000 --json
+  --options "mock,wait-for-api" --json
 
-# Coordinator 等待並處理訊息（逐則處理後再 ack）
-orca orchestration check --wait \
-  --types worker_done,escalation,question --timeout-ms 900000 --json</pre>
-          <p>Worker 完成時需送出一次 <code>worker_done</code>，包含成功／失敗 outcome、摘要及修改檔案。不要把 Worker 的 Done 當成整個需求已驗收。</p>
+# 需要等待答案時，才加 --wait；也可用 --resume &lt;message_id&gt;
+orca orchestration ask --resume &lt;message_id&gt; --wait --json
+
+# Worker 完成時，回報本次 Task／Dispatch
+orca orchestration send --type worker_done \
+  --subject "報名流程 QA 完成" --body "已完成檢查，附測試證據。" \
+  --task-id &lt;taskId&gt; --dispatch-id &lt;dispatchId&gt; \
+  --outcome succeeded --files-modified "src/pages/registration"</pre>
+          <p><code>ask</code> 預設立即建立問題並回傳 pending；可加 <code>--wait</code> 或稍後以 <code>--resume</code> 等待答案。Worker 的 <code>worker_done</code> 必須帶 <code>--outcome succeeded|failed</code>、taskId 與 dispatchId。不要把 Worker 的 Done 當成整個需求已驗收。</p>
         </div>
       </details>
 
       <details>
         <summary>C｜Coordinator 如何監督與驗收？</summary>
         <div class="detail-body">
-          <p>Coordinator 必須保持監督迴圈：讀取 Delivery、逐則處理問題、依據現有規格回答、檢查 Worker 完成回報，最後再 ack。需要業務決策或超出授權時才交回使用者。</p>
-          <pre class="code">orca orchestration check --wait \
-  --types worker_done,escalation,question --timeout-ms 900000 --json
+          <p>目前官方建議採用事件喚醒式協作：Worker 回報、提問或停止時，Orca 會喚醒 Coordinator。派工後先結束本輪，不必讓 Coordinator 永遠輪詢；收到喚醒後再執行 <code>check --run</code>，逐則處理回傳訊息。新版預設 check 會取出最舊未讀郵件並標記已處理；舊版若回傳 deliveryId，依該版本要求再 ack。</p>
+          <pre class="code"># Coordinator 被 Orca 喚醒後
+orca orchestration check --run &lt;runId&gt; --json
 
+# 查閱 Worker 狀態與最近輸出
 orca orchestration worker-show --dispatch &lt;dispatchId&gt; --json
-orca orchestration worker-read --dispatch &lt;dispatchId&gt; --limit 50 --json</pre>
-          <p>檢查 Diff、測試與規格後，再決定是否完成。完成的 Worker 可使用 <code>worker-release</code> 釋放終端；需要保留除錯時使用 <code>worker-retain</code>。</p>
+orca orchestration worker-read --dispatch &lt;dispatchId&gt; --limit 50 --json
+
+# 完成後釋放，或依需要保留除錯
+orca orchestration worker-release --dispatch &lt;dispatchId&gt;
+orca orchestration worker-retain --dispatch &lt;dispatchId&gt;</pre>
+          <p>檢查 Diff、測試與規格後，再決定是否完成。只有需要長時間等待收件匣時才使用 wait 模式；不要把 check 命令自己的等待心跳誤認為 Worker heartbeat。</p>
         </div>
       </details>
 
@@ -770,7 +779,8 @@ orca orchestration worker-read --dispatch &lt;dispatchId&gt; --limit 50 --json</
 先確認 Runtime、Run、Task、Dispatch 與 Worktree 狀態。
 每個 Worker 都要有明確範圍、主要寫入者、完成定義與驗收證據。
 長時間工作要送 heartbeat；阻塞問題用 ask；完成時送 worker_done。
-持續處理 Coordinator inbox，逐則處理訊息後才 ack。
+Worker 回報、提問或停止時，依 Orca 喚醒訊號執行 check --run <runId>，逐則處理訊息；依目前版本確認是否需要 ack。
+派工後不要無意義地永久輪詢；只有明確需要 wait 模式時才使用等待命令。
 遇到需求不明、重大範圍變更、個資或不可逆操作，回來向我確認。
 不要因為沒有新訊息就認定 Worker 已死亡；先檢查 Dispatch、Worker 輸出與實際程序。
 Worker 完成後檢查 Diff、測試與規格，再決定 release、retain 或明確 retry。</pre>
@@ -786,15 +796,16 @@ Worker 完成後檢查 Diff、測試與規格，再決定 release、retain 或�
         <p>這一章把 Orca 已提供的狀態與心跳能力，和團隊應建立的 Watchdog 監督規則分開。這樣才不會把「有 heartbeat 訊息」誤認為「Worker 失聯會自動重啟」。</p>
       </div>
       <div class="grid two">
-        <div class="card accent"><strong>Orca 原生已有的能力</strong><p>Worker heartbeat 訊息、Agent Dashboard 狀態、Worker inspect／stop／明確 retry、Agent 結束後 Restart chip，以及 Runtime Supervisor（特定平台）。</p></div>
+        <div class="card accent"><strong>Orca 原生已有的能力</strong><p>Orchestration heartbeat 訊息、Agent Dashboard、Mobile companion 狀態同步、Worker inspect／stop／明確 retry、Agent 結束後 Restart chip，以及 Runtime Supervisor（特定平台）。</p></div>
         <div class="card"><strong>Orca 沒有明確保證的能力</strong><p>官方文件沒有承諾一個通用 Worker Watchdog 會因心跳逾時而自動判定死亡、殺掉程序並重派。這一層應先採用「偵測 → 查證 → 人工／Coordinator 決策 → 明確恢復」的策略。</p></div>
       </div>
       <h3 style="margin:20px 0 12px;">先分清楚四種「心跳／狀態」</h3>
       <div class="grid two">
         <div class="card"><strong>1. Worker Heartbeat｜Orchestration 訊息</strong><p>長時間工作的 Worker 依官方 contract 主動回報 heartbeat。訊息需關聯正確的 <code>taskId</code> 與 <code>dispatchId</code>，讓 Coordinator 知道這個 Dispatch 仍在回報。</p></div>
-        <div class="card"><strong>2. Agent Dashboard｜執行狀態</strong><p>Orca 透過終端機 OSC title sequence 與 Agent hooks 判斷 Working、Needs You、Done、Blocked、Idle。它是狀態看板，不是 Worker 程序存活保證。</p></div>
-        <div class="card"><strong>3. Mobile Heartbeat｜手機狀態同步</strong><p>手機 companion 追蹤桌面 Agent process 的 heartbeat。若手機顯示 Working、桌面已 Idle，可強制刷新 Worktree row；這是同步修正，不是自動恢復 Worker。</p></div>
-        <div class="card"><strong>4. Runtime Supervisor｜Orca Server 程序監督</strong><p><code>orca serve --supervise</code> 可在 Orca Server 異常退出後重新啟動。它監督的是 Server，不是個別 Worker；官方服務安裝支援 macOS／Linux，目前不支援 Windows。</p></div>
+        <div class="card"><strong>2. Agent Dashboard｜執行狀態</strong><p>在 Settings → Experimental 開啟 Agent Dashboard。看板以 OSC title sequence 與 Agent status hooks 顯示 Needs You、Working、Done、Idle；紅點代表 Blocked／interrupted／failed。它是狀態視圖，不是 Worker 程序存活保證。</p><pre class="code">orca agent hooks status --json
+orca agent hooks on --json</pre></div>
+        <div class="card"><strong>3. Mobile Heartbeat｜手機狀態同步</strong><p>手機 companion 顯示桌面 Worktree／Agent 狀態、近期終端輸出與通知。桌面已 Idle 而手機仍顯示 Working 時，強制刷新 Worktree row；這是狀態同步，不是自動恢復 Worker。</p></div>
+        <div class="card"><strong>4. Runtime Supervisor｜Orca Server 程序監督</strong><p><code>orca serve --supervise</code> 可在 Orca Server 異常退出後重新啟動。它監督的是 Server，不是個別 Worker；官方 per-user service 支援 macOS LaunchAgent／Linux systemd user unit，Windows 尚不支援。</p></div>
       </div>
       <h3 style="margin:20px 0 12px;">Watchdog 建議監督表（團隊流程，不是 Orca 內建狀態名稱）</h3>
       <div class="table-scroll">
