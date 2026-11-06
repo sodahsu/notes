@@ -31,7 +31,11 @@ for (const device of viewports) {
         const fragment = await link.getAttribute('href');
         assert.ok(await page.locator(fragment).count(), `missing destination ${fragment}`);
         await link.click();
-        await page.waitForFunction(hash => location.hash === hash, fragment);
+        // hashchange updates aria-current asynchronously after URL fragment navigation.
+        await page.waitForFunction(hash => {
+          const current = document.querySelector(`.topnav a[href="${hash}"]`);
+          return location.hash === hash && current?.getAttribute('aria-current') === 'location';
+        }, fragment);
         assert.equal(await link.getAttribute('aria-current'), 'location', `active nav ${fragment}`);
       }
 
