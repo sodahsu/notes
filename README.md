@@ -1,6 +1,6 @@
-# Orca × OpenSpec｜設計師與前端工程師快速上手
+# Orca × OpenSpec｜跨職能工作流手冊（PM／PO／SA／設計／工程／QA）
 
-這個 repo 是一份「先白話、再深入」的 Orca 工作流手冊。
+這個 repo 是一份「先白話、再深入」的 Orca × OpenSpec 跨職能工作流手冊，涵蓋需求規劃、規格、實作、驗收與維運。
 
 線上版：
 
@@ -193,6 +193,132 @@ Codex
 ```
 
 
+
+## Planning：先計畫、再批准、再執行
+
+Orca 不只是讓 AI 寫程式，也適合在 Agent 工作環境中整理有來源的計畫。它**沒有預設的 PM／SA 專屬管理功能**；以下是使用 Agent、工作目錄、OpenSpec、Browser、Diff 與 Orchestration 的建議流程。
+
+```text
+需求與依據 → 唯讀調查 → 計畫草稿 → 人工核准 → 分工執行 → 驗證與交接
+```
+
+通用 Planning Prompt：
+
+```text
+你是計畫協調者。先唯讀分析，不修改程式、文件與 Git。
+查核已提供來源與目前專案狀態，整理：
+1. 目標、非目標、來源
+2. 已確認事實、推論、待確認規則
+3. 執行順序、依賴、負責角色及交付物
+4. 修改範圍與禁止修改範圍
+5. 風險、待決策事項、驗收方式與驗收者
+6. 是否需要 Solo、唯讀平行調查或 Worktree 多代理
+最後標示「計畫完成，尚未執行」，等待核准。
+```
+
+只有獨立開發功能才需要視情況開 Worktree；PM／SA 分析文件不必預設切 Git 分支。正式 Orchestration 是任務編排，不等於業務規則經過核准。
+
+## 不同職能的 Orca 使用情境
+
+| 職能 | 實際情境 | 建議工作方式 | 交付／人工驗收 |
+| --- | --- | --- | --- |
+| PM | 政府專案需求新增、進度風險 | 比對合約與會議紀錄，整理 WBS、里程碑、依賴與風險 | 計畫草案；PM／業主核准時程與範圍 |
+| SA | 從訪談、原型、API 整理真實規格 | 分析角色、流程、狀態、資料契約和例外 | Scenario／OpenSpec 草案；SA／業務確認 |
+| UX/UI | 接手 AI 產生的 HTML 雛形 | Browser／Design Mode 找出資訊架構、RWD、可用性與錯誤狀態問題 | 設計檢查清單與視覺驗收 |
+| Frontend | API 未完成先用 Mock 建互動 | 核准規格後開功能 Worktree、實作、測試、Diff | 功能提交與測試證據；Code Review |
+| QA | 報名、繳費、補件跨角色測試 | 由核准規格建立正常、邊界、異常、權限案例 | PASS／FAIL／NOT_RUN／BLOCKED 與重現證據 |
+| 主管 | 多專案競爭人力、AI 派工 | 優先順序、工作 ownership、任務依賴和風險決策 | 分工及驗收閘門；主管批准 |
+
+### PM 範例｜新增線上繳費需求
+
+```text
+請根據已提供的合約、會議紀錄、專案時程，先唯讀整理：
+- 既有範圍與新增變更
+- WBS、相依工作、責任角色和里程碑草案
+- 風險、阻塞、需業主決策事項
+- 每項結論的依據
+尚無證據的工時、預算、規則標示待確認。
+只提出計畫，不修改任何檔案。
+```
+
+### SA 範例｜考選系統多階段繳費
+
+```text
+依現有已核准文件、原型及 API 證據整理：
+- 報考繳費、受訓繳費、證書核發前繳費的流程與角色
+- 狀態轉換、通知／補件／失敗／逾期路徑
+- API 請求與回應、欄位、權限及異常
+- 驗收 Scenario 與證據來源
+區分「已確認規則」「原型暗示」「Mock 假設」「待確認」。
+未批准規則不得直接寫入正式 openspec/specs。
+```
+
+### 六種職能的完整可複製 Prompt
+
+請看 [線上互動手冊的「PM / SA 等職能」章節](https://sodahsu.github.io/notes/#crossroles)，裡面也有 UX/UI、前端、QA、主管情境，以及人工驗收界線。
+
+## 跨職能交付與任務追蹤
+
+[線上互動手冊：跨職能任務與交付](https://sodahsu.github.io/notes/#teamwork) 包含責任矩陣、Issue → Worktree → PR → CI → QA／資安 → 上線與維運交接。PM／SA 不必先學會寫程式，但必須清楚區分：
+
+- **Issue / GitHub Projects / Jira / Linear**：工作、責任、期限與業務驗收的追蹤來源。只有完成實際連線與授權，Orca 才能讀寫對應任務。
+- **Worktree / PR / CI**：程式工作空間、版本審查與可驗證測試。
+- **Agent Dashboard / Checkpoint**：代理的執行狀態和交接快照，不能代表業務已驗收或已部署。
+- **人工 Gate**：PO 核准規則、PM 核准交付、QA 確認測試、資安確認風險、維運／主管核准上線；必須依實際組織權限調整。
+
+以政府標案為例：
+
+```text
+PM 需求／Issue
+  → PO／業主批准範圍與規則
+  → SA 明確化 Scenario／API 契約
+  → UX/UI＋前端設計師確認互動
+  → 前後端工程師實作與整合
+  → QA／資安驗證
+  → PR／部署 Gate
+  → 系統管理／客服與維運交接
+```
+
+### 角色差異不可混淆
+
+- **UX/UI**：資訊架構、體驗與視覺驗收。
+- **前端設計師**：HTML/CSS/JS、Vue 互動實作與設計系統落地。
+- **前端工程師**：共用元件、架構、API／Mock、工程測試、效能與程式品質。
+- **後端工程師**：契約、交易、資料完整性與可信任邊界的授權。
+
+更多 PO、Backend、資安、DevOps、系統管理與客服的情境、可複製 Prompt、輸入／輸出與人工驗收請見 [所有職能](https://sodahsu.github.io/notes/#crossroles)。
+
+## AI Agent 安全與權限
+
+[安全治理章節](https://sodahsu.github.io/notes/#safety) 詳細說明：
+
+1. 在 Orca `Settings → Agents → Agent Permissions` 檢查 Manual／Auto／Yolo 等設定；預設高自主權的 Agent 可能執行比你預期更大的動作。
+2. Worktree 是 Git 工作目錄隔離，**不等於 OS 沙箱**。
+3. 不得未授權提供客戶資料、個資、憑證、正式資料庫與有寫入權的 MCP；使用去識別化資料及最小權限。
+4. 正式部署、刪除、強制推送、改權限、付款／資料異動等操作要有獨立的人工核准。
+5. 前端資訊遮罩、錯誤頁與檢核不等於後端授權，資安責任需要跨層驗證。
+
+Orca 官方說明：[Supported agents／permissions](https://www.onorca.dev/docs/agents/supported)、[Settings](https://www.onorca.dev/docs/settings)。
+
+## 必須同步更新規格的維護契約
+
+本 Repo 的 [SPEC.md](SPEC.md) 是 **這份工作手冊本身** 的可觀察行為與章節／角色契約；[AGENTS.md](AGENTS.md) 規定 AI 開發者必須遵守同步修改規則，PR 建立時參照 [檢查表](.github/pull_request_template.md)。
+
+**每次修改教學工作流、角色、章節、導覽、Orca 功能敘述或驗收規則，都必須在同一個 PR 評估並同步修改 `SPEC.md`、兩份 HTML、必要的 README 和測試。** 若規格無影響，PR 必須明確寫出理由。由 `tests/roles-planning.test.mjs` 比對 SPEC 中的導航／角色清單與網站內容。
+
+兩份公開 HTML 必須逐字相同，既有常見痛點切換行為不得壞掉。變更完成後：
+
+```bash
+node --test tests/*.test.mjs
+```
+
+PR 將由 `.github/workflows/verify-guide.yml` 執行上述 Node 測試及 `tests/browser-smoke.mjs` 的真實 Chromium 桌面／手機互動測試（透過 CI 安裝 Playwright/Chromium）；檢查結果需標為 `PASS`／`FAIL`／`NOT_RUN`／`BLOCKED`，且必要時人工驗證桌面／手機、角色展開及所有按鈕。
+
+**要特別分清楚兩種規格同步：**
+
+- **本手冊：** 修改 `SPEC.md` 以維護教學行為與導航契約。
+- **使用手冊的業務專案：** 待批准／未完工的工作寫入 `openspec/changes/`；只有經確認、實作及驗證的現行業務行為，才可更新 `openspec/specs/`。若已核准意圖與實際系統不符，標 `SPEC_DRIFT` 並由權責決策，不讓 AI 自行覆寫。
+
 ## Orca Orchestration：Worker 有問題，Commander 會回答嗎？
 
 **可以，但不是保證自動回答。** Orca 正式的 Orchestration 提供 Worker → Commander 的阻塞提問與回覆機制；Commander 仍需要留在監督迴圈，持續讀取問題、回答、驗收 Worker 的完成回報。
@@ -384,12 +510,17 @@ orca screenshot --worktree active --json
 ├─ index.html
 ├─ orca-openspec-designer-guide-with-ui.html
 ├─ README.md
+├─ SPEC.md                 # 規格／導覽／角色契約
+├─ AGENTS.md               # AI 修改時的同步規則
+├─ tests/                  # 互動與規格同步測試
 └─ .nojekyll
 ```
 
 - `index.html`：GitHub Pages 首頁。
 - `orca-openspec-designer-guide-with-ui.html`：同一份互動教學原始檔。
-- `README.md`：工程師快速查閱版。
+- `README.md`：跨職能快速查閱版。
+- `SPEC.md`：此工作手冊的規格來源，所有修改需評估同步。
+- `AGENTS.md`：AI 與人員維護本 repo 時的最低規範。
 
 ## GitHub Pages
 
