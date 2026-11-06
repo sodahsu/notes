@@ -1,55 +1,86 @@
-# Orca × OpenSpec 工作手冊｜內容與互動規格
+# Orca 使用指南｜資訊架構、角色與監督規格
 
-版本：2026-11-06（本次 PR 的目標規格）
+版本：2026-11-06
 
-## 1. 目的、界線與真相來源
+## 1. 目的、定位與真相來源
 
-本 Repo 是面向 PM、PO、SA、UX/UI、前端設計、前後端工程、QA、資安、維運與主管的 **Orca 工作方法教學網站**；不是 Orca 的產品原始碼，也不提供原生專案管理服務。
+本 Repo 是 **Orca 使用方法教學網站**，目標是讓使用者先理解「Orca 能解決什麼工作問題」，再依自己的職能找到入門路徑，最後學會多 Agent 監督、故障處理與安全交付。
 
-- **本網站內容與互動的規格來源：** 本檔 `SPEC.md`。
-- **實作來源：** `index.html`（GitHub Pages 首頁）；`orca-openspec-designer-guide-with-ui.html` 是完全一致的鏡像，必須逐字同步。
-- **入門摘要：** `README.md`。詳細情境與可複製 Prompt 以網站為準，不能互相矛盾。
-- **可驗證行為：** `tests/*.test.mjs`。測試通過不能代替瀏覽器與人工內容審查。
-- **Orca 功能事實：** 以實際版本及官方文件為證；不能將建議工作法描述為原生內建功能。
-- **客戶／業務規格：** 以已核准需求決定「預期行為」；以 API、實作及實測決定「現況行為」，兩者衝突必須標記，不得以 AI 推測直接覆蓋。
+- Orca 是面向 coding agents 的開發環境；不是模型、不是 Jira／專案管理平台、不是 no-code 工具，也不保證自動完成業務核准或所有 Worker 故障恢復。
+- PM／PO／SA 可在需要 Repo、規格、Mock 或開發上下文時使用 Agent 輔助 Planning；業務決策與正式專案追蹤仍由既有權責及工具負責。
+- OpenSpec 是與 Orca 搭配使用的規格方法／工具，不得寫成 Orca 原生內建功能。
+- 本手冊內容與互動的規格來源：本檔 `SPEC.md`。
+- 實作來源：`index.html`；`orca-openspec-designer-guide-with-ui.html` 是完全一致的鏡像。
+- 快速查閱：`README.md`。AI 維護規則：`AGENTS.md`。
+- 可驗證行為：`tests/*.test.mjs`。測試通過不取代人工內容審查。
+- Orca 產品能力以當前官方文件與版本為準；建議工作法不得冒充原生功能。
 
-手冊的 `SPEC.md` 只規範 **這個網站與其教學承諾**；它不代替其他專案的 OpenSpec。其他專案中尚未完成的工作應放在 `openspec/changes/`，只有已實作且驗證完成、經授權確認的行為才進 `openspec/specs/`，不得把原型、Mock 或未批准的規則直接寫成現行規格。
+本 Repo 的 `SPEC.md` 規範本網站，不代替實際業務專案的 OpenSpec。其他專案中未批准／未實作的需求放在 `openspec/changes/`；只有經授權確認、實作與驗證的現行行為才進 `openspec/specs/`。
 
-## 2. 網站章節契約
+## 2. 首頁閱讀路徑與主要導覽契約
 
-頂部 `nav.topnav` 的全部站內章節連結必須存在且順序如下（由自動測試比對）：
+首頁先回答「為什麼要用」，再提供職能入口、交付全貌、第一次使用與進階監督。頂部導覽只放主要入口；次要操作章節透過首頁卡片、職能連結與上下文 CTA 進入，避免把所有細節塞進同一排導覽。
 
 <!-- navigation-contract:start -->
-| id | 章節目的 |
-| --- | --- |
-| why | 簡介與定位 |
-| quickstart | 第一次使用 |
-| problems | 五種常見痛點的互動切換 |
-| designer | 設計師日常操作 |
-| frontend | 前端開發流程 |
-| planning | 唯讀分析、計畫、核准 |
-| crossroles | 跨職能情境及可展開 Prompt |
-| teamwork | 角色責任、Issue／Worktree 串接、交付生命週期 |
-| orchestration | 正式 Run／Task／Worker／訊息機制 |
-| openspec | 規格與實作的雙向同步 |
-| safety | Agent 權限、資料、風險治理 |
-| mobile | 裝置與模擬器測試界線 |
-| reference | 名詞與指令 |
+| id | 導覽標籤 | 使用者問題 |
+| --- | --- | --- |
+| why | Orca 能幫什麼 | 什麼情況值得用 Orca？ |
+| crossroles | 依職能找用法 | 我的角色可以怎麼開始？ |
+| teamwork | 從需求到交付 | 團隊如何交接與驗收？ |
+| quickstart | 第一次開始 | 如何完成第一個小任務？ |
+| planning | 計畫與規格 | 怎麼先整理需求再派工？ |
+| orchestration | 多 Agent 協作 | 怎麼分派與監督 Worker？ |
+| watchdog | 心跳與故障處理 | Worker 是否還活著？卡住如何恢復？ |
+| openspec | OpenSpec 同步 | 怎麼讓規格與程式同步？ |
+| safety | 安全與權限 | 怎麼控制 Agent 權限與資料風險？ |
+| reference | 指令速查 | 需要查什麼術語或指令？ |
 <!-- navigation-contract:end -->
 
-需求：
+<!-- page-section-contract:start -->
+| id | 章節目的 |
+| --- | --- |
+| why | Orca 定位、適用與不適用情境 |
+| crossroles | 12 種職能入口與可複製 Prompt |
+| teamwork | 端到端交付流程、責任矩陣與任務來源 |
+| quickstart | 第一次使用與第一個任務 |
+| planning | 唯讀調查、計畫與人工核准 |
+| openspec | Change 與現行 Spec 的界線 |
+| designer | 設計師的 Browser／Design Mode 工作法 |
+| frontend | 前端工程流程 |
+| problems | 五種常見痛點的互動切換 |
+| orchestration | Run／Task／Dispatch／Worker／Coordinator |
+| watchdog | Heartbeat、狀態監控、Watchdog 與 Recovery |
+| safety | Agent 權限、資料與不可逆操作治理 |
+| mobile | 手機 companion、RWD、Emulator 與 WebView |
+| reference | 名詞、CLI 與官方文件 |
+<!-- page-section-contract:end -->
 
-- **WEB-01**：所有 `href="#..."` 必須指向真實存在且唯一的 HTML ID；導航鍵盤與滑鼠可使用。
-- **WEB-02**：常見痛點保留原有五個可切換按鈕及每案的描述、Prompt、驗收內容；切換不得重建按鈕導致焦點遺失。
-- **WEB-03**：桌面與窄螢幕都可閱讀；縮小頁面時導覽可換行，`details/summary` 可用滑鼠及鍵盤展開；點擊職能卡片的角色連結，必須自動展開對應的 Prompt 區塊。
-- **WEB-04**：鏡像 HTML 完全一致，且新增段落不能破壞現有 JavaScript。
-- **WEB-05**：導航、內部連結、角色區塊或展開數量變更時，測試**不得沿用過期固定數量**；應以此契約及實際目標做檢查。
-- **WEB-06**：本 repo 的 PR 應由 `.github/workflows/verify-guide.yml` 以唯讀權限執行 `node --test tests/*.test.mjs`，自動擋下導航、角色、鏡像與互動回歸；CI 未跑時必須標記為 NOT_RUN，不能宣稱通過。
-- **WEB-07**：每個 PR 需執行桌面 1280×800 與手機 390×844 的真實 Chromium Smoke Test（`tests/browser-smoke.mjs`），驗證 13 個導覽、5 個痛點切換、12 個職能連結、鍵盤展開、無 JS 例外及非預期橫向溢出。自動化瀏覽器測試不能取代正式 GitHub Pages 部署後確認。
+<!-- problem-case-contract:start -->
+| id | 使用者問題 |
+| --- | --- |
+| agent-handoff | AI 額度用完，需要換 Agent 接手 |
+| worktree-conflict | 多個功能同時開發，避免互相踩檔案 |
+| diff-review | AI 擴大修改範圍，需要檢查 Diff |
+| design-mode | 想直接指出畫面元件並修正 |
+| checkpoint | 隔天回來或換人接手，需要進度快照 |
+| worker-watch | Worker 沒回應，需要判斷是否卡住與安全恢復 |
+<!-- problem-case-contract:end -->
+
+
+### WEB requirements
+
+- **WEB-01**：所有站內 `href="#..."` 必須指向真實且唯一的 HTML ID。
+- **WEB-02**：常見痛點保留六個互動案例；切換內容不得重建按鈕或遺失焦點。
+- **WEB-03**：桌面與窄螢幕可閱讀；`details/summary` 支援滑鼠與鍵盤；職能捷徑會自動展開對應 Prompt。
+- **WEB-04**：`index.html` 與鏡像 HTML 必須逐字一致；重排章節不得破壞現有 JavaScript。
+- **WEB-05**：頂部導覽、頁面章節、職能數量以本檔契約為準，測試從契約讀取，不得在多處寫死互相矛盾的數字。
+- **WEB-06**：PR 需執行 Node 測試與真實 Chromium Browser Smoke Test；未執行標記 NOT_RUN。
+- **WEB-07**：Browser Smoke Test 至少覆蓋契約中的導覽、所有職能捷徑、所有痛點案例、鍵盤展開、無 JS 例外與非預期橫向溢出；桌面 1280×800、手機 390×844。
+- **WEB-08**：主導覽只顯示 navigation-contract；所有 page-section-contract 章節仍需可由主導覽、職能卡、CTA 或內容連結到達。
 
 ## 3. 角色情境契約
 
-下列 `role-* ` 是網站交付的角色情境 ID。每個角色均需要「具體工作情境、輸入、建議步驟／Prompt、交付物、人工核准責任」，不能只有職稱。
+每個職能都必須有具體情境、輸入、工作步驟／Prompt、交付物與人工驗收責任。Agent／Coordinator／Worker 是 Orca 執行角色，不等於公司組織職稱。
 
 <!-- role-contract:start -->
 | id | 職能 |
@@ -68,44 +99,67 @@
 | role-lead | 主管／Coordinator |
 <!-- role-contract:end -->
 
-- **ROLE-01**：明確區分「PM 規劃」「PO 業務決策」「SA 規格與契約」「設計師體驗判斷」「前端設計師互動實作」「前端工程師工程治理」；不將 Agent 模型角色誤當組織職稱。
-- **ROLE-02**：政府標案與多階段繳費等案例僅是示範，不代表未經確認的客戶業務規則。
-- **ROLE-03**：PM／SA 的分析工作不必建立 Worktree；只有版本控管的修改與獨立開發功能才需要考慮 Worktree。
-- **ROLE-04**：所有 Role Prompt 預設先唯讀，輸出須區分已確認、推論、待確認，人工核准後才進行寫入或外部操作。
+- **ROLE-01**：PM 規劃、PO 業務決策、SA 規格與契約、UX/UI 體驗、前端設計師互動落地、前端工程師工程品質、後端資料與授權、QA 驗證、資安風險、維運上線與主管資源決策需分清楚。
+- **ROLE-02**：政府標案與多階段繳費案例僅示範，不代表未經確認的客戶業務規則。
+- **ROLE-03**：PM／SA 文件分析不必預設建立 Worktree；只有需要修改 Repo 或獨立開發功能時才考慮。
+- **ROLE-04**：Role Prompt 預設唯讀，區分已確認、推論、待確認；寫入、對外操作與業務核准由人決定。
 
 ## 4. Planning、Orchestration 與規格同步
 
-- **PLAN-01**：Planning = 需求與證據分析、依賴、範圍、風險及驗收計畫。
-- **PLAN-02**：Orchestration = 正式 Run／Task／Dispatch／Worker 的執行協調；不等於需求已批准。Worker 提問需要 Coordinator 實際監督處理。
-- **PLAN-03**：OpenSpec = 專案業務規格的可追溯變更與已驗證現行行為；不是聊天紀錄或 AI 自動補全。
-- **PLAN-04**：單一完整功能原則一個 Worktree／一位主要 Writer；可多個唯讀調查／驗收代理，但禁止未授權的共檔案平行寫入。
-- **PLAN-05**：需求變更時，**在同一個 PR／變更中**更新涉及的 Change/Spec、文件、Mock/API 契約及驗收測試。無法確認者必須列入待決策項，不能假裝同步完成。
-- **PLAN-06**：驗收證據需分 PASS、FAIL、NOT_RUN、BLOCKED。對 Git 重要操作、部署、付款與個資揭露保留人工 Gate。
+- **PLAN-01**：Planning 是工作方法：需求與證據分析、範圍、依賴、風險、交付物及驗收計畫；不是 Orca 內建 PM 模組。
+- **PLAN-02**：Orchestration 是 Orca 的正式多 Agent 編排層，包含 Run、Task、Dispatch、Worker、訊息與 Decision Gate；它不代表需求已核准。
+- **PLAN-03**：OpenSpec 是搭配 Orca 使用的規格方法／工具。待實作／未批准意圖放在 `openspec/changes/`；已實作、驗證、經授權確認的現行行為才進 `openspec/specs/`。
+- **PLAN-04**：單一完整功能原則上一個 Worktree／一位主要 Writer；可有多個唯讀調查與驗收代理，但禁止未授權的共檔案平行寫入。
+- **PLAN-05**：需求變更時，在同一 PR／變更中評估並同步更新 Change／Spec、文件、Mock／API 契約及驗收測試。
+- **PLAN-06**：驗收狀態使用 PASS、FAIL、NOT_RUN、BLOCKED。Git 破壞性操作、正式部署、資料異動與個資揭露保留人工 Gate。
 
 ## 5. 任務管理與端到端交付
 
-- **FLOW-01**：示範由需求／Issue → SA 確認／Scenario → UX／工程 → QA／資安 → 部署 → 維運的交付鏈，並寫明各 Gate 的權責與證據。
-- **FLOW-02**：GitHub、GitLab、Jira、Linear 等任務來源只有在實際連線、授權後才能使用；Issue/Project 狀態是專案工作狀態，Agent Dashboard 的 Working／Done 是 AI 執行狀態，不能互相取代。
-- **FLOW-03**：Issue 與 Worktree、PR、測試要保持可追溯；Issue 不得因 Worker 顯示 Done 就直接視為業務完成。
-- **FLOW-04**：部署與維運應包含測試環境、上線核准、回復策略、監控與操作交接；避免只停在 Commit/PR。
+- **FLOW-01**：教學交付鏈為需求／Issue → PO 核准 → SA Scenario／契約 → 設計與實作 → QA／資安 → PR／部署 → 維運交接。
+- **FLOW-02**：GitHub、GitLab、Jira、Linear 等任務來源須實際連線與授權；Issue 狀態、Worktree 狀態、Agent Dashboard 狀態與業務驗收不得混為一談。
+- **FLOW-03**：Issue、Worktree、PR、CI、測試與交付證據需可追溯。Agent 顯示 Done 不代表 PM／PO 已驗收。
+- **FLOW-04**：部署交付包含環境、上線核准、回復策略、監控與操作交接。
 
-## 6. 安全與權限治理
+## 6. Heartbeat、Watchdog 與 Recovery 契約
 
-- **SAFE-01**：明確提示 Orca 對 Agent 的預設啟動許可可能很高；組織用機應先檢查 Settings → Agents → Agent Permissions，依專案風險選 Manual/Auto/Yolo。獨立 Git Worktree **不是完整的安全沙箱**。
-- **SAFE-02**：正式憑證、客戶資料、機敏資訊、個資與未授權檔案不得直接放入 Agent 的可讀／可傳範圍；必要時採最小權限、去識別化及合規來源。
-- **SAFE-03**：刪除、重設、強制推送、正式部署、改權限、修改正式資料及其他不可逆動作需授權與獨立審核；不默許 AI 自行決策。
-- **SAFE-04**：Skills/MCP 與外部 Agent 需先檢查來源、權限、資料流與供應商政策；資安要求不是只做前端遮罩，授權與資料保護需落在可信邊界。
+<!-- watchdog-contract:start -->
+| 能力 | 分類 | 本手冊必須說清楚的行為 |
+| --- | --- | --- |
+| Worker Heartbeat | Orca 原生 | Worker preamble 明確要求時才回報 heartbeat；訊息需帶 taskId 與 dispatchId，不得自行假設固定週期。 |
+| Agent Dashboard | Orca 原生（Experimental） | Settings → Experimental 啟用；看板欄位為 Needs You／Working／Done／Idle，紅點代表 blocked／interrupted／failed。依 OSC title sequence 與 Agent status hooks 判斷；是狀態視圖，不是程序存活保證。 |
+| Mobile Heartbeat | Orca 原生 | 手機追蹤桌面 Agent process heartbeat；卡住的 spinner 可強制刷新 Worktree row。這不是 Worker auto-recovery。 |
+| Runtime Supervisor | Orca 原生（平台受限） | 監督 Orca Server 程序並在異常退出後重新啟動；不是個別 Worker Watchdog。官方 service install 支援 macOS／Linux，Windows 尚不支援。 |
+| Worker Recovery | Orca 原生的明確操作 | worker-show／worker-read／worker-stop／worker-start --retry-of；需先查證再由 Coordinator 決定，不能當成自動重派。 |
+| Worker Watchdog policy | 本手冊建議的團隊流程 | 以 heartbeat、checkpoint、Dashboard、Dispatch 與 Terminal 證據判斷 Healthy／Slow／Stale／Failed／Blocked；觀察門檻由團隊設定。 |
+<!-- watchdog-contract:end -->
 
-## 7. 規格同步修改規則（所有後續 PR 必遵守）
+- **WATCH-01**：不得宣稱 Orca 已提供通用 Worker Watchdog，可在 heartbeat timeout 後自動 kill／restart／retry。官方文件未承諾這種自動故障恢復。
+- **WATCH-02**：Worker heartbeat、Agent Dashboard 狀態、Mobile heartbeat、Runtime Supervisor 必須分別說明，不可混稱同一種心跳。
+- **WATCH-03**：Orchestration `check --wait` 等待期間每 15 秒寫到 stderr 的 JSON heartbeat，是等待命令本身的訊號，不是 Worker heartbeat interval。
+- **WATCH-04**：Worker 只有在目前 preamble 明確要求時才送 heartbeat，且需帶 taskId／dispatchId；官方沒有承諾固定 Worker heartbeat 秒數。Watchdog timeout 由團隊依任務類型與長指令設定，不得把 15 秒當成 Worker 週期。
+- **WATCH-05**：疑似失聯先檢查 Worker／Dispatch／Terminal；只有確認前一個 Dispatch 安全結束，才可明確 retry，並重新指定 Worktree／host placement。
+- **WATCH-06**：Runtime Supervisor 只監督 Orca Server，不可描述為個別 Worker 的看門狗。
+- **WATCH-07**：Agent Dashboard 的 Needs You／Working／Done／Idle 是看板欄位；紅點代表 blocked／interrupted／failed。它是 Agent 狀態，不是業務交付狀態。
+- **WATCH-08**：目前官方建議事件喚醒式 Coordinator 流程：Worker 回報、提問或停止時 Orca 喚醒 Coordinator，Coordinator 再執行 `check --run <runId>`；不可要求永遠輪詢作為唯一監督方式。
+- **WATCH-09**：Agent Dashboard 位於 Settings → Experimental；Agent status hooks 可用 `orca agent hooks status|on|off --json` 檢查與切換。沒有狀態指示時，先確認 Agent CLI 是從 Orca Agent picker 啟動且 hooks 已啟用。
 
-當網站功能、教學工作流、職能、Orca 官方產品敘述或規格規則有變化時：
+## 7. 安全與權限治理
 
-1. **先確認差異。** 讀 `SPEC.md`、`AGENTS.md`、`README.md`、兩份 HTML 與相關測試。
-2. **本 PR 同步修改規格。** 若要新增／刪除／更名章節或職能，更新本檔的契約表及受影響的 `WEB-*`、`ROLE-*`、`PLAN-*`、`FLOW-*`、`SAFE-*`。若未影響規格，在 PR 清楚說明「規格無影響」及理由。
-3. **同步內容。** `index.html` 與 `orca-openspec-designer-guide-with-ui.html` 必須逐字一致；若影響入門或章節路徑，同步 `README.md`。
-4. **同步測試。** 修改使用者可觀察的操作與連結時同步更新 `tests/*.test.mjs`；測試從本檔契約提取角色／導航，而不是各自寫死互相矛盾的數量。
-5. **驗證與證據。** 執行 `node --test tests/*.test.mjs` 與 CI 的 `node --test tests/browser-smoke.mjs`（含安裝 Playwright/Chromium），並按影響面檢查桌面／手機、導覽、展開、常見痛點切換；在 PR 寫出 PASS／FAIL／NOT_RUN／BLOCKED 與理由。
-6. **尊重來源與核准。** 官方功能應附來源或版本；業務意圖與現行實作若衝突，標成 `SPEC_DRIFT` 並列出負責人，不自行選一邊。沒有經核准的推測不得寫成既有行為。
-7. **核准後整合。** 未通過驗證或尚未核准，不能宣告完成、部署或合併。
+- **SAFE-01**：Orca 對支援 Agent 可能預設帶入高自主權啟動參數；須提醒使用者在 Settings → Agents 檢查每個 Agent 的 launch arguments，依專案敏感度調整。不可假設每次操作都會詢問。
+- **SAFE-02**：Worktree 是 Git 工作目錄隔離，不是完整 OS 安全沙箱。
+- **SAFE-03**：正式憑證、客戶資料、個資、未授權檔案與具寫入權的連接器遵守最小權限與資料最小化。
+- **SAFE-04**：刪除、重設、強制推送、正式部署、改權限、正式資料異動等不可逆操作需獨立人工核准。
+- **SAFE-05**：Skills／MCP／外部 Agent 安裝前檢查來源、權限、資料流與供應商政策；前端遮罩不能取代後端授權。
 
-這個規則是一個**維護契約**，不是保證 AI 或 Git 會自行修改任何規格；執行前仍需人和 CI／測試實際檢查。
+## 8. 規格同步維護規則（所有後續 PR 必遵守）
+
+1. 變更前閱讀 `SPEC.md`、`AGENTS.md`、`README.md`、兩份 HTML 與相關測試。
+2. 章節、導覽、職能或 Watchdog 能力有變更時，在同一 PR 更新對應契約表及受影響的 WEB／ROLE／PLAN／FLOW／WATCH／SAFE 條文。
+3. `index.html` 與 `orca-openspec-designer-guide-with-ui.html` 必須逐字一致。
+4. 若影響入門或公開承諾，同步更新 README；修改可觀察行為時同步更新 Node 與 Chromium 測試。
+5. 測試必須從本檔契約讀取導覽與角色，不得在多處寫死互相矛盾的數量。
+6. 官方功能敘述需附當前官方來源；未確認功能標為未確認，建議工作法標為建議。
+7. 執行 `node --test tests/*.test.mjs` 與 `node --test tests/browser-smoke.mjs`；在 PR 標示 PASS／FAIL／NOT_RUN／BLOCKED。
+8. 未通過驗證或未經核准，不可宣告完成、部署或合併。
+
+本檔是手冊維護契約，不保證 AI 或 Git 自動更新規格；每次修改仍須由作者與 CI 驗證。

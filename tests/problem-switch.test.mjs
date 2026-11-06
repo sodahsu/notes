@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+
+const spec = readFileSync("SPEC.md", "utf8");
+const problemBlockStart = spec.indexOf("<!-- problem-case-contract:start -->");
+const problemBlockEnd = spec.indexOf("<!-- problem-case-contract:end -->", problemBlockStart);
+if (problemBlockStart < 0 || problemBlockEnd < 0) throw new Error("missing problem-case-contract in SPEC.md");
+const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && value !== "id" && /^[a-z][a-z0-9-]*$/.test(value); }).length;
 import { Script } from "node:vm";
 
 const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
@@ -127,7 +133,7 @@ for (const page of pages) {
     const nodes = mountPage(html);
     const nav = nodes.problemNav;
     const buttons = [...nav.children];
-    assert.equal(buttons.length, 5);
+    assert.equal(buttons.length, problemCaseCount);
     assert.equal(nodes.problemKicker.textContent, "痛點 1");
 
     const titles = new Set();
@@ -165,9 +171,9 @@ test("All internal navigation links resolve and navigation stays stable", () => 
   const linkedSections = [...navigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
   const links = [...html.matchAll(/<a\b[^>]*href="#([^"]+)"/g)].map((m) => m[1]);
 
-  assert.ok(linkedSections.length >= 9, "all major sections remain available");
+  assert.ok(linkedSections.length >= 8, "primary navigation remains available");
   assert.equal(new Set(linkedSections).size, linkedSections.length, "navigation targets must be unique");
-  assert.equal(linkedSections.length, sectionIds.size, "top nav must list every named content section");
+  for (const id of linkedSections) assert.ok(sectionIds.has(id), "navigation must target a section: #" + id);
   for (const id of links) assert.ok(allIds.has(id), "missing anchor target: " + id);
   assert.match(html, /html\{scroll-behavior:auto\}/, "avoid unstable animated jumps");
   assert.match(html, /id="problemTitle" aria-live="polite"/);
