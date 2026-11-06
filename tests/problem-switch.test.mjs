@@ -86,7 +86,10 @@ function mountPage(html, { mobile = false } = {}) {
     link.setAttribute("href", match[1]);
     return link;
   });
-  const roleJumps = [...html.matchAll(/<a class="role-jump" href="#(role-[^"]+)"/g)].map((match) => {
+  const crossrolesStart = html.indexOf('<section id="crossroles"');
+  const crossrolesEnd = html.indexOf("</section>", crossrolesStart);
+  const roleSection = html.slice(crossrolesStart, crossrolesEnd);
+  const roleJumps = [...roleSection.matchAll(/<a class="role-jump" href="#(role-[^"]+)"/g)].map((match) => {
     const link = new MockElement("a");
     link.setAttribute("href", "#" + match[1]);
     return link;
