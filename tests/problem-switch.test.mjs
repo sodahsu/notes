@@ -10,7 +10,7 @@ const problemCaseCount = spec.slice(problemBlockStart, problemBlockEnd).split("\
 const roleBlockStart = spec.indexOf("<!-- role-contract:start -->");
 const roleBlockEnd = spec.indexOf("<!-- role-contract:end -->", roleBlockStart);
 if (roleBlockStart < 0 || roleBlockEnd < 0) throw new Error("missing role-contract in SPEC.md");
-const roleCount = spec.slice(roleBlockStart, roleBlockEnd).split("\\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && /^role-[a-z0-9-]+$/.test(value); }).length;
+const roleCount = spec.slice(roleBlockStart, roleBlockEnd).split("\n").filter(line => { const value = line.split("|")[1]?.trim(); return value && /^role-[a-z0-9-]+$/.test(value); }).length;
 import { Script } from "node:vm";
 
 const pages = ["index.html", "orca-openspec-designer-guide-with-ui.html"];
