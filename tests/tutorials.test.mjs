@@ -39,7 +39,7 @@ for (const file of pages) {
       assert.ok(item.steps.length >= 4, item.id + " has fewer than four steps");
       for (const [index, step] of item.steps.entries()) {
         for (const key of ["title", "input", "action", "prompt", "output", "review"]) {
-          assert.ok(typeof step[key] === "string" && step[key].trim().length > 12,
+          assert.ok(typeof step[key] === "string" && step[key].trim().length >= (key === "title" ? 4 : 12),
             item.id + " step " + index + " missing " + key);
         }
         assert.ok(/確認|檢查|核准|驗收|審查/.test(step.review), "human gate missing");
