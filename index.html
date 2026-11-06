@@ -127,6 +127,44 @@
       .dual-label{padding-bottom:0}
       .section-head{flex-direction:column;align-items:flex-start}
     }
+      /* Interactive tutorial: local-only learning state; no network or persistence. */
+    .tutorial-lab{margin-top:24px;border:1px solid var(--border);border-radius:18px;padding:20px;background:var(--subtle)}
+    .tutorial-heading{display:flex;gap:20px;justify-content:space-between;align-items:start}
+    .tutorial-heading h3{margin:0}
+    .tutorial-heading p:last-child{max-width:480px;margin:0;color:var(--muted);font-size:13px;line-height:1.75}
+    .tutorial-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+    .tutorial-tab{min-height:48px;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--text);font:inherit;font-weight:750;cursor:pointer;text-align:center}
+    .tutorial-tab[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft);color:#1746a2}
+    .tutorial-tab:focus-visible,.tutorial-controls button:focus-visible,.tutorial-copy-line button:focus-visible,.tutorial-check input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .tutorial-panel{min-width:0;margin-top:12px;padding:20px;border:1px solid var(--border);border-radius:14px;background:#fff}
+    .tutorial-case-label{margin:0;font-weight:850;color:var(--accent)}
+    .tutorial-summary{margin:7px 0 16px;color:var(--muted);font-size:13px;line-height:1.7}
+    .tutorial-progress{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .tutorial-progress progress{min-width:120px;flex:1;accent-color:var(--accent);height:12px}
+    .tutorial-count{color:var(--muted);font-size:12px}
+    .tutorial-step-title{margin:16px 0 12px;font-size:19px}
+    .tutorial-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .tutorial-field{min-width:0;padding:14px;border:1px solid var(--border);border-radius:12px;background:#fff}
+    .tutorial-field p{margin:0;color:var(--text);font-size:13px;line-height:1.75;overflow-wrap:anywhere}
+    .tutorial-review{border-color:#a7cfb5;background:#f4fbf6}
+    .tutorial-prompt{margin-top:14px}
+    .tutorial-prompt textarea{display:block;width:100%;margin-top:8px;padding:13px;border:1px solid var(--border);border-radius:12px;background:#171a20;color:#e7ebf0;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical;overflow-wrap:anywhere}
+    .tutorial-copy-line{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:9px}
+    .tutorial-copy-line span{font-size:12px;color:var(--muted);line-height:1.5}
+    .tutorial-check{display:flex;align-items:flex-start;gap:10px;margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--subtle);font-size:13px;line-height:1.65;cursor:pointer}
+    .tutorial-check input{margin-top:3px;accent-color:var(--accent)}
+    .tutorial-controls{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+    .tutorial-controls .btn:disabled{opacity:.45;cursor:not-allowed}
+    @media(max-width:680px){
+      .tutorial-lab{padding:13px}
+      .tutorial-heading{display:block}
+      .tutorial-heading p:last-child{margin-top:9px}
+      .tutorial-tabs{grid-template-columns:1fr;gap:6px}
+      .tutorial-tab{text-align:left;min-height:42px}
+      .tutorial-panel{padding:14px}
+      .tutorial-fields{grid-template-columns:1fr}
+    }
+
   </style>
 </head>
 <body>
@@ -240,6 +278,49 @@
           <a class="role-jump" href="#orchestration">看多 Agent 協作方式 →</a>
         </article>
       </div>
+
+      <div id="tutorialLab" class="tutorial-lab" aria-label="跟著操作的 Orca 教學">
+        <div class="tutorial-heading">
+          <div><p class="eyebrow">GUIDED PRACTICE · 互動實作教學</p><h3>選一個情境，照著步驟操作</h3></div>
+          <p>這是可跟著做的<strong>教學模擬</strong>：不會連線 Orca、不會執行 Agent 或自行核准。只有你親自操作並檢查後，才勾選完成。</p>
+        </div>
+        <div class="tutorial-tabs" role="tablist" aria-label="選擇教學案例">
+          <button type="button" id="tutorial-pm-sa" class="tutorial-tab" role="tab" aria-controls="tutorialPanel" aria-selected="true" tabindex="0" data-tutorial="tutorial-pm-sa">PM／SA · 需求</button>
+          <button type="button" id="tutorial-design" class="tutorial-tab" role="tab" aria-controls="tutorialPanel" aria-selected="false" tabindex="-1" data-tutorial="tutorial-design">UX／Design · 畫面</button>
+          <button type="button" id="tutorial-engineering" class="tutorial-tab" role="tab" aria-controls="tutorialPanel" aria-selected="false" tabindex="-1" data-tutorial="tutorial-engineering">Engineering · 多 Agent</button>
+        </div>
+        <div id="tutorialPanel" class="tutorial-panel" role="tabpanel" tabindex="0" aria-labelledby="tutorial-pm-sa">
+          <p class="tutorial-case-label" id="tutorialCaseLabel"></p>
+          <p class="tutorial-summary" id="tutorialSummary"></p>
+          <div class="tutorial-progress">
+            <span id="tutorialStepIndex" class="badge" aria-live="polite"></span>
+            <progress id="tutorialProgress" value="0" max="4" aria-label="自行完成的教學步驟"></progress>
+            <span id="tutorialProgressText" class="tutorial-count" aria-live="polite"></span>
+          </div>
+          <h4 id="tutorialStepTitle" class="tutorial-step-title"></h4>
+          <div class="tutorial-fields">
+            <div class="tutorial-field"><div class="label">輸入／前置條件</div><p id="tutorialInput"></p></div>
+            <div class="tutorial-field"><div class="label">在 Orca／Agent 中做什麼</div><p id="tutorialAction"></p></div>
+            <div class="tutorial-field"><div class="label">預期輸出</div><p id="tutorialOutput"></p></div>
+            <div class="tutorial-field tutorial-review"><div class="label">人工檢查點（不可自動核准）</div><p id="tutorialReview"></p></div>
+          </div>
+          <div class="tutorial-prompt">
+            <label for="tutorialPrompt" class="label">這一步可交給 AI 的 Prompt（可選取、手動複製）</label>
+            <textarea id="tutorialPrompt" rows="6" readonly spellcheck="false"></textarea>
+            <div class="tutorial-copy-line">
+              <button type="button" class="btn" id="tutorialCopy">複製本步 Prompt</button>
+              <span id="tutorialCopyStatus" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+          <label class="tutorial-check"><input id="tutorialComplete" type="checkbox"> <span>我已自行操作並檢查本步結果（僅記錄教學進度）</span></label>
+          <div class="tutorial-controls">
+            <button class="btn" type="button" id="tutorialPrev">← 上一步</button>
+            <button class="btn primary" type="button" id="tutorialNext">下一步 →</button>
+          </div>
+          <p class="note">僅使用虛構示範資料；不要貼入政府客戶個資、正式 Token 或機敏檔案。此頁不會連線或執行 Orca，步驟完成由你自行標記。</p>
+        </div>
+      </div>
+      <script type="application/json" id="tutorialData">[{"id":"tutorial-pm-sa","label":"PM／SA｜需求整理","summary":"示範：以虛構的線上報名服務，把零散的問題整理成可審查的流程與 Scenario。只做唯讀分析，不假設業務規則已獲核准。","steps":[{"title":"準備需求來源","input":"虛構情境：線上報名可填資料、儲存草稿與送出；付款與通知規則仍未確認。","action":"在有權限的 Orca 專案開啟 Agent；先提供已可公開的需求草稿或範例，不必建立 Worktree。","prompt":"請以唯讀方式理解以下虛構線上報名情境：使用者可儲存草稿、送出報名；付款、通知及補件規則尚未確認。不要修改檔案。請列出可確認的事實、仍需證據的假設、缺少的來源和要問 PO／SA 的問題。","output":"需求來源表，分成「已知」、「推論」與「待確認」。","review":"人工確認來源可用且無個資、Token 或客戶機敏資訊；不把推論當作已批准需求。"},{"title":"盤點角色、狀態與例外","input":"前一步的需求來源表；既有系統流程或經授權可讀的 Repo／Mock。","action":"請 Agent 依來源整理角色、狀態轉換、API／資料交接與例外；先提出缺口，不自行發明業務規則。","prompt":"請依據已確認的需求來源，唯讀整理報名者、審核者的角色與權限、草稿／送出／補件狀態、每個狀態的入口與出口，以及 401／403／404／405 等例外。所有無證據項目標記「待確認」，附證據來源，不修改程式。","output":"文字版服務流程、狀態表和缺漏清單。","review":"由 SA 逐條查來源；權限、狀態及支付規則未經核准前不得視為定稿。"},{"title":"產生可驗收 Scenario","input":"已確認流程、狀態表與待確認清單。","action":"讓 Agent 產生 happy path、錯誤狀態與補件情境的 Scenario 草稿，並列驗收方式。","prompt":"根據已確認的虛構報名流程，整理 Given／When／Then 驗收 Scenario：草稿儲存、送出報名、資料缺漏、逾期與無權限存取。逐條附依據，無依據的規則另列為問題，不要寫入 openspec/specs/。","output":"可供 PM／SA／QA 討論的 Scenario 草稿與測試矩陣。","review":"檢查 Scenario 是否可測、角色是否明確、邊界與例外是否都可追溯。"},{"title":"提交人工核准與規格交接","input":"Scenario 草稿、決策問題、資料與 API 契約差異。","action":"請 Agent 彙整待核准事項、建議的 OpenSpec Change 草稿及交付責任；不要自動批准、提交或部署。","prompt":"請將已確認流程、Scenario、API／Mock 差異及待決策事項整理成審查摘要。分列 PO／SA／QA 的核准項目與建議下一步。未批准的內容只放 Change 草稿，已實作且驗證的現行規格才可建議同步至 openspec/specs/。本步不要寫入或提交任何正式檔案。","output":"決策清單、Change 草稿提綱、下一位工程師可接手的範圍與驗收條件。","review":"PO／SA 人工核准需求與規則後，才授權下一階段修改規格或開發。"}]},{"id":"tutorial-design","label":"UX／Design｜畫面改善","summary":"示範：檢查虛構報名表單的行動版與錯誤回饋。要明確定位畫面、限制修改範圍，再做設計和工程驗收。","steps":[{"title":"對照原型與現況","input":"測試 Repo、可啟動的開發頁面、既有設計規範與已確認的流程。","action":"在功能 Worktree 啟動 dev server，用 Orca Browser 開啟 localhost，先確認桌面和手機現況。","prompt":"請先唯讀比較目前報名表單的既有設計規範、頁面實作與 390px 手機顯示。列出資訊層級、錯誤訊息、欄位間距、主要 CTA 和鍵盤操作的差異。請不要修改程式，先回報可重現問題與畫面證據。","output":"可重現的 UX 問題清單、受影響頁面與現況證據。","review":"設計師確認優先順序、實際螢幕尺寸與修改範圍，避免依 AI 猜測擴大重構。"},{"title":"使用 Design Mode 定位問題","input":"已確認的問題清單，例如手機版送出按鈕被固定底欄遮住。","action":"使用 Browser／Design Mode 指定元素；以文字說明預期互動與驗收條件。","prompt":"我在 Orca Browser／Design Mode 已選取報名表單主要 CTA。請依目前選取元素、程式碼與已確認設計規範，提出最小修改方案，使 390px viewport 的 CTA 不被 fixed footer 或虛擬鍵盤遮住。先列出會影響的元件、CSS、互動與回歸風險，不要碰其他功能。","output":"有明確元素定位的修改計畫與預期畫面。","review":"人工確認選取的確實是正確元素、修改不會破壞桌面版或共用元件。"},{"title":"讓 Agent 限定範圍修改","input":"已核准的最小修改計畫、功能 Worktree 與檔案清單。","action":"授權 Agent 在當前 Worktree 修改必要元件與樣式；請它同步說明 Diff。","prompt":"依已核准範圍，只調整報名表單主要 CTA 的響應式版面和必要互動。優先沿用現有 CSS token／元件；不要加入新依賴或修改其他路由。完成後列出實際修改檔案、Diff 摘要、已跑和未跑的檢查。","output":"受控範圍內的 UI 修改與 Diff 摘要。","review":"逐檔檢查 Diff；未經核准的修改退回，避免不必要的樣式與功能擴散。"},{"title":"驗收 RWD、操作與交付","input":"修改後的頁面、相關 Scenario、測試命令與既有 Git 變更。","action":"在 Browser 檢查 390px 與桌面、鍵盤、錯誤提示；執行專案適用的 lint／test／build，再 Review。","prompt":"請依既有規格驗收報名表單：390px 不得有非預期橫向捲動、主要 CTA 可點擊且不被遮住、錯誤訊息可讀、Tab／Enter 可操作。列 PASS／FAIL／NOT_RUN／BLOCKED，附畫面及測試證據；未驗證不得寫 PASS。檢查 Diff 後提出 PR 摘要，先不要合併。","output":"桌機／手機驗收表、相關測試證據與 PR 草稿。","review":"設計師驗收 UX，工程師確認可維護性；由授權者決定是否合併。"}]},{"id":"tutorial-engineering","label":"Engineering｜多 Agent 交付","summary":"示範：虛構報名功能的前端與 QA 並行。重點是隔離、Dispatch 身分、Heartbeat 訊號與人工整合 Gate，不宣稱 Worker 會自動恢復。","steps":[{"title":"建立功能 Worktree 與驗收邊界","input":"已核准的 Issue／Change、專案整合分支、明確的功能範圍。","action":"在 Orca 建立一個可獨立驗收的功能 Worktree；盤點檔案 ownership、Mock、API 與測試。","prompt":"請先讀取這個測試專案的 Issue、OpenSpec 與現有實作，唯讀提出一個「報名表單功能」Worktree 的範圍、主要 Writer、相關 Mock／API、不可修改區域、驗收標準和測試命令。確認後才建立或修改檔案。","output":"獨立 Worktree 計畫、受影響檔案清單與 Definition of Done。","review":"人工確認基底分支、寫入範圍、共用元件影響和權限；Worktree 不是 OS sandbox。"},{"title":"分派正式 Task／Dispatch","input":"功能 Worktree、DoD 與可獨立執行的工作項目。","action":"使用 Orca 官方 Orchestration 建立 Run／Task，由 Coordinator 分派 Worker；每個寫入目標明確。","prompt":"請使用 Orca 官方 Orchestration，不要文字模擬多代理。先確認已啟用的 Orchestration 版本及 orca skills get orchestration --full，再整理 Run、Task、Dispatch 及 Worker ownership。實作任務只能有一個主要 Writer；QA 可先唯讀檢查。建立後回報真實 taskId、dispatchId 和 Worktree，不得捏造 ID。","output":"可追溯 Run／Task／Dispatch 關係、Worker 分工與執行狀態。","review":"確認是否真的建立 Dispatch、是否有寫入衝突；若環境不支援則標 BLOCKED，不可假裝已啟動。"},{"title":"觀察 Heartbeat 與 Worker 阻塞","input":"執行中的 Run／Task／Dispatch、Terminal 最近輸出與工作檢查點。","action":"Coordinator 處理 Worker 提問與完成訊息；依現行 preamble 要求確認 heartbeat，不只看 Dashboard。","prompt":"請以 Coordinator 身分查驗這次真實 Run 的 Task、Dispatch、Terminal 輸出與 Worker 訊息。只有目前 preamble 要求時才期待 Worker heartbeat；區分 Working、Waiting／Blocked、Stale 和 Failed。若疑似失聯先查證，不可只因無心跳就自動停止或 retry，回報可追溯證據。","output":"Worker 狀態摘要、阻塞原因、待決策事項及下一個 checkpoint。","review":"人工／Coordinator 確認沒有重複 Writer，若要重派，先確認原 Dispatch 安全結束並重新指定 placement。"},{"title":"執行 QA 與規格核對","input":"Worker 的修改 Diff、測試證據、已批准的 OpenSpec／Scenario。","action":"讓 QA／資安唯讀驗證，必要時指定獨立 Reviewer；不要把 Worker Done 視為 QA PASS。","prompt":"請對照已核准的 Scenario 與目前 Diff 做唯讀驗證：表單狀態、未授權回應、空白資料、RWD、敏感資訊顯示。執行專案允許的 lint／typecheck／test／build；每項列 PASS／FAIL／NOT_RUN／BLOCKED 與證據。檢查有無 SPEC_DRIFT，未經核准的業務規則不得回寫現行規格。","output":"QA／資安檢查表、測試結果、規格漂移與修正清單。","review":"QA 與規格 owner 逐項確認 PASS；任何未跑測試不得視為完成。"},{"title":"Review、PR 與人工整合 Gate","input":"可 Review 的功能 Commit、QA 證據與同步的 Change／Spec。","action":"Coordinator 核對完成後產生 PR 摘要，交人工 Review；合併與部署需由授權者決定。","prompt":"請整理本次功能 PR：Issue、Worktree、Run／Task／Dispatch、變更檔案、測試證據、SPEC 影響、風險與回滾方法。確認沒有其他 Worker 正在寫入同一檔案。請準備 PR 與驗收摘要，不要自動合併、部署、強制推送或刪除工作區。","output":"有檔案、測試、規格與責任紀錄的 PR 和交付摘要。","review":"主管／工程負責人審核 PR、CI、資料與部署權限；只有人工批准後才整合。"}]}]</script>
 
       <h3 style="margin:24px 0 12px;">依你的熟悉程度，逐步學習</h3>
       <div class="grid four">
@@ -1312,6 +1393,101 @@ orca screenshot --worktree active --json</pre>
   });
 
   renderNav();
+  render();
+})();
+</script>
+
+<script>
+(() => {
+  "use strict";
+  const root = document.getElementById("tutorialLab");
+  if (!root) return;
+  const tutorialCases = JSON.parse(document.getElementById("tutorialData").textContent);
+  const tabs = [...root.querySelectorAll('[role="tab"][data-tutorial]')];
+  const byId = new Map(tutorialCases.map(item => [item.id, item]));
+  const done = new Map(tutorialCases.map(item => [item.id, new Set()]));
+  let activeId = tutorialCases[0].id;
+  let stepIndex = 0;
+
+  const el = id => document.getElementById(id);
+  const panel = el("tutorialPanel");
+  const prompt = el("tutorialPrompt");
+  const copyStatus = el("tutorialCopyStatus");
+  const complete = el("tutorialComplete");
+
+  function render() {
+    const item = byId.get(activeId);
+    const step = item.steps[stepIndex];
+    tabs.forEach(tab => {
+      const selected = tab.dataset.tutorial === activeId;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    });
+    panel.setAttribute("aria-labelledby", activeId);
+    el("tutorialCaseLabel").textContent = item.label;
+    el("tutorialSummary").textContent = item.summary;
+    el("tutorialStepIndex").textContent = "步驟 " + (stepIndex + 1) + " / " + item.steps.length;
+    el("tutorialStepTitle").textContent = step.title;
+    el("tutorialInput").textContent = step.input;
+    el("tutorialAction").textContent = step.action;
+    el("tutorialOutput").textContent = step.output;
+    el("tutorialReview").textContent = step.review;
+    prompt.value = step.prompt;
+    complete.checked = done.get(activeId).has(stepIndex);
+    const progress = el("tutorialProgress");
+    progress.max = item.steps.length;
+    progress.value = done.get(activeId).size;
+    el("tutorialProgressText").textContent = "自行完成 " + done.get(activeId).size + " / " + item.steps.length + " 步";
+    el("tutorialPrev").disabled = stepIndex === 0;
+    el("tutorialNext").disabled = stepIndex === item.steps.length - 1;
+    copyStatus.textContent = "";
+  }
+  function selectCase(id, focus = false) {
+    if (!byId.has(id)) return;
+    activeId = id;
+    stepIndex = 0;
+    render();
+    if (focus) tabs.find(tab => tab.dataset.tutorial === id).focus();
+  }
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectCase(tab.dataset.tutorial));
+    tab.addEventListener("keydown", event => {
+      if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1
+        : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+      selectCase(tabs[next].dataset.tutorial, true);
+    });
+  });
+  el("tutorialPrev").addEventListener("click", () => {
+    if (stepIndex > 0) { stepIndex--; render(); }
+  });
+  el("tutorialNext").addEventListener("click", () => {
+    if (stepIndex < byId.get(activeId).steps.length - 1) { stepIndex++; render(); }
+  });
+  complete.addEventListener("change", () => {
+    const stepsDone = done.get(activeId);
+    if (complete.checked) stepsDone.add(stepIndex); else stepsDone.delete(stepIndex);
+    el("tutorialProgress").value = stepsDone.size;
+    el("tutorialProgressText").textContent = "自行完成 " + stepsDone.size + " / " + byId.get(activeId).steps.length + " 步";
+  });
+  el("tutorialCopy").addEventListener("click", async () => {
+    const text = prompt.value;
+    const id = activeId, index = stepIndex;
+    try {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
+        throw new Error("clipboard unavailable");
+      }
+      await navigator.clipboard.writeText(text);
+      if (id === activeId && index === stepIndex) copyStatus.textContent = "已複製本步 Prompt。";
+    } catch {
+      if (id === activeId && index === stepIndex) {
+        prompt.focus();
+        prompt.select();
+        copyStatus.textContent = "無法自動複製；已選取 Prompt，請手動複製。";
+      }
+    }
+  });
   render();
 })();
 </script>
