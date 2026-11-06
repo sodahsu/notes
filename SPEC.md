@@ -63,6 +63,7 @@
 | diff-review | AI 擴大修改範圍，需要檢查 Diff |
 | design-mode | 想直接指出畫面元件並修正 |
 | checkpoint | 隔天回來或換人接手，需要進度快照 |
+| worker-watch | Worker 沒回應，需要判斷是否卡住與安全恢復 |
 <!-- problem-case-contract:end -->
 
 
