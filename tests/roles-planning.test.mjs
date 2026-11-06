@@ -37,7 +37,7 @@ test("Specification defines user-first navigation, all page sections, roles and 
   assert.ok(roles.includes("role-pm") && roles.includes("role-sa"));
   assert.ok(roles.includes("role-frontdesign") && roles.includes("role-security"));
   assert.ok(roles.includes("role-devops") && roles.includes("role-support"));
-  assert.equal(problemCases.length, 5);
+  assert.equal(problemCases.length, 6);
 });
 
 for (const page of pages) {
