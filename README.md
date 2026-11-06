@@ -44,10 +44,12 @@ Orca 可以協助連結 Issue 與 Worktree，但 Agent Dashboard 的 Working／D
 | 名稱 | Orca 目前提供什麼 | 不代表什麼 |
 | --- | --- | --- |
 | Worker Heartbeat | Orchestration 訊息；長時間工作應回報，並帶 taskId／dispatchId | 不代表逾時後會自動 kill／restart Worker |
-| Agent Dashboard | 依 OSC title sequence 與 Agent hooks 顯示 Working／Needs You／Done／Blocked／Idle | 不是程序存活保證或業務交付狀態 |
+| Agent Dashboard | Settings → Experimental 啟用；Needs You／Working／Done／Idle 看板欄位，紅點代表 blocked／interrupted／failed | 不是程序存活保證或業務交付狀態 |
 | Mobile Heartbeat | 手機追蹤桌面 Agent process；spinner 不一致可強制刷新 | 不是 Worker 自動恢復 |
 | Runtime Supervisor | 可在 macOS／Linux 監督 Orca Server 程序並重新啟動 | 不是個別 Worker Watchdog |
 | Worker Recovery | worker-show／worker-read／worker-stop／明確 retry | 不是無條件自動重派 |
+
+Coordinator 的目前建議流程是事件喚醒：Worker 回報、提問或停止時，Orca 喚醒 Coordinator，再執行 `orca orchestration check --run <runId>`；不必派工後永久輪詢。Agent Dashboard 在 Settings → Experimental 開啟；若狀態未顯示，檢查 `orca agent hooks status --json`。
 
 官方文件沒有承諾通用的 Worker Watchdog 會在 heartbeat timeout 後自動 kill／restart／retry。建議團隊採用：
 
