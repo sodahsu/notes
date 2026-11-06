@@ -19,7 +19,8 @@ const navigation = contractIds('navigation-contract', /^(?!id$)[a-z][a-z0-9-]*$/
 const sections = contractIds('page-section-contract', /^(?!id$)[a-z][a-z0-9-]*$/);
 const roles = contractIds('role-contract', /^role-[a-z0-9-]+$/);
 const problemCases = contractIds('problem-case-contract', /^(?!id$)[a-z][a-z0-9-]*$/);
-const pageUrl = pathToFileURL(resolve('index.html')).href;
+const pageUrl = pathToFileURL(resolve('guide.html')).href;
+const homeUrl = pathToFileURL(resolve('index.html')).href;
 const viewports = [
   { name: 'desktop', viewport: { width: 1280, height: 800 } },
   { name: 'mobile', viewport: { width: 390, height: 844 }, isMobile: true },
@@ -198,6 +199,103 @@ for (const device of viewports) {
       assert.ok(size.scrollWidth <= size.viewportWidth + 2,
         device.name + ' horizontal overflow ' + JSON.stringify(size));
       assert.deepEqual(exceptions, [], 'no page JavaScript exceptions');
+      await context.close();
+    } finally {
+      await browser.close();
+    }
+  });
+}
+
+
+for (const device of viewports) {
+  test('real Chromium ' + device.name + ': short landing invites exploration and preserves deep links', async () => {
+    const browser = await chromium.launch({headless: true});
+    try {
+      const context = await browser.newContext({
+        viewport: device.viewport,
+        isMobile: Boolean(device.isMobile),
+        hasTouch: Boolean(device.isMobile),
+      });
+      const page = await context.newPage();
+      const exceptions = [];
+      page.on('pageerror', error => exceptions.push(error.message));
+      await page.goto(homeUrl, {waitUntil: 'domcontentloaded'});
+
+      assert.equal(await page.locator('h1').count(), 1);
+      assert.ok((await page.locator('h1').innerText()).includes('AI 幫你動起來'));
+      assert.equal(await page.locator('section#journey').count(), 1);
+      assert.equal(await page.locator('#missionPanel').getAttribute('role'), 'tabpanel');
+      const tabs = page.locator('.mission-tab');
+      assert.equal(await tabs.count(), 3);
+      assert.equal(await tabs.nth(0).getAttribute('aria-selected'), 'true');
+      assert.equal(await page.locator('#missionResult').isHidden(), true);
+      assert.equal(await page.locator('#missionWaiting').isVisible(), true);
+      assert.equal(await page.locator('#revealMission').getAttribute('aria-expanded'), 'false');
+
+      // The first click demonstrates a concrete before/after without executing real AI.
+      await page.locator('#revealMission').click();
+      assert.equal(await page.locator('#missionResult').isVisible(), true);
+      assert.equal(await page.locator('#missionOutputs li').count(), 3);
+      assert.equal(await page.locator('#revealMission').getAttribute('aria-expanded'), 'true');
+      await page.locator('#revealMission').click();
+      assert.equal(await page.locator('#missionResult').isHidden(), true);
+
+      await tabs.nth(1).click();
+      assert.equal(await tabs.nth(1).getAttribute('aria-selected'), 'true');
+      assert.equal(await tabs.nth(0).getAttribute('aria-selected'), 'false');
+      assert.equal(await page.locator('#missionPanel').getAttribute('aria-labelledby'), 'mission-design');
+      assert.ok((await page.locator('#missionBefore').innerText()).includes('手機版'));
+      assert.equal(await page.locator('#missionResult').isHidden(), true);
+      assert.ok((await page.locator('#missionGuide').getAttribute('href')).includes('case=tutorial-design'));
+
+      // Keyboard navigation changes the mission and preserves focus.
+      await tabs.nth(1).focus();
+      await page.keyboard.press('ArrowRight');
+      assert.equal(await tabs.nth(2).getAttribute('aria-selected'), 'true');
+      assert.equal(await tabs.nth(2).evaluate(el => document.activeElement === el), true);
+      assert.ok((await page.locator('#missionGuide').getAttribute('href')).includes('case=tutorial-engineering'));
+
+      // Clipboard success and failure must be distinguishable.
+      await page.locator('#missionPromptDetails summary').click();
+      const prompt = await page.locator('#missionPrompt').inputValue();
+      assert.ok(prompt.length > 40);
+      await page.evaluate(() => {
+        window.__copiedMission = '';
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {writeText: async value => {window.__copiedMission = value;}}
+        });
+      });
+      await page.locator('#copyMission').click();
+      assert.ok((await page.locator('#missionCopyStatus').innerText()).includes('已複製'));
+      assert.equal(await page.evaluate(() => window.__copiedMission), prompt);
+      await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', {configurable: true, value: undefined});
+      });
+      await page.locator('#copyMission').click();
+      assert.ok((await page.locator('#missionCopyStatus').innerText()).includes('無法自動複製'));
+      assert.equal(await page.locator('#missionPrompt').evaluate(el => el.selectionEnd - el.selectionStart === el.value.length), true);
+
+      const size = await page.evaluate(() => ({
+        viewport: document.documentElement.clientWidth,
+        scroll: document.documentElement.scrollWidth,
+      }));
+      assert.ok(size.scroll <= size.viewport + 2, 'landing has unintended horizontal overflow: ' + JSON.stringify(size));
+
+      // The learning link opens the matching detailed guide tutorial.
+      await page.locator('#missionGuide').click();
+      await page.waitForURL(/guide\.html\?case=tutorial-engineering#tutorialLab$/);
+      assert.equal(await page.locator('#tutorial-engineering').getAttribute('aria-selected'), 'true');
+      assert.ok((await page.locator('#tutorialStepIndex').innerText()).includes('1 / 5'));
+
+      // Existing bookmarked URLs must not lead to an empty short landing.
+      await page.goto(homeUrl + '#watchdog');
+      await page.waitForURL(/guide\.html#watchdog$/);
+      assert.equal(await page.locator('#watchdog').count(), 1);
+      await page.goto(homeUrl + '#role-sa');
+      await page.waitForURL(/guide\.html#role-sa$/);
+      assert.equal(await page.locator('#role-sa').count(), 1);
+      assert.deepEqual(exceptions, [], 'no JavaScript errors on landing or guide');
       await context.close();
     } finally {
       await browser.close();
