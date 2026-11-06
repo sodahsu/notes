@@ -86,6 +86,30 @@
 - **WEB-12**：首頁職能捷徑需直接連到對應職能 Prompt；PM／SA、設計師、工程師、主管入口各有不同工作目標，不可全部導向同一泛用頁。
 - **WEB-13**：Quickstart 必須將文件／需求工作與程式／介面工作分流；文件唯讀分析不要求 Worktree，程式修改才進入 Git 工作區流程。
 
+
+## 3. 互動式實作教學契約
+
+新增於 `journey` 區塊中的三個互動教學案例。教學使用安全的示範資料與靜態範例，不連接客戶系統、不執行使用者專案命令，也不自動核准或寫入正式規格。
+
+<!-- tutorial-contract:start -->
+| id | 教學案例 | 主要職能 | 預期成果 |
+| --- | --- | --- | --- |
+| tutorial-pm-sa | PM／SA：需求整理 | PM、PO、SA | 需求摘要、流程／Scenario、待確認清單與人工核准 Gate |
+| tutorial-design | UX／Design：畫面改善 | UX/UI、前端設計師 | 問題定位、修改指令、畫面／Diff／RWD 驗收清單 |
+| tutorial-engineering | Engineering：多 Agent 交付 | 前端／後端、QA、主管 | Worktree／Task 分工、Worker 狀態、測試證據與整合 Gate |
+<!-- tutorial-contract:end -->
+
+- **TUTORIAL-01**：三個案例以可切換的教學面板呈現；一次聚焦一個案例，顯示目前案例名稱與進度。
+- **TUTORIAL-02**：每個案例至少包含 4 個有順序的步驟；每步需提供「輸入資料／前置條件、在 Orca 中做什麼、可複製 Prompt、預期輸出、人工檢查點」。
+- **TUTORIAL-03**：每個步驟可獨立複製 Prompt；複製失敗或 Clipboard API 不可用時，畫面仍提供可選取的完整文字，不得假裝已複製。
+- **TUTORIAL-04**：可前進、返回步驟及切換案例；切換案例後步驟回到第一步；步驟狀態可由使用者自行勾選，不可宣稱 AI 已執行。
+- **TUTORIAL-05**：明確標示 Orca／Agent 執行動作與人工核准責任。PM／SA 的唯讀分析不要求 Worktree；工程案例才使用 Worktree／Orchestration。
+- **TUTORIAL-06**：工程案例必須包含 Task／Dispatch 身分、Worker heartbeat、Coordinator review、QA 測試及人工整合 Gate；不宣稱自動 Watchdog 可保證恢復。
+- **TUTORIAL-07**：教學只使用虛構示範內容；不得要求貼入政府客戶個資、正式 Token、機敏檔案或生產資料。
+- **TUTORIAL-08**：桌面及手機均可操作；鍵盤可切換案例與步驟；切換後焦點與 aria-selected／aria-current 等可及性狀態正確。
+- **TUTORIAL-09**：Node 測試須將 tutorial-contract 與實際面板、步驟、Prompt 數量及必要欄位對照；Chromium E2E 驗證切換、前後步、複製回退、步驟勾選、手機版及無 JS 例外。
+- **TUTORIAL-10**：修改教學步驟、案例或 Prompt 時，同一 PR 同步更新 SPEC、兩份 HTML、README（若影響入口）、Node 與 Chromium 測試。
+
 ## 3. 角色情境契約
 
 每個職能都必須有具體情境、輸入、工作步驟／Prompt、交付物與人工驗收責任。Agent／Coordinator／Worker 是 Orca 執行角色，不等於公司組織職稱。
