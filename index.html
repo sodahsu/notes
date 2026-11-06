@@ -12,7 +12,7 @@
       --orange:#b54708;--shadow:0 12px 32px rgba(16,24,40,.07);--code:#171a20;
     }
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:auto}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
     a{color:inherit}
     button{font:inherit}
@@ -21,6 +21,8 @@
     .wrap{width:min(1180px,calc(100% - 28px));margin:28px auto 64px}
     .topnav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
     .topnav a{padding:8px 11px;border:1px solid var(--border);border-radius:999px;background:#fff;text-decoration:none;font-size:12px;font-weight:750}
+    .topnav a[aria-current="location"]{border-color:var(--accent);background:var(--accent-soft);color:#1746a2}
+    .topnav a:focus-visible,.entry:focus-visible,.problem-btn:focus-visible,summary:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     .hero,.section-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow)}
     .hero{padding:30px}
     .eyebrow{margin:0 0 8px;color:var(--accent);font-size:12px;font-weight:850;letter-spacing:.06em}
@@ -86,6 +88,13 @@
     .sop{overflow-x:auto;display:flex;gap:8px;align-items:center;padding-bottom:8px}
     .node{flex:none;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:13px;font-weight:800}
     .node.spec{border-color:var(--accent);background:var(--accent-soft)}
+    .role-jump{display:inline-block;margin-top:12px;font-size:13px;font-weight:800;color:var(--accent);text-underline-offset:3px}
+    .role-jump:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:14px}
+    .workflow-table{width:100%;min-width:700px;border-collapse:collapse;font-size:13px;line-height:1.7}
+    .workflow-table th,.workflow-table td{padding:12px 13px;border-bottom:1px solid var(--border);vertical-align:top;text-align:left}
+    .workflow-table thead{background:var(--subtle);font-size:12px}
+    .workflow-table tbody tr:last-child td{border-bottom:0}
     .roles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .role{border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff}
     .role h3{margin-bottom:10px}
@@ -130,15 +139,17 @@
     <a href="#frontend">我是前端</a>
     <a href="#planning">計畫撰寫</a>
     <a href="#crossroles">PM / SA 等職能</a>
+    <a href="#teamwork">任務與交付</a>
     <a href="#orchestration">Worker / Commander</a>
     <a href="#openspec">OpenSpec</a>
+    <a href="#safety">資安與規格同步</a>
     <a href="#mobile">手機測試</a>
     <a href="#reference">名詞 / 指令</a>
   </nav>
 
   <section class="hero">
     <p class="eyebrow">ORCA × OPENSPEC · PM / SA / UX / FRONTEND / QA</p>
-    <h1>AI 幫你寫程式，但不要讓工作跟著變亂。</h1>
+    <h1>從需求規劃到交付，讓 AI 協作有規格、有證據。</h1>
     <p class="lead">Orca 把需求、功能、AI、畫面與修改紀錄整理在可追溯的工作流程。PM、SA 可以先做計畫與規格，設計師與工程師再實作和驗收；先知道「自己的職能能做什麼」就能開始。</p>
 
     <div class="dual-flow">
@@ -167,7 +178,7 @@
       <a class="card entry" href="#frontend"><strong>我是前端工程師</strong><small>Worktree、dev server、Mock、test、commit / push。</small></a>
       <a class="card entry" href="#problems"><strong>我現在就卡住了</strong><small>AI 沒額度、亂改、多功能衝突、忘記進度。</small></a>
     </div>
-    <div class="cta-row"><a class="btn" href="#planning">先寫計畫 →</a><a class="btn" href="#crossroles">PM / SA / QA / 主管使用情境 →</a></div>
+    <div class="cta-row"><a class="btn" href="#planning">先寫計畫 →</a><a class="btn" href="#crossroles">查看各職能情境 →</a><a class="btn" href="#teamwork">交付流程與責任 →</a></div>
   </section>
 
   <section id="why" class="section">
@@ -191,7 +202,7 @@
         <div class="card soft"><strong>只想調一顆按鈕</strong><p>Browser / Design Mode 直接指給 AI。</p></div>
       </div>
 
-      <div class="callout"><b>比較適合：</b>已經在用 Claude Code、Codex 等 coding agent，會碰 Git、需要同時處理多個功能、在意 Diff 與驗證的人。若只是想做完全不碰程式的 no-code 原型，Orca 不是主要解法。</div>
+      <div class="callout"><b>怎麼選：</b>PM／SA 可以用 Agent 先做有來源的計畫、規格與審查，不必先碰 Git；設計師與工程師可使用 Browser、Worktree 與 Diff 進行可驗證實作。若只是要管理甘特圖或純 no-code 原型，Orca 不取代專用工具。</div>
     </div>
   </section>
 
@@ -231,7 +242,7 @@
         <div class="priority"><strong>第一天先會：在新會話中繼續</strong><span>AI 換班，功能不用重開。</span></div>
         <div class="priority"><strong>第一天先會：Diff</strong><span>AI 說完成後，自己看它到底改了什麼。</span></div>
       </div>
-      <p class="note">做 UI 再學 Browser / Design Mode；開始多工再學 Split panes、Usage tracking。</p>
+      <p class="note">PM／SA 只需要整理文件時，可以直接在可授權的 Agent 工作環境進行唯讀 Planning，不必預設開 Worktree。做 UI 再學 Browser / Design Mode；真正開多功能才需要 Git 隔離。</p>
     </div>
   </section>
 
@@ -246,7 +257,7 @@
         <nav id="problemNav" class="problem-nav" aria-label="常見問題"></nav>
         <article id="problemPanel" class="problem-main">
           <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
-            <div><p id="problemKicker" class="eyebrow">痛點 1</p><h3 id="problemTitle"></h3></div>
+            <div><p id="problemKicker" class="eyebrow">痛點 1</p><h3 id="problemTitle" aria-live="polite"></h3></div>
             <span id="problemFeature" class="badge"></span>
           </div>
 
@@ -398,19 +409,25 @@
   <section id="crossroles" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">延伸 · 跨職能使用情境</p><h2>PM、SA、設計、工程與 QA，怎麼用 Orca 合作？</h2></div>
+        <div><p class="eyebrow">延伸 · 跨職能使用情境</p><h2>跨職能角色：誰負責規格、誰負責執行與驗收？</h2></div>
         <p>這些是使用 Orca、Agent、既有文件和可驗證資料的「建議工作方法」，不是 Orca 內建的 PM / SA 專屬功能。從你自己的職能切入，確認適用範圍即可。</p>
       </div>
       <div class="grid three">
-        <div class="card accent"><strong>PM｜專案經理</strong><p><b>情境：</b>政府專案需求新增或時程異動。<br><b>做法：</b>整理需求來源、WBS、依賴、風險與責任分工。<br><b>交付：</b>計畫草案、決策清單與追蹤表。<br><b>核准：</b>範圍、預算、時程由有權責的人確認。</p></div>
-        <div class="card accent"><strong>SA｜系統分析師</strong><p><b>情境：</b>從訪談、舊系統及 HTML 原型建立可驗收需求。<br><b>做法：</b>整理流程、角色權限、狀態轉換、資料與 API 契約。<br><b>交付：</b>需求／情境、流程與待決問題。<br><b>核准：</b>業務規則與狀態由業務／SA 確認。</p></div>
-        <div class="card"><strong>UX/UI｜設計師</strong><p><b>情境：</b>接手品質不一的 AI HTML 雛形。<br><b>做法：</b>檢查資訊架構、操作回饋、錯誤狀態、RWD、無障礙。<br><b>交付：</b>問題清單、標註原型及互動驗收。<br><b>核准：</b>體驗與視覺品質由設計負責。</p></div>
-        <div class="card"><strong>Frontend｜前端工程師</strong><p><b>情境：</b>API 尚未完成、需先開發前端互動。<br><b>做法：</b>檢查規格與 Repo，隔離功能 Worktree，實作 Mock、測試及 Diff。<br><b>交付：</b>可重現的實作與測試證據。<br><b>核准：</b>合併前需完成 Code Review。</p></div>
-        <div class="card"><strong>QA｜測試人員</strong><p><b>情境：</b>報名、多階段繳費、補件與不同角色操作。<br><b>做法：</b>由核准規格推導正常、邊界、失敗和權限案例。<br><b>交付：</b>測試矩陣、重現步驟與問題證據。<br><b>核准：</b>通過標準由測試與業務負責人確認。</p></div>
-        <div class="card"><strong>Lead｜主管／協調者</strong><p><b>情境：</b>跨專案共用人力與多 Agent 協作。<br><b>做法：</b>評估優先級、工作依賴、寫入邊界與驗收狀態。<br><b>交付：</b>分工表、風險與決策紀錄。<br><b>核准：</b>資源調整、合併及交付由人決策。</p></div>
+        <div class="card accent"><strong>PM｜專案經理</strong><p>需求變更、WBS、里程碑與風險；確認交付、時程及責任，不能讓 AI 自行承諾。</p><a class="role-jump" href="#role-pm">查看情境與 Prompt</a></div>
+        <div class="card accent"><strong>PO｜業務負責人</strong><p>釐清業務價值、優先順序、接受條件；負責需求與規則的核准。</p><a class="role-jump" href="#role-po">查看情境與 Prompt</a></div>
+        <div class="card accent"><strong>SA｜系統分析師</strong><p>服務流程、角色權限、狀態轉換、API 契約；區分批准需求與原型假設。</p><a class="role-jump" href="#role-sa">查看情境與 Prompt</a></div>
+        <div class="card"><strong>UX/UI｜設計師</strong><p>資訊架構、原型可用性、RWD、無障礙、例外狀態的體驗驗收。</p><a class="role-jump" href="#role-ux">查看情境與 Prompt</a></div>
+        <div class="card"><strong>前端設計師</strong><p>將互動原型落成可測的 Vue 頁面，治理元件與版面品質。</p><a class="role-jump" href="#role-frontdesign">查看情境與 Prompt</a></div>
+        <div class="card"><strong>Frontend｜前端工程師</strong><p>功能 Worktree、共用元件、Mock／API 整合、工程品質與 Diff。</p><a class="role-jump" href="#role-frontend">查看情境與 Prompt</a></div>
+        <div class="card"><strong>Backend｜後端工程師</strong><p>API 契約、權限、狀態交易與資料完整性，配合前端整合測試。</p><a class="role-jump" href="#role-backend">查看情境與 Prompt</a></div>
+        <div class="card"><strong>QA｜測試人員</strong><p>從已核准 Scenario 建立正常、邊界、失敗、權限案例與證據。</p><a class="role-jump" href="#role-qa">查看情境與 Prompt</a></div>
+        <div class="card"><strong>資安／個資負責人</strong><p>資料最小化、風險評估、權限與供應商資料處理界線。</p><a class="role-jump" href="#role-security">查看情境與 Prompt</a></div>
+        <div class="card"><strong>DevOps｜維運</strong><p>部署計畫、環境、回復策略、監控及上線變更管制。</p><a class="role-jump" href="#role-devops">查看情境與 Prompt</a></div>
+        <div class="card"><strong>系統管理／客服</strong><p>操作回饋、障礙重現、知識庫與維運交接。</p><a class="role-jump" href="#role-support">查看情境與 Prompt</a></div>
+        <div class="card"><strong>Lead｜主管／協調者</strong><p>多專案優先順序、AI 寫入邊界、審查 Gate 與交付決策。</p><a class="role-jump" href="#role-lead">查看情境與 Prompt</a></div>
       </div>
 
-      <h3 style="margin:22px 0 12px;">可複製的職能 Prompt｜點選情境展開</h3>
+      <h3 style="margin:22px 0 12px;">各職能可複製的 Prompt｜點選情境展開</h3>
 
       <details id="role-pm">
         <summary>PM｜專案需求新增：先排計畫、找依賴，不直接叫 AI 開發</summary>
@@ -425,6 +442,22 @@
 5. 將需求來源與每項結論對應；無證據請標記假設
 目前只提出計畫，等待 PM 核准，不修改專案檔案。</pre>
           <p><b>人工驗收：</b>確認 WBS 對應合約、責任與決策者清楚，變更範圍經授權。</p>
+        </div>
+      </details>
+
+      <details id="role-po">
+        <summary>PO／業務負責人｜決定做什麼、哪些規則可交付</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>業務目標、使用者需求、法規或合約限制、SA 問題清單。<b>交付：</b>優先順序、驗收條件、核准／駁回紀錄。</p>
+          <pre class="code">請協助我檢視此次需求決策，不要替我批准。
+根據已提供的目標、合約及 SA 問題清單：
+1. 對照每項需求的使用者價值與限制
+2. 分開列出已批准、被否決、尚待確認的規則
+3. 定義完成驗收時可觀察的業務結果
+4. 檢查新增需求是否影響成本、交期與角色權限
+5. 產出要由 PO／業主親自回答的決策清單
+先產生供審核的版本，不發訊息、不修改正式規格。</pre>
+          <p><b>人工驗收：</b>PO／業務權責確認價值、範圍、業務規則與接受條件；AI 不能代簽核准。</p>
         </div>
       </details>
 
@@ -460,6 +493,22 @@
         </div>
       </details>
 
+      <details id="role-frontdesign">
+        <summary>前端設計師｜原型變成可操作的 Vue 互動與可驗收元件</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>核准流程、設計系統、原型與 API／Mock 範圍。<b>交付：</b>可操作頁面、元件狀態、RWD／無障礙紀錄。</p>
+          <pre class="code">先唯讀檢查設計系統、Vue／PrimeVue 既有元件與核准的 Scenario。
+針對指定功能：
+1. 列出資訊架構、版面、互動與表單狀態
+2. 沿用既有元件、design token 和互動模式
+3. 將 loading、empty、error、403／404／405 等體驗補齊
+4. 明確標出尚未確認的業務規則與 Mock 假設
+5. 提出同一個功能 Worktree 的最小實作與 RWD 驗收計畫
+我確認後才修改，完成時提供 Browser 證據與 Diff。</pre>
+          <p><b>人工驗收：</b>設計負責人確認互動與視覺，前端工程師審查工程品質與共用資產相容性。</p>
+        </div>
+      </details>
+
       <details id="role-frontend">
         <summary>Frontend｜規格確認後再切 Worktree，Mock 與互動留同一功能</summary>
         <div class="detail-body">
@@ -477,6 +526,21 @@ API 未確認時不得自行新增業務規則。
         </div>
       </details>
 
+      <details id="role-backend">
+        <summary>Backend｜從 SA 契約檢查 API、授權及資料交易</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>已批准流程、OpenAPI／Swagger、資料模型與現有後端實作。<b>交付：</b>契約差異、交易及錯誤處理方案、整合測試結果。</p>
+          <pre class="code">目前只做後端契約分析，不修改程式或資料庫。
+1. 以批准的 Scenario 對照 API 請求、回應、狀態及權限
+2. 檢查輸入驗證、授權、敏感欄位與資料一致性邊界
+3. 列出重複請求、逾時、部分成功、交易失敗的處置
+4. 將 Frontend Mock、OpenAPI 與實際程式碼的差異分類
+5. 設計可測試的 integration case 與 migration／回復策略
+未獲 SA／業務確認的規則不得補成既有契約。待核准再實作。</pre>
+          <p><b>人工驗收：</b>SA 確認契約與規則，後端負責人確認正確性，QA 驗證 API 行為。</p>
+        </div>
+      </details>
+
       <details id="role-qa">
         <summary>QA｜從驗收 Scenario 產生測試矩陣，而不是讓 AI 猜預期結果</summary>
         <div class="detail-body">
@@ -490,6 +554,51 @@ API 未確認時不得自行新增業務規則。
 5. 區分 PASS、FAIL、NOT_RUN、BLOCKED，不臆測成功
 請勿修改正式資料、權限設定或程式碼。</pre>
           <p><b>人工驗收：</b>測試負責人查核案例覆蓋和缺陷影響，業務負責人確認預期結果。</p>
+        </div>
+      </details>
+
+      <details id="role-security">
+        <summary>資安／個資｜在設計與開發階段提早做風險盤點</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>資料分類、權限矩陣、資料流、前後端程式及企業資安政策。<b>交付：</b>風險清單、證據、修正責任與複驗結果。</p>
+          <pre class="code">以唯讀稽核角色檢查此功能的實際風險與證據。
+1. 梳理個資與機敏資料的收集、顯示、傳輸、儲存路徑
+2. 對照權限矩陣、輸入驗證、錯誤頁與敏感資訊遮罩
+3. 分開檢查前端 UI 防呆與後端真正的授權／資料保護
+4. 參照適用 OWASP 項目，但不要在無證據時宣告漏洞
+5. 每項輸出位置、影響、重現方式、責任人與複驗條件
+不得讀取未授權資料、外傳憑證、修改正式權限或環境。</pre>
+          <p><b>人工驗收：</b>資安／個資負責人決定處置風險與複驗，前端遮罩不能取代後端權限管制。</p>
+        </div>
+      </details>
+
+      <details id="role-devops">
+        <summary>DevOps／維運｜上線前產出部署與回復計畫</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>部署架構、環境設定、CI/CD、資料變更、驗收結果與維運窗口。<b>交付：</b>部署檢查表、回復策略、監控及交接紀錄。</p>
+          <pre class="code">先唯讀盤點部署流程，不得自行部署或更動正式環境。
+1. 確認版本、環境差異、變更範圍與相依服務
+2. 盤點環境變數、密鑰讀取權限、資料 migration
+3. 列出上線前的測試、負責人與人工 Approval Gate
+4. 擬定回復條件、回復步驟、監控指標和通知窗口
+5. 將部署與資料操作的風險標成待確認或阻塞
+先交維運／專案負責人核准，再安排正式操作。</pre>
+          <p><b>人工驗收：</b>維運負責人審核部署及回復可行性，正式上線由有權責人員核准。</p>
+        </div>
+      </details>
+
+      <details id="role-support">
+        <summary>系統管理／客服｜將使用問題變成可追蹤修復工作</summary>
+        <div class="detail-body">
+          <p><b>輸入：</b>去識別化通報、操作路徑、系統版本、錯誤紀錄與支援知識庫。<b>交付：</b>問題分類、重現方式、Issue 與操作說明。</p>
+          <pre class="code">請先整理使用者通報，不存取或更改正式資料。
+1. 隱去個資、帳號、Token 與敏感截圖內容
+2. 分辨操作問題、系統缺陷、權限問題及需求變更
+3. 整理環境、版本、操作步驟、預期／實際結果
+4. 無法重現或缺少依據時標成待確認，禁止編造原因
+5. 產生可交 QA／SA 的 Issue 草稿和使用者回覆重點
+須由支援負責人審查後才建立對外回覆或修復排程。</pre>
+          <p><b>人工驗收：</b>客服／維運確認問題分類與外部回覆，QA 確認缺陷可重現，PM 決定排程。</p>
         </div>
       </details>
 
@@ -510,7 +619,58 @@ API 未確認時不得自行新增業務規則。
         </div>
       </details>
 
-      <div class="callout"><b>把六種角色串起來：</b>PM 定交付與時程 → SA 定可驗收的規格 → UX/UI 定使用體驗 → Frontend 實作 → QA 留測試證據 → 主管決定是否可交付。Orca 負責協作與可追溯工作；人負責業務決策和品質責任。</div>
+      <div class="callout"><b>把各職能串起來：</b>PM 整理計畫 → PO 核准業務 → SA 建立契約 → UX/UI／前端設計師定義體驗 → 前後端實作 → QA／資安驗收 → 維運與支援交接 → 主管依權責決定交付。Orca 負責協作與可追溯工作；人負責業務決策和品質責任。</div>
+    </div>
+  </section>
+
+  <section id="teamwork" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">跨職能協作 · 任務與交付</p><h2>從 Issue、規格、Worktree 到正式維運</h2></div>
+        <p>Orca 可以把任務與程式工作區連起來，但專案里程碑、業務決策與 Agent 工作狀態是不同概念。各職能使用同一個需求來源，靠交付證據而不是聊天共識銜接。</p>
+      </div>
+      <div class="sop" aria-label="專案端到端交付流程">
+        <span class="node">需求／Issue</span><span class="arrow">→</span>
+        <span class="node spec">SA／PO 核准</span><span class="arrow">→</span>
+        <span class="node">設計／實作</span><span class="arrow">→</span>
+        <span class="node">QA／資安</span><span class="arrow">→</span>
+        <span class="node">PR／部署</span><span class="arrow">→</span>
+        <span class="node">監控／維運</span>
+      </div>
+      <h3 style="margin:18px 0 12px;">責任矩陣｜誰執行、誰批准、看什麼證據？</h3>
+      <div class="table-scroll">
+        <table class="workflow-table">
+          <thead><tr><th scope="col">階段</th><th scope="col">主要執行</th><th scope="col">人工決策／核准</th><th scope="col">必要證據與規格同步</th></tr></thead>
+          <tbody>
+            <tr><td>需求／變更</td><td>PM、PO</td><td>PO／業主</td><td>範圍、決策、Issue、待確認規則；新增需求先進 Change 草稿</td></tr>
+            <tr><td>流程／契約</td><td>SA、UX/UI、後端</td><td>SA／業務權責</td><td>流程、角色、狀態、Scenario、OpenAPI 與 Mock 差異；確認意圖再更新規格</td></tr>
+            <tr><td>設計／實作</td><td>前端設計、前後端工程</td><td>技術與設計負責人</td><td>功能 Worktree、Diff、元件／契約檢查、測試；需求改動時連同 Change 同步</td></tr>
+            <tr><td>品質／風險</td><td>QA、資安</td><td>QA／資安／業務</td><td>Scenario、測試矩陣、缺陷與風險複驗；未執行項目標 NOT_RUN／BLOCKED</td></tr>
+            <tr><td>上線／維運</td><td>DevOps、客服／系統管理</td><td>有權責的上線主管</td><td>PR、核准、部署、回復方案、監控、交接；已驗證現況才成為現行 Spec</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid two" style="margin-top:14px;">
+        <div class="card accent">
+          <strong>PM 實務：從 Issue 走到可驗收交付</strong>
+          <p>1. 在公司既有 GitHub Projects／GitHub Issues、GitLab、Linear 或 Jira 建立工作項目。<br>
+          2. 由 SA 附上可驗收 Scenario、已批准決策與待確認事項。<br>
+          3. 在實際連接任務來源的 Orca 中，將 Issue 關聯到正確 Repo 的功能 Worktree。<br>
+          4. 追蹤 PR、CI、驗收、風險及上線 Gate；由 PM 關閉已完成的交付項目。</p>
+        </div>
+        <div class="card">
+          <strong>狀態不能混為一談</strong>
+          <p><b>Issue／Projects 狀態：</b>代表工作是否完成與誰負責。<br><b>Worktree／PR／CI：</b>代表程式版本、審查與測試證據。<br>
+          <b>Agent Dashboard 的 Working／Done／Needs You：</b>代表代理的執行或等待狀態，<b>不等於 PM 驗收或正式交付完成</b>。</p>
+        </div>
+      </div>
+      <h3 style="margin:20px 0 12px;">進階功能：何時使用？</h3>
+      <div class="grid three">
+        <div class="card"><strong>Skills／MCP</strong><p>把公司重複的規格稽核、品牌檢查、前端資安與 API 對照流程標準化。檢查來源和權限，避免跨專案讀取不該看的資料。</p></div>
+        <div class="card"><strong>Agent Dashboard／Checkpoint</strong><p>適合監督多個 Agent、紀錄已完成／未完成／卡住項目；仍須以 Issue、Git 與驗收證據作為實際交付依據。</p></div>
+        <div class="card"><strong>Automations／SSH</strong><p>有固定節奏或遠端開發需求時才啟用；先確認觸發時間、執行主機、授權和是否可能修改正式環境。</p></div>
+      </div>
+      <div class="callout"><b>版本與連線注意：</b>此流程是整合工作法，不代表所有提供者在你的 Orca 都已登入或已取得寫入權限。官方參考：<a href="https://www.onorca.dev/docs/review/github" target="_blank" rel="noopener noreferrer">GitHub Tasks／PR／Actions</a>、<a href="https://www.onorca.dev/docs/review/jira" target="_blank" rel="noopener noreferrer">Jira</a>、<a href="https://www.onorca.dev/docs/model/worktrees" target="_blank" rel="noopener noreferrer">Worktree 與 Issue 關聯</a>。</div>
     </div>
   </section>
 
@@ -605,7 +765,7 @@ orca orchestration worker-read --dispatch &lt;dispatch_id&gt; --limit 50 --json<
   <section id="openspec" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">6 · Orca × OpenSpec</p><h2>Orca 管「工作不要亂」，OpenSpec 管「需求不要歪」</h2></div>
+        <div><p class="eyebrow">6 · Orca × OpenSpec</p><h2>Orca 管工作可追溯，OpenSpec 管規格與驗證同步</h2></div>
         <p>OpenSpec 不應只放在文件最後。它要出現在開工、AI 接手、UI 修改、Diff Review 與完成驗收。</p>
       </div>
 
@@ -615,10 +775,47 @@ orca orchestration worker-read --dispatch &lt;dispatch_id&gt; --limit 50 --json<
         <div class="card accent"><strong>收工前：拿來對答案</strong><p>OpenSpec 看「應該做什麼」、Browser 看「實際長什麼」、Diff 看「程式改了什麼」。三個一起對。</p></div>
       </div>
 
+      <div class="callout"><b>請區分兩種規格：</b><code>openspec/changes/</code> 用來描述待核准／待實作的意圖；<code>openspec/specs/</code> 僅代表已確認、已實作、已驗證的現行行為。若批准需求與實作不同，先標 SPEC_DRIFT 並指定 Owner，不可自動改寫任何一邊。<b>修改程式時必須在同一變更內評估並同步修改受影響規格與測試。</b></div>
+
       <div class="grid two" style="margin-top:14px;">
         <div class="card"><strong>每個 Orca 功能旁邊都問一句</strong><p>這一步 OpenSpec 要幫我定範圍、接手、確認 UI 行為，還是驗收？</p></div>
         <div class="card"><strong>未知就保持未知</strong><p>SA / prototype / Mock 沒證據的業務規則，不要讓 AI 自己補成「既定規格」。標成待確認。</p></div>
       </div>
+    </div>
+  </section>
+
+  <section id="safety" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">AI Agent · 權限與資料治理</p><h2>先確認 Agent 能做什麼，再決定放手到什麼程度</h2></div>
+        <p>Orca 可提高 Agent 自主性；Worktree 只隔離 Git 工作目錄，不是完整作業系統安全沙箱。對政府與客戶專案，權限、資料與部署核准仍要獨立把關。</p>
+      </div>
+      <div class="grid three">
+        <div class="card accent"><strong>啟動權限</strong><p>先在 Settings → Agents → Agent Permissions 檢查 Manual／Auto／Yolo；部分 Agent 預設可能帶高自主權旗標。依專案敏感度和組織政策調整。</p></div>
+        <div class="card"><strong>資料與憑證</strong><p>正式 API Key、Token、個資、機敏客戶檔案、未授權連接器不得提供給 Agent。使用去識別化資料、最小權限、獨立測試環境。</p></div>
+        <div class="card"><strong>不可逆操作</strong><p>正式部署、刪除資料、權限調整、強制推送、資料庫 migration、對外寄送與付款相關動作都要指定人審核，不能因 Worker 回報完成而自動放行。</p></div>
+      </div>
+      <div class="grid two" style="margin-top:14px;">
+        <div class="card"><strong>Skills／MCP 與模型供應商</strong><p>先檢查套件來源、安裝指令、授權範圍、資料外傳路徑和供應商政策；產品遙測設定不等於模型服務資料保證。未經批准不要新增具有客戶資料寫入權的連接器。</p></div>
+        <div class="card"><strong>前端資安與個資遮罩</strong><p>姓名遮罩、身分證部分隱碼、404／405／403 畫面及表單檢核是體驗與防護的一部分；真正的存取控制與敏感資料保護必須在後端可信任邊界落實。</p></div>
+      </div>
+      <h3 style="margin:20px 0 12px;">規格與文件要同步修改，不能只修改 AI Prompt</h3>
+      <div class="steps">
+        <div class="step"><b>1</b><span><strong>先確認來源：</strong>業務意圖看核准需求，現行行為看 API、程式與實測。不同時標成 SPEC_DRIFT，交 SA／業務負責人判斷。</span></div>
+        <div class="step"><b>2</b><span><strong>同一變更同步：</strong>需求或功能改變時，更新 Change／Scenario、受影響設計與 API／Mock 契約，以及測試案例；未實作／未確認規則留在 Change。</span></div>
+        <div class="step"><b>3</b><span><strong>經驗證才成現行規格：</strong>只把確認且實作驗證的行為整理到 openspec/specs/，別讓 Mock 或 AI 推論變成系統真實規則。</span></div>
+        <div class="step"><b>4</b><span><strong>本站也要同步：</strong>變更教學章節或職能時，同一個 PR 更新 <a href="SPEC.md">SPEC.md</a>、兩份 HTML、README 與相關 tests，通過驗證後才整合。</span></div>
+      </div>
+      <div class="prompt">
+        <div class="label">規格漂移檢查 Prompt（預設唯讀）</div>
+        <pre>請以唯讀稽核角度比較已批准需求、OpenSpec、SA 原型、Mock、OpenAPI、前後端實作與測試。
+區分：已確認業務意圖／可重現現況／推測／衝突。
+標出 INTENT_GAP、CONTRACT_GAP、IMPLEMENTATION_DRIFT、SPEC_DRIFT、UNKNOWN，
+每一項列來源路徑、影響、責任人、建議的最小修正。
+沒有批准和驗證的規則不得寫入 openspec/specs/。
+只回報差異；經批准後才更新 Change、程式、文件與驗收測試。</pre>
+      </div>
+      <p class="note">官方權限參考：<a href="https://www.onorca.dev/docs/agents/supported" target="_blank" rel="noopener noreferrer">Supported agents &amp; permission defaults</a>、<a href="https://www.onorca.dev/docs/settings" target="_blank" rel="noopener noreferrer">Settings</a>。請依實際 Orca 版本確認設定名稱。</p>
     </div>
   </section>
 
@@ -720,7 +917,7 @@ orca skills get orca-emulator-android</pre>
         <div class="term"><b>Worker</b><span>接下 Task 的執行者，透過 ask 提問、worker_done 回報。</span></div>
         <div class="term"><b>Run / Task / Dispatch</b><span>協調收件匣／工作內容／一次實際派工。</span></div>
         <div class="term"><b>Diff</b><span>這次到底改了哪些程式。AI 說 Done 之後先看它。</span></div>
-        <div class="term"><b>OpenSpec</b><span>功能應該做到哪裡的規格與驗收邊界。</span></div>
+        <div class="term"><b>OpenSpec</b><span>專案需求與現行可觀察行為的可追溯規格，待變更與已驗證版本需分開。</span></div><div class="term"><b>Issue／Task</b><span>工作追蹤項目，不等於 Agent 的工作狀態。</span></div><div class="term"><b>Approval Gate</b><span>由具權責的人確認範圍、業務、資安或部署是否可以繼續。</span></div><div class="term"><b>SPEC_DRIFT</b><span>經批准的需求與實際程式行為不同，需回報並決定修正方向。</span></div>
         <div class="term"><b>Checkpoint</b><span>留給自己或下一個 AI 的進度記錄：完成、未完成、下一步、限制。</span></div>
       </div>
 
@@ -749,22 +946,17 @@ orca screenshot --worktree active --json</pre>
 
   <section class="section">
     <div class="section-card">
-      <p class="eyebrow">最後只要記這兩條</p>
-      <div class="roles">
-        <div class="role">
-          <h3>設計師</h3>
-          <div class="flow"><span class="pill">開功能</span><span class="arrow">→</span><span class="pill">AI 做</span><span class="arrow">→</span><span class="pill">看畫面</span><span class="arrow">→</span><span class="pill">留意見</span><span class="arrow">→</span><span class="pill">收成果</span></div>
-        </div>
-        <div class="role">
-          <h3>前端工程師</h3>
-          <div class="flow"><span class="pill">branch</span><span class="arrow">→</span><span class="pill">worktree</span><span class="arrow">→</span><span class="pill spec">spec</span><span class="arrow">→</span><span class="pill">dev / test</span><span class="arrow">→</span><span class="pill">diff / commit</span></div>
-        </div>
+      <p class="eyebrow">最後記住三種責任</p>
+      <div class="grid three">
+        <div class="card"><strong>PM／PO／SA</strong><p>來源 → 計畫 → 核准規則 → Scenario → 變更可追溯</p></div>
+        <div class="card"><strong>設計／工程／QA</strong><p>規格 → 原型／實作 → 測試證據 → Diff → 人工驗收</p></div>
+        <div class="card"><strong>資安／維運／主管</strong><p>權限與風險 → 上線 Gate → 回復方案 → 維運交接</p></div>
       </div>
       <p class="note"><b>一句話：</b>Orca 管「工作不要亂」，OpenSpec 管「需求不要歪」。</p>
     </div>
   </section>
 
-  <div class="sources">介面圖來源：Orca 官網與 Orca Docs；AI 換班案例使用你提供的 Orca 中文介面截圖。官方介面可能隨版本與語言略有差異。</div>
+  <div class="sources">介面圖來源：Orca 官網與 Orca Docs；AI 換班案例使用你提供的 Orca 中文介面截圖。產品功能隨版本與授權而異。本網站的內容維護契約見 <a href="SPEC.md">SPEC.md</a>。</div>
 </main>
 
 <script>
@@ -918,6 +1110,21 @@ orca screenshot --worktree active --json</pre>
       </div>`;
     updateNav();
   }
+
+  // Reflect page navigation, hero links, deep links, and browser history.
+  const sectionLinks = Array.from(document.querySelectorAll('.topnav a[href^="#"]'));
+  function updateSectionNav(){
+    const activeHash = window.location.hash;
+    sectionLinks.forEach((link)=>{
+      if (activeHash && link.getAttribute("href") === activeHash) {
+        link.setAttribute("aria-current", "location");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+  window.addEventListener("hashchange", updateSectionNav);
+  updateSectionNav();
 
   renderNav();
   render();
