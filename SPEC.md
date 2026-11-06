@@ -125,7 +125,7 @@
 <!-- watchdog-contract:start -->
 | 能力 | 分類 | 本手冊必須說清楚的行為 |
 | --- | --- | --- |
-| Worker Heartbeat | Orca 原生 | 長時間工作的 Worker 應回報 heartbeat；訊息需帶 taskId 與 dispatchId。 |
+| Worker Heartbeat | Orca 原生 | Worker preamble 明確要求時才回報 heartbeat；訊息需帶 taskId 與 dispatchId，不得自行假設固定週期。 |
 | Agent Dashboard | Orca 原生（Experimental） | Settings → Experimental 啟用；看板欄位為 Needs You／Working／Done／Idle，紅點代表 blocked／interrupted／failed。依 OSC title sequence 與 Agent status hooks 判斷；是狀態視圖，不是程序存活保證。 |
 | Mobile Heartbeat | Orca 原生 | 手機追蹤桌面 Agent process heartbeat；卡住的 spinner 可強制刷新 Worktree row。這不是 Worker auto-recovery。 |
 | Runtime Supervisor | Orca 原生（平台受限） | 監督 Orca Server 程序並在異常退出後重新啟動；不是個別 Worker Watchdog。官方 service install 支援 macOS／Linux，Windows 尚不支援。 |
@@ -136,7 +136,7 @@
 - **WATCH-01**：不得宣稱 Orca 已提供通用 Worker Watchdog，可在 heartbeat timeout 後自動 kill／restart／retry。官方文件未承諾這種自動故障恢復。
 - **WATCH-02**：Worker heartbeat、Agent Dashboard 狀態、Mobile heartbeat、Runtime Supervisor 必須分別說明，不可混稱同一種心跳。
 - **WATCH-03**：Orchestration `check --wait` 等待期間每 15 秒寫到 stderr 的 JSON heartbeat，是等待命令本身的訊號，不是 Worker heartbeat interval。
-- **WATCH-04**：官方沒有承諾固定 Worker heartbeat 秒數；Watchdog timeout 由團隊依任務類型與長指令設定，不得把 15 秒當成 Worker 週期。
+- **WATCH-04**：Worker 只有在目前 preamble 明確要求時才送 heartbeat，且需帶 taskId／dispatchId；官方沒有承諾固定 Worker heartbeat 秒數。Watchdog timeout 由團隊依任務類型與長指令設定，不得把 15 秒當成 Worker 週期。
 - **WATCH-05**：疑似失聯先檢查 Worker／Dispatch／Terminal；只有確認前一個 Dispatch 安全結束，才可明確 retry，並重新指定 Worktree／host placement。
 - **WATCH-06**：Runtime Supervisor 只監督 Orca Server，不可描述為個別 Worker 的看門狗。
 - **WATCH-07**：Agent Dashboard 的 Needs You／Working／Done／Idle 是看板欄位；紅點代表 blocked／interrupted／failed。它是 Agent 狀態，不是業務交付狀態。
