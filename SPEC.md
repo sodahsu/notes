@@ -45,6 +45,7 @@
 - **WEB-04**：鏡像 HTML 完全一致，且新增段落不能破壞現有 JavaScript。
 - **WEB-05**：導航、內部連結、角色區塊或展開數量變更時，測試**不得沿用過期固定數量**；應以此契約及實際目標做檢查。
 - **WEB-06**：本 repo 的 PR 應由 `.github/workflows/verify-guide.yml` 以唯讀權限執行 `node --test tests/*.test.mjs`，自動擋下導航、角色、鏡像與互動回歸；CI 未跑時必須標記為 NOT_RUN，不能宣稱通過。
+- **WEB-07**：每個 PR 需執行桌面 1280×800 與手機 390×844 的真實 Chromium Smoke Test（`tests/browser-smoke.mjs`），驗證 13 個導覽、5 個痛點切換、12 個職能連結、鍵盤展開、無 JS 例外及非預期橫向溢出。自動化瀏覽器測試不能取代正式 GitHub Pages 部署後確認。
 
 ## 3. 角色情境契約
 
@@ -103,7 +104,7 @@
 2. **本 PR 同步修改規格。** 若要新增／刪除／更名章節或職能，更新本檔的契約表及受影響的 `WEB-*`、`ROLE-*`、`PLAN-*`、`FLOW-*`、`SAFE-*`。若未影響規格，在 PR 清楚說明「規格無影響」及理由。
 3. **同步內容。** `index.html` 與 `orca-openspec-designer-guide-with-ui.html` 必須逐字一致；若影響入門或章節路徑，同步 `README.md`。
 4. **同步測試。** 修改使用者可觀察的操作與連結時同步更新 `tests/*.test.mjs`；測試從本檔契約提取角色／導航，而不是各自寫死互相矛盾的數量。
-5. **驗證與證據。** 執行 `node --test tests/*.test.mjs`，並按影響面檢查桌面／手機、導覽、展開、常見痛點切換；在 PR 寫出 PASS／FAIL／NOT_RUN／BLOCKED 與理由。
+5. **驗證與證據。** 執行 `node --test tests/*.test.mjs` 與 CI 的 `node --test tests/browser-smoke.mjs`（含安裝 Playwright/Chromium），並按影響面檢查桌面／手機、導覽、展開、常見痛點切換；在 PR 寫出 PASS／FAIL／NOT_RUN／BLOCKED 與理由。
 6. **尊重來源與核准。** 官方功能應附來源或版本；業務意圖與現行實作若衝突，標成 `SPEC_DRIFT` 並列出負責人，不自行選一邊。沒有經核准的推測不得寫成既有行為。
 7. **核准後整合。** 未通過驗證或尚未核准，不能宣告完成、部署或合併。
 
