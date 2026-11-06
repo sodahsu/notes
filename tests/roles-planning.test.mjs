@@ -55,6 +55,7 @@ for (const page of pages) {
     for (const id of allAnchors) assert.ok(ids.includes(id), "broken anchor: #" + id);
     for (const section of sections) {
       assert.ok(html.includes('<section id="' + section + '"'), "missing page section: " + section);
+      assert.ok(allAnchors.includes(section), "page section must be reachable from a link: #" + section);
     }
   });
 
