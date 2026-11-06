@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Orca 跨職能工作指南：從第一個 AI 開發任務、角色分工、Orchestration、Worker 心跳與 Watchdog，到安全驗收與規格同步。">
-  <title>Orca 使用指南｜從第一個任務到 AI 艦隊監督</title>
+  <meta name="description" content="Orca 使用指南：從實際工作案例與職能入口開始，學習 AI 開發、Worktree、多 Agent、Worker 心跳、Watchdog 與安全交付。">
+  <title>Orca 使用指南｜先選工作，再學會 AI 協作</title>
   <style>
     :root{
       --bg:#f6f7f9;--surface:#fff;--subtle:#f0f2f5;--text:#17191d;--muted:#69707d;
@@ -133,55 +133,41 @@
 <main class="wrap">
 <nav class="topnav" aria-label="快速導覽">
     <a href="#why">Orca 能幫什麼</a>
+    <a href="#journey">看實際案例</a>
     <a href="#crossroles">依職能找用法</a>
-    <a href="#teamwork">從需求到交付</a>
+    <a href="#teamwork">團隊怎麼交付</a>
     <a href="#quickstart">第一次開始</a>
     <a href="#planning">計畫與規格</a>
     <a href="#orchestration">多 Agent 協作</a>
     <a href="#watchdog">心跳與故障處理</a>
     <a href="#openspec">OpenSpec 同步</a>
     <a href="#safety">安全與權限</a>
-    <a href="#reference">指令速查</a>
   </nav>
 
 <section class="hero">
-    <p class="eyebrow">ORCA GUIDE · FROM FIRST TASK TO SUPERVISED AI FLEET</p>
-    <h1>讓 AI 開發有分工、有進度，也有退場機制。</h1>
-    <p class="lead">Orca 把多個 AI coding agents、Git Worktree、Terminal、Browser、Diff 與 Git 放在同一個工作環境。從一個任務開始，逐步擴大成可追蹤、可監督、可驗收的 AI 開發流程。</p>
+    <p class="eyebrow">ORCA GUIDE · START WITH YOUR WORK, NOT THE TOOL</p>
+    <h1>不要先學 Orca。先選一件想完成的工作。</h1>
+    <p class="lead">把需求整理、畫面修改、功能開發與多 AI 協作，放進同一條可追蹤的工作流程。你不需要一次學會所有功能，只要從自己的工作開始。</p>
 
-    <div class="dual-flow">
-      <div class="dual-label">一個任務</div>
-      <div class="flow">
-        <span class="pill">需求與規格</span><span class="arrow">→</span>
-        <span class="pill">獨立 Worktree</span><span class="arrow">→</span>
-        <span class="pill spec">Agent 執行</span><span class="arrow">→</span>
-        <span class="pill">Browser / Diff</span><span class="arrow">→</span>
-        <span class="pill">人工驗收與交付</span>
-      </div>
-      <div class="dual-label">多 Agent</div>
-      <div class="flow">
-        <span class="pill">Coordinator</span><span class="arrow">→</span>
-        <span class="pill">Tasks / Dispatch</span><span class="arrow">→</span>
-        <span class="pill spec">Worker + Heartbeat</span><span class="arrow">→</span>
-        <span class="pill">Watchdog 檢查</span><span class="arrow">→</span>
-        <span class="pill">Review / Recovery</span>
-      </div>
+    <div class="grid three" style="margin-top:22px;">
+      <div class="card accent"><strong>把需求變清楚</strong><p>從會議紀錄、訪談或既有系統，整理出流程、角色、待確認問題與驗收條件。</p></div>
+      <div class="card"><strong>把畫面做出來</strong><p>直接在 Browser 指出畫面問題，讓 Agent 修改，再檢查桌機、手機與 Diff。</p></div>
+      <div class="card"><strong>讓 AI 工作可管理</strong><p>用 Worktree 隔離功能，用 Orchestration 分工，透過狀態、心跳與驗收證據監督。</p></div>
     </div>
 
-    <div class="grid four" style="margin-top:22px;">
-      <a class="card entry" href="#crossroles"><strong>我是 PM / SA</strong><small>把需求整理成計畫、流程、Scenario 與可驗收規格。</small></a>
-      <a class="card entry" href="#designer"><strong>我是設計師</strong><small>用 Browser / Design Mode 指出問題，直接檢查畫面。</small></a>
-      <a class="card entry" href="#frontend"><strong>我是前端 / 工程師</strong><small>Worktree 隔離任務，並行實作、測試、Review。</small></a>
-      <a class="card entry" href="#watchdog"><strong>我要監督 AI 艦隊</strong><small>看 Agent 狀態、Worker 心跳、阻塞與恢復方式。</small></a>
+    <h3 style="margin:24px 0 12px;">你現在最想完成哪件事？</h3>
+    <div class="grid four">
+      <a class="card entry role-jump" href="#role-pm"><strong>我是 PM／SA</strong><small>整理需求、服務流程、規格與待決策事項。</small></a>
+      <a class="card entry role-jump" href="#role-ux"><strong>我是設計師</strong><small>檢查原型、改善互動、RWD 與無障礙。</small></a>
+      <a class="card entry role-jump" href="#role-frontend"><strong>我是工程師</strong><small>開功能 Worktree、實作、測試與 Review。</small></a>
+      <a class="card entry" href="#watchdog"><strong>我是團隊主管</strong><small>監督多個 Agent，及早發現卡住與失聯。</small></a>
     </div>
     <div class="cta-row">
-      <a class="btn primary" href="#quickstart">先完成第一個任務 →</a>
-      <a class="btn" href="#teamwork">看完整交付流程 →</a>
-      <a class="btn" href="#watchdog">看心跳與故障處理 →</a>
-      <a class="btn" href="#problems">常見卡關排查 →</a>
-      <a class="btn" href="#mobile">手機／WebView 測試 →</a>
+      <a class="btn primary" href="#journey">先看 Orca 能完成什麼 →</a>
+      <a class="btn" href="#quickstart">直接開始第一個任務 →</a>
+      <a class="btn" href="#problems">我遇到問題，需要排查 →</a>
     </div>
-    <div class="callout"><b>先釐清 Orca 的定位：</b>Orca 是面向 coding agents 的開發環境，不是 AI 模型、不是 Jira／專案管理系統，也不是 no-code 工具。PM／SA 可在需要讀取 Repo、規格與開發上下文時參與 Planning；真正的需求核准與專案追蹤仍由既有權責與工具負責。</div>
+    <div class="callout"><b>先說清楚：</b>Orca 是 AI coding-agent 開發環境，不是模型、Jira 或 no-code 工具。若只是一般文字整理，普通 AI 聊天可能更簡單；當工作需要讀取 Repo、規格、原型、程式、Browser 或多 Agent 協作時，Orca 才更有價值。</div>
   </section>
 
 <section id="why" class="section">
@@ -207,10 +193,69 @@
     </div>
   </section>
 
+<section id="journey" class="section">
+    <div class="section-card">
+      <div class="section-head">
+        <div><p class="eyebrow">02 · SEE THE RESULT / 看實際案例</p><h2>Orca 不是多一個聊天視窗，而是讓工作從問題走到可交付成果</h2></div>
+        <p>先看你熟悉的工作，再理解背後用了哪些 Orca 功能。每個案例都標出 Agent 能做的事，以及仍需由人決定的部分。</p>
+      </div>
+
+      <div class="grid three">
+        <article class="card accent">
+          <p class="eyebrow">PM / SA · 需求與規格</p>
+          <h3>把一堆需求討論，整理成可以開發的工作</h3>
+          <div class="steps" style="margin-top:12px;">
+            <div class="step"><b>1</b><span>提供會議紀錄、現有流程、Repo／規格等可用來源。</span></div>
+            <div class="step"><b>2</b><span>Agent 唯讀整理角色、流程、狀態、例外與未知事項。</span></div>
+            <div class="step"><b>3</b><span>產出流程草稿、Scenario、需求差異與決策清單。</span></div>
+          </div>
+          <div class="callout"><b>成果：</b>可審查的需求與規格草稿，不是 AI 自動核准的業務規則。</div>
+          <p class="note">適合：需求反覆、SA 原型不一致、前後端對流程理解不同。</p>
+          <a class="role-jump" href="#role-sa">看 SA 實際 Prompt →</a>
+        </article>
+
+        <article class="card">
+          <p class="eyebrow">UX / DESIGN · 畫面與互動</p>
+          <h3>把「這個畫面不順」變成可定位、可修改的問題</h3>
+          <div class="steps" style="margin-top:12px;">
+            <div class="step"><b>1</b><span>在 Orca Browser 開啟正在開發的頁面。</span></div>
+            <div class="step"><b>2</b><span>用 Design Mode 點選元件，描述預期互動與畫面。</span></div>
+            <div class="step"><b>3</b><span>Agent 修改後，檢查 Diff、桌機與手機狀態。</span></div>
+          </div>
+          <div class="callout"><b>成果：</b>可操作的介面修改與可檢查的變更紀錄。</div>
+          <p class="note">適合：AI 產生的 HTML 雛形品質不一、畫面需要快速迭代。</p>
+          <a class="role-jump" href="#role-ux">看設計師實際 Prompt →</a>
+        </article>
+
+        <article class="card">
+          <p class="eyebrow">ENGINEERING · 開發與協作</p>
+          <h3>讓多個功能並行開發，仍然知道誰在做、如何驗收</h3>
+          <div class="steps" style="margin-top:12px;">
+            <div class="step"><b>1</b><span>每個可獨立驗收的功能建立自己的 Worktree。</span></div>
+            <div class="step"><b>2</b><span>Coordinator 分派 Task，Worker 回報進度與阻塞。</span></div>
+            <div class="step"><b>3</b><span>檢查 Heartbeat、Diff、測試與 PR，再決定整合。</span></div>
+          </div>
+          <div class="callout"><b>成果：</b>隔離的功能變更、測試證據與可追蹤交付。</div>
+          <p class="note">適合：多個 Agent 同時開發、任務容易互相踩檔或需要長時間執行。</p>
+          <a class="role-jump" href="#orchestration">看多 Agent 協作方式 →</a>
+        </article>
+      </div>
+
+      <h3 style="margin:24px 0 12px;">依你的熟悉程度，逐步學習</h3>
+      <div class="grid four">
+        <a class="card entry" href="#quickstart"><strong><span class="badge">LEVEL 1</span> 先完成一件事</strong><p>一個 Agent、一個任務。先學會開始、看成果與驗收。</p></a>
+        <a class="card entry" href="#designer"><strong><span class="badge">LEVEL 2</span> 日常工作流</strong><p>Browser、Design Mode、Worktree、Diff 與測試。</p></a>
+        <a class="card entry" href="#orchestration"><strong><span class="badge">LEVEL 3</span> 多 Agent 協作</strong><p>Coordinator、Worker、Task、Heartbeat 與訊息處理。</p></a>
+        <a class="card entry" href="#watchdog"><strong><span class="badge">LEVEL 4</span> 團隊治理</strong><p>Watchdog、Recovery、資安權限、規格同步與交付 Gate。</p></a>
+      </div>
+      <p class="note">不需要從 Level 1 一路讀到 Level 4。依工作需求進入即可；只有在多任務、長時間或多人協作時，才需要進階監督能力。</p>
+    </div>
+  </section>
+
 <section id="crossroles" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">02 · ROLE / 依職能找用法</p><h2>先選你要完成的工作，不必先學完整個 Orca</h2></div>
+        <div><p class="eyebrow">03 · ROLE / 依職能找用法</p><h2>先選你要完成的工作，不必先學完整個 Orca</h2></div>
         <p>每個職能只需要先學與自己工作相關的部分。以下是 Orca + Agent 的建議工作法，不代表 Orca 內建 PM／SA 專屬管理功能；PM／SA 仍使用公司既有的 Issue、專案與核准流程。</p>
       </div>
       <div class="grid three">
@@ -427,7 +472,7 @@ API 未確認時不得自行新增業務規則。
 <section id="teamwork" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">03 · WORKFLOW / 從需求到交付</p><h2>每一棒都有負責人、交付物與驗收證據</h2></div>
+        <div><p class="eyebrow">04 · WORKFLOW / 從需求到交付</p><h2>每一棒都有負責人、交付物與驗收證據</h2></div>
         <p>把 AI 導入團隊，不是讓每個人各自開聊天視窗，而是讓需求、規格、程式、測試與上線有同一條可追溯的交付鏈。Orca 可以串起任務與 Worktree；專案進度和業務核准仍以既有系統為準。</p>
       </div>
       <div class="sop" aria-label="專案端到端交付流程">
@@ -478,47 +523,73 @@ API 未確認時不得自行新增業務規則。
 <section id="quickstart" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">04 · START / 第一次使用</p><h2>第一次開始：先完成一個小任務</h2></div>
-        <p>前提是 Orca 與你要用的 Agent CLI／帳號已安裝完成。第一次設定可能超過 5 分鐘；先完成一個小功能，比一次學完所有功能更有效。</p>
+        <div><p class="eyebrow">05 · START / 第一次開始</p><h2>第一次使用，不要先學全部功能；先選一條適合你的路徑</h2></div>
+        <p>共通前提是 Orca 與你要使用的 Agent CLI／帳號已安裝並完成登入。第一次設定可能超過五分鐘，先完成一個小任務即可。</p>
       </div>
 
       <div class="grid three">
         <div class="card">
-          <strong>下載 Orca</strong>
-          <p>官方提供 macOS、Windows、Linux。Windows 10/11 x64、macOS Apple Silicon / Intel、Linux AppImage。</p>
+          <strong>① 下載並安裝 Orca</strong>
+          <p>從官方下載對應 macOS、Windows 或 Linux 的版本。</p>
           <div class="cta-row"><a class="btn primary" href="https://www.onorca.dev/download" target="_blank" rel="noopener noreferrer">官方下載 ↗</a></div>
         </div>
         <div class="card">
-          <strong>macOS 也能用 Homebrew</strong>
-          <pre class="code">brew install --cask stablyai/orca/orca</pre>
+          <strong>② 準備你已使用的 Agent</strong>
+          <p>例如 Claude Code、Codex。Orca 是工作環境，不是另一個模型；先完成 CLI 與帳號登入。</p>
         </div>
         <div class="card">
-          <strong>第一次開啟</strong>
-          <p>把現有 Git repo 加進 Orca，再選你已經在用的 Claude Code、Codex 等 Agent。Orca 本身不是另一個模型。</p>
+          <strong>③ 加入既有專案</strong>
+          <p>選擇你有權限的 Git Repository。第一次先用測試專案或低風險任務，不要直接讓 Agent 修改正式環境。</p>
         </div>
       </div>
 
-      <div class="steps" style="margin-top:16px;">
-        <div class="step"><b>1</b><span><strong>加入你的 Git repo。</strong> 先從現有專案開始，不用為 Orca 另外建專案。</span></div>
-        <div class="step"><b>2</b><span><strong>從工作整合分支開一個功能 Worktree。</strong> 例如「會員管理」。</span></div>
-        <div class="step"><b>3</b><span><strong>先讀 / 補 OpenSpec。</strong> 先確定範圍，再讓 AI 動手。</span></div>
-        <div class="step"><b>4</b><span><strong>啟動 Agent，跑 dev server。</strong> 需要 UI 時，把 Browser 一起開起來。</span></div>
-        <div class="step"><b>5</b><span><strong>AI 做完先看 Diff。</strong> 驗證通過後再 Stage、Commit、Push。</span></div>
+      <div class="grid two" style="margin-top:16px;">
+        <div class="card accent">
+          <p class="eyebrow">PATH A · PM / PO / SA</p>
+          <h3>我先整理需求、流程或規格</h3>
+          <p>如果需要讀取專案 Repo、既有規格、Mock 或 API 上下文，才在 Orca 開啟該專案與 Agent。純會議紀錄整理不一定需要 Orca。</p>
+          <div class="steps" style="margin-top:12px;">
+            <div class="step"><b>1</b><span>提供需求來源，要求 Agent 先唯讀調查。</span></div>
+            <div class="step"><b>2</b><span>請它區分已確認、推論、待確認，列出來源證據。</span></div>
+            <div class="step"><b>3</b><span>取得流程、Scenario、需求差異與驗收草稿。</span></div>
+            <div class="step"><b>4</b><span>由 PO／業務／SA 核准規則，再決定是否寫入 Change／Spec。</span></div>
+          </div>
+          <div class="callout"><b>這條路徑不需要 Worktree。</b> 只有要修改 Repo、規格檔或程式碼時，才進入 Git 工作區流程。</div>
+          <a class="role-jump" href="#role-pm">PM 計畫 Prompt →</a>
+          <span> · </span>
+          <a class="role-jump" href="#role-sa">SA 規格 Prompt →</a>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">PATH B · UX / FRONTEND / ENGINEERING</p>
+          <h3>我要修改畫面或開發功能</h3>
+          <p>這條路徑會碰到 Git，因此先隔離工作目錄，再讓 Agent 修改。</p>
+          <div class="steps" style="margin-top:12px;">
+            <div class="step"><b>1</b><span>從正確的整合分支建立一個功能 Worktree。</span></div>
+            <div class="step"><b>2</b><span>先讀相關 SPEC／OpenSpec，確認允許修改的範圍。</span></div>
+            <div class="step"><b>3</b><span>啟動 Agent 與必要的 dev server／Browser。</span></div>
+            <div class="step"><b>4</b><span>檢查畫面、RWD、Diff、lint／test／build。</span></div>
+            <div class="step"><b>5</b><span>人工 Review 後再 Commit、Push、開 PR。</span></div>
+          </div>
+          <div class="callout"><b>一個完整功能一張工作桌。</b> UI、Mock、互動與驗收通常留在同一個 Worktree。</div>
+          <a class="role-jump" href="#frontend">前端開發 SOP →</a>
+          <span> · </span>
+          <a class="role-jump" href="#designer">設計師操作 →</a>
+        </div>
       </div>
 
-      <div class="firstday">
-        <div class="priority"><strong>第一天先會：Worktree</strong><span>一個完整功能一張工作桌。</span></div>
-        <div class="priority"><strong>第一天先會：AI 換班</strong><span>AI 換班，功能不用重開。</span></div>
-        <div class="priority"><strong>第一天先會：Diff</strong><span>AI 說完成後，自己看它到底改了什麼。</span></div>
+      <div class="card soft" style="margin-top:14px;">
+        <strong>什麼時候才需要進階？</strong>
+        <p>當你有多個獨立任務、長時間 Worker 或需要協調多個 Agent，才開始學 Orchestration、Heartbeat、Watchdog。不要為了使用 Orca 而刻意把簡單工作複雜化。</p>
+        <div class="cta-row"><a class="btn" href="#orchestration">學多 Agent 協作 →</a><a class="btn" href="#watchdog">學心跳與故障恢復 →</a></div>
       </div>
-      <p class="note">PM／SA 若只是整理會議紀錄或需求文件，不必為了使用 Orca 而建立 Worktree。當工作需要檢視 Repo、OpenSpec、Mock 或與開發者交接時，再使用相應的 Agent／Worktree。</p>
     </div>
   </section>
 
 <section id="planning" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">05 · PLAN / 先計畫再執行</p><h2>先把問題與驗收寫清楚，再決定要不要派 AI</h2></div>
+        <div><p class="eyebrow">06 · PLAN / 計畫與規格</p><h2>先把問題與驗收寫清楚，再決定要不要派 AI</h2></div>
         <p>Planning 是一種工作方法，不是 Orca 內建的專案管理模組。PM／SA、設計師與工程師都可用 Agent 整理證據、範圍、依賴、風險與驗收；計畫仍須由有權責的人核准。</p>
       </div>
       <div class="sop" aria-label="AI 計畫審查流程">
@@ -556,7 +627,7 @@ API 未確認時不得自行新增業務規則。
 <section id="openspec" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">06 · SPEC / Orca × OpenSpec</p><h2>Orca 管工作上下文，OpenSpec 管規格與驗證同步</h2></div>
+        <div><p class="eyebrow">07 · SPEC / Orca × OpenSpec</p><h2>Orca 管工作上下文，OpenSpec 管規格與驗證同步</h2></div>
         <p>OpenSpec 是與 Orca 搭配的規格工作流，不是 Orca 內建功能。它應出現在開工、AI 接手、UI 修改、Diff Review 與完成驗收。</p>
       </div>
 
@@ -578,7 +649,7 @@ API 未確認時不得自行新增業務規則。
 <section id="designer" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">07 · DESIGN / 設計師實作</p><h2>不用先變工程師，先學會「指、看、改、驗」</h2></div>
+        <div><p class="eyebrow">08 · DESIGN / 設計師實作</p><h2>不用先變工程師，先學會「指、看、改、驗」</h2></div>
         <p>設計師最有感的是 Browser、Design Mode、Diff Review、手機 QA。你負責判斷結果，AI 負責動程式。</p>
       </div>
 
@@ -607,13 +678,14 @@ API 未確認時不得自行新增業務規則。
       </div>
 
       <div class="callout"><b>設計師的工作不是「相信 AI」。</b> 你的價值是定義需求、看畫面、找出不對的地方、決定哪些修改可以收。</div>
+      <div class="cta-row"><a class="btn" href="#mobile">手機與裝置測試指南 →</a></div>
     </div>
   </section>
 
 <section id="frontend" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">08 · BUILD / 前端工程</p><h2>每天就跑這條 SOP</h2></div>
+        <div><p class="eyebrow">09 · BUILD / 前端工程</p><h2>每天就跑這條 SOP</h2></div>
         <p>工程師不需要另外一套教學。白話層往下一層，就是 branch、worktree、dev server、test、diff、commit。</p>
       </div>
 
@@ -655,7 +727,7 @@ API 未確認時不得自行新增業務規則。
 <section id="problems" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">09 · TROUBLESHOOT / 常見卡關</p><h2>我現在遇到這個問題，要用哪個 Orca 功能？</h2></div>
+        <div><p class="eyebrow">10 · TROUBLESHOOT / 常見卡關</p><h2>我現在遇到這個問題，要用哪個 Orca 功能？</h2></div>
         <p>每個案例都固定用同一個結構：白話 → 在哪裡按 → 工程師要知道什麼 → OpenSpec → 操作 → 驗證。</p>
       </div>
 
@@ -698,7 +770,7 @@ API 未確認時不得自行新增業務規則。
 <section id="orchestration" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">10 · FLEET / 多 Agent 協作</p><h2>從「同時開很多 AI」升級成「每個 Worker 都有任務與負責人」</h2></div>
+        <div><p class="eyebrow">11 · FLEET / 多 Agent 協作</p><h2>從「同時開很多 AI」升級成「每個 Worker 都有任務與負責人」</h2></div>
         <p>Orchestration 是 Orca 的正式多代理任務編排機制，適合需要 Task ownership、完成追蹤、相依關係與人工決策 Gate 的工作。單一小任務仍可直接使用 Terminal。</p>
       </div>
       <div class="grid three">
@@ -796,7 +868,7 @@ Worker 完成後檢查 Diff、測試與規格，再決定 release、retain 或�
 <section id="watchdog" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">11 · WATCH / 心跳與故障恢復</p><h2>不要只知道 AI 在跑；要知道它是否還活著、是否卡住，以及如何安全恢復</h2></div>
+        <div><p class="eyebrow">12 · WATCH / 心跳與故障恢復</p><h2>不要只知道 AI 在跑；要知道它是否還活著、是否卡住，以及如何安全恢復</h2></div>
         <p>這一章把 Orca 已提供的狀態與心跳能力，和團隊應建立的 Watchdog 監督規則分開。這樣才不會把「有 heartbeat 訊息」誤認為「Worker 失聯會自動重啟」。</p>
       </div>
       <div class="grid two">
@@ -870,7 +942,7 @@ orca serve service uninstall --json</pre>
 <section id="safety" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">12 · GOVERNANCE / 安全與權限</p><h2>先確認 Agent 能做什麼，再決定放手到什麼程度</h2></div>
+        <div><p class="eyebrow">13 · GOVERNANCE / 安全與權限</p><h2>先確認 Agent 能做什麼，再決定放手到什麼程度</h2></div>
         <p>Orca 可提高 Agent 自主性；Worktree 只隔離 Git 工作目錄，不是完整作業系統安全沙箱。對政府與客戶專案，權限、資料與部署核准仍要獨立把關。</p>
       </div>
       <div class="grid three">
@@ -905,7 +977,7 @@ orca serve service uninstall --json</pre>
 <section id="mobile" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">13 · MOBILE / 手機與裝置測試</p><h2>先判斷你要測哪一種手機情境</h2></div>
+        <div><p class="eyebrow">14 · MOBILE / 手機與裝置測試</p><h2>先判斷你要測哪一種手機情境</h2></div>
         <p>這章是進階驗證。只是看 RWD，先用 Browser Device Emulation；真的要測 App / WebView / 手勢，再進 Emulator。</p>
       </div>
 
@@ -988,7 +1060,7 @@ orca skills get orca-emulator-android</pre>
 <section id="reference" class="section">
     <div class="section-card">
       <div class="section-head">
-        <div><p class="eyebrow">14 · REFERENCE / 名詞與指令速查</p><h2>看到術語不用怕，先翻成白話</h2></div>
+        <div><p class="eyebrow">15 · REFERENCE / 名詞與指令速查</p><h2>看到術語不用怕，先翻成白話</h2></div>
         <p>正式技術名稱保留，旁邊補白話。這樣設計師看得懂，工程師也不會失去精確度。</p>
       </div>
 
@@ -1040,10 +1112,12 @@ orca screenshot --worktree active --json</pre>
         <div class="card"><strong>資安／維運／主管</strong><p>權限與風險 → 上線 Gate → 回復方案 → 維運交接</p></div>
       </div>
       <p class="note"><b>一句話：</b>Orca 管工作上下文與 Agent 協作；OpenSpec 管規格；Heartbeat 與 Watchdog 幫你及早發現停滯。</p>
+      <p class="note"><a href="#reference">需要查 CLI 或術語？前往名詞與指令速查 →</a></p>
     </div>
   </section>
 
 <div class="sources">介面圖來源：Orca 官網與 Orca Docs；AI 換班案例使用你提供的 Orca 中文介面截圖。產品功能隨版本與授權而異。本網站的內容維護契約見 <a href="https://github.com/sodahsu/notes/blob/main/SPEC.md" target="_blank" rel="noopener noreferrer">SPEC.md</a>。</div>
+
 
 </main>
 
