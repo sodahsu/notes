@@ -187,7 +187,7 @@ for (const page of pages) {
   test(page + ": each section link highlights when selected", () => {
     const nodes = mountPage(readFileSync(page, "utf8"));
     const html = readFileSync(page, "utf8");
-    const navHtml = html.match(/<nav class="topnav"[^>]*>([\\s\\S]*?)<\\/nav>/i)?.[1];
+    const navHtml = html.match(/<nav class="topnav"[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
     const expectedLinks = [...navHtml.matchAll(/href="#([^"]+)"/g)].length;
     assert.equal(nodes.sectionLinks.length, expectedLinks);
     for (const active of nodes.sectionLinks) {
