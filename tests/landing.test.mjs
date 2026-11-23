@@ -31,6 +31,22 @@ test("short homepage preserves detailed guide and legacy alias", () => {
   assert.ok(guide.includes('href="./"'), "the guide has a route back home");
 });
 
+test("pages expose canonical and text Open Graph metadata", () => {
+  for (const page of [home, alias]) {
+    assert.match(page, /<link rel="canonical" href="https:\/\/sodahsu\.github\.io\/notes\/">/);
+    assert.match(page, /<meta property="og:title" content="Orca｜不用先學功能，先試一件事">/);
+    assert.match(page, /<meta property="og:description" content="不用先讀技術文章。用三個日常工作情境，30 秒認識 Orca 如何幫你整理需求、改善介面、管理 AI 協作。">/);
+    assert.match(page, /<meta property="og:url" content="https:\/\/sodahsu\.github\.io\/notes\/">/);
+    assert.match(page, /<meta property="og:type" content="website">/);
+  }
+  assert.match(guide, /<link rel="canonical" href="https:\/\/sodahsu\.github\.io\/notes\/guide\.html">/);
+  assert.match(guide, /<meta property="og:title" content="Orca 完整操作手冊｜角色、教學與 AI 協作">/);
+  assert.match(guide, /<meta property="og:description" content="Orca 使用指南：從實際工作案例與職能入口開始，學習 AI 開發、Worktree、多 Agent、Worker 心跳、Watchdog 與安全交付。">/);
+  assert.match(guide, /<meta property="og:url" content="https:\/\/sodahsu\.github\.io\/notes\/guide\.html">/);
+  assert.match(guide, /<meta property="og:type" content="website">/);
+  assert.doesNotMatch(home + guide, /property="og:image"|rel="icon"|rel="shortcut icon"/);
+});
+
 test("exactly three mission tabs match the SPEC and have specific short examples", () => {
   assert.deepEqual(missionIds(), ["mission-pm", "mission-design", "mission-team"]);
   assert.deepEqual(missions.map(mission => mission.id), missionIds());
