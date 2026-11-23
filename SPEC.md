@@ -39,6 +39,7 @@
 - **LANDING-06**：保留舊網址錨點相容性，從 `/#watchdog`、`/#role-*` 等既有技術章節入口自動導至 `guide.html#...`；`/#journey` 保留為短首頁的體驗入口，完整教學改由 `guide.html?case=...#tutorialLab` 開啟對應情境。
 - **LANDING-07**：桌面與手機的 tab 切換、鍵盤操作、結果展開、Prompt 複製成功／失敗、舊錨點轉送與所有完整手冊舊功能必須通過 Node 與 Chromium 回歸測試。
 - **LANDING-08**：這是使用動機導向的資訊架構假設；CI 只可證明互動與技術規格，不可宣稱已用訪談或可用性測試證明「更容易學習」。
+- **LANDING-09**：首頁與逐字鏡像提供 canonical 及 Open Graph 的 title、description、url、type；標題與描述沿用頁面既有 `<title>` 與 meta description。不得要求圖像或 favicon 中繼資料。
 
 <!-- navigation-contract:start -->
 | id | 導覽標籤 | 使用者問題 |
@@ -104,6 +105,7 @@
 - **WEB-11**：提供分階學習路徑：第一次完成單一任務、日常工作流、多 Agent 協作、團隊治理；每階段說明適用時機與下一步，不要求新手先學完進階術語。
 - **WEB-12**：首頁情境捷徑必須能通往對應的完整教程，進一步由完整手冊的職能捷徑開啟各自 Prompt；不可全部導向同一泛用案例。
 - **WEB-13**：Quickstart 必須將文件／需求工作與程式／介面工作分流；文件唯讀分析不要求 Worktree，程式修改才進入 Git 工作區流程。
+- **WEB-14**：完整手冊提供自己的 canonical 及 Open Graph 的 title、description、url、type；標題與描述沿用頁面既有 `<title>` 與 meta description。此文字中繼標籤不要求圖像或 favicon。
 
 
 ## 3. 互動式實作教學契約
